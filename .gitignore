@@ -29,3 +29,5 @@ time_series_example
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+.idea/

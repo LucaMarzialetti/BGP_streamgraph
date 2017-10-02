@@ -1,0 +1,8 @@
+{{#features}}
+    <div class="tab-element" data-id="{{id}}">
+        <div class="name">{{properties.name}}</div>
+        {{#properties.up}}<span class="glyphicon glyphicon-arrow-up arrow-up" aria-hidden="true"></span>{{/properties.up}}
+        {{#properties.down}}<span class="glyphicon glyphicon-arrow-down arrow-down" aria-hidden="true"></span>{{/properties.down}}
+        Crashes: {{properties.currentTotal}}
+    </div>
+{{/features}}
