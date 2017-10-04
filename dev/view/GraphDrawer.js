@@ -1,6 +1,12 @@
 
 define([
-    "bgpst.view.color"
+    "bgpst.view.color",
+    "bgpst.lib.d3-amd"
+
+    /*gui manager*/
+    /*moment*/
+    /*jquery*/
+    /*chiamate sul DOM dalla root DOM*/
 ], function(ColorManager) {
 
     function GraphDrawer(gui_manager) {
@@ -19,9 +25,9 @@ define([
         this.last_hover;
         this.ordering;
         console.log("== GraphDrawer Ready");
-    }
+    };
 
-//setup the drawing in the svg  <-- TO CALL AT DOM READY
+    //setup the drawing in the svg  <-- TO CALL AT DOM READY
     GraphDrawer.prototype.drawer_init = function () {
         this.erase_all();
         var margin = {top: 15, right: 15, bottom: 15, left: 15};
@@ -42,7 +48,7 @@ define([
         this.draw_stream_axis(this.main_svg, this.sizes);
         this.draw_minimap(this.mini_svg, this.sizes);
         this.draw_over(this.main_svg, this.sizes);
-    }
+    };
 
     GraphDrawer.prototype.draw_over = function (svg, sizes) {
         var s, x, y;
@@ -62,7 +68,7 @@ define([
             .append("text")
             .text(s)
             .attr("style", "font-family:'Arial Black', Gadget, sans-serif; font-size: 20px; stroke: black; fill: gray; opacity: 0.4; stroke-opacity: 0.4;");
-    }
+    };
 
     GraphDrawer.prototype.draw_minimap = function (svg, sizes, data, stack) {
         this.erase_minimap();
@@ -156,7 +162,7 @@ define([
                 drawer.events_range = null;
                 gui_manager.ripe_data_broker.brush();
             }
-        }
+        };
 
         function draw_stream(data, stack) {
             drawer.erase_minimap();
@@ -210,12 +216,12 @@ define([
                 .attr("class", "brush end")
                 .attr("transform", "translate (" + margin_left + "," + margin_top + ")")
                 .call(drawer.brusher.on("end", brushed));
-        }
+        };
 
         function draw_heat(svg, sizes) {
             //TODO!
             drawer.erase_minimap();
-        }
+        };
 
         function draw_background() {
             svg
@@ -238,8 +244,8 @@ define([
                 .attr("class", "mini_axis")
                 .attr("transform", "translate (" + margin_left + "," + margin_top + ")")
                 .call(d3.axisLeft(drawer.mini_y).ticks(10, "%"));
-        }
-    }
+        };
+    };
 
     GraphDrawer.prototype.check_brush = function () {
         /*put brusher in position if the query is new and the old brusher was focused*/
@@ -259,25 +265,25 @@ define([
                 this.center_brush(moment(this.events_range[0]), moment(this.events_range[1]));
             }
         }
-    }
+    };
 
     GraphDrawer.prototype.center_brush = function (start, end) {
         console.log("CENTERING BRUSH TO " + start + " | " + end)
         this.brush.call(this.brusher.move, [this.mini_x(moment(start)), this.mini_x(moment(end))]);
-    }
+    };
 
     GraphDrawer.prototype.erase_minimap = function () {
         d3.selectAll(".mini_layers").remove();
         d3.selectAll(".mini_background").remove();
         d3.selectAll(".mini_axis").remove();
         this.erase_brush();
-    }
+    };
 
     GraphDrawer.prototype.erase_brush = function () {
         d3.selectAll(".brush").remove();
-    }
+    };
 
-//add background
+    //add background
     GraphDrawer.prototype.draw_background = function (svg, sizes) {
         svg
             .append("g")
@@ -288,9 +294,9 @@ define([
             .attr("height", sizes.height_main - (sizes.margin.top + sizes.margin.bottom))
             .attr("transform", "translate(" + (sizes.margin.left + sizes.margin.right) + ",0)")
             .attr("fill", "#a0c4ff");
-    }
+    };
 
-//add axis
+    //add axis
     GraphDrawer.prototype.draw_stream_axis = function (svg, sizes) {
         // set the ranges
         this.x = d3.scaleTime().range([0, sizes.width - (sizes.margin.left + sizes.margin.right + 2)]);
@@ -317,17 +323,17 @@ define([
             .attr("transform", "translate(" + ((sizes.width / 2) + (sizes.margin.left * 5 / 2)) + "," + (sizes.height_main + sizes.margin.top) + ")")  // centre below axis
             .attr("class", "axe_description")
             .text("Timestamp");
-    }
+    };
 
     GraphDrawer.prototype.parseDate = function () {
         return d3.timeParse("%Y-%m-%dT%H:%M:%S");
-    }
+    };
 
     GraphDrawer.prototype.formatDate = function () {
         return d3.timeFormat("%d/%m/%Y %H:%M:%S");
-    }
+    };
 
-//function used to draw the data - already parsed as TSV
+    //function used to draw the data - already parsed as TSV
     GraphDrawer.prototype.draw_streamgraph = function (current_parsed, graph_type, tsv_incoming_data, keys_order, preserve_color_map, global_visibility, targets, query_id, bgplay_callback, events_limit, events_range, redraw_minimap) {
         var drawer = this;
         this.erase_all();
@@ -441,7 +447,7 @@ define([
 
         function mouseover() {
             drawer.tooltip.removeClass("hidden");
-        }
+        };
 
         function mousemove(d_key, pos) {
             //trova l'interesezione sull'asse X (percentuale) relativamente al mouse X
@@ -480,13 +486,13 @@ define([
                     .style("fill-opacity", 0.35);
                 drawer.last_hover = d_key.key;
             }
-        }
+        };
 
         function mouseout() {
             d3.selectAll(".area").style("fill-opacity", 1);
             drawer.tooltip.addClass("hidden");
             drawer.last_hover = null;
-        }
+        };
 
         function click(pos, event) {
             //if(event.ctrlKey||event.altKey||event.shiftKey||event.metaKey) {
@@ -501,11 +507,11 @@ define([
                 bgplay_callback(date);
             }
             //}
-        }
+        };
 
         this.draw_over(this.main_svg, this.sizes);
         this.current_query_id = query_id;
-    }
+    };
 
     GraphDrawer.prototype.draw_heat_axis = function (events, margin_x) {
         var drawer = this;
@@ -544,7 +550,7 @@ define([
                 this.ticks.push(new Date(events[i]));
         }
         this.ticks.push(new Date(events[events.length - 1]));
-    }
+    };
 
     GraphDrawer.prototype.common_for_streamgraph = function (tsv_data, keys_order, events_limit, visibility, preserve_color_map, query_id) {
         var drawer = this;
@@ -588,10 +594,10 @@ define([
             for (var i = 2; i < columns.length; i++)
                 d[columns[i]] = d[columns[i]] / percentage;
             return d;
-        }
-    }
+        };
+    };
 
-//function used to draw the data - already parsed as TSV
+    //function used to draw the data - already parsed as TSV
     GraphDrawer.prototype.draw_heatmap = function (current_parsed, tsv_incoming_data, stream_tsv, keys_order, preserve_color_map, global_visibility, targets, query_id, bgplay_callback, level, ip_version, prepending, collapse_rrc, collapse_events, events_labels, rrc_labels, timemap, events_range, redraw_minimap) {
         var known_rrc = current_parsed.known_rrc;
         var drawer = this;
@@ -946,11 +952,11 @@ define([
             else
                 d.asn = null;
             return d;
-        }
+        };
 
         function mouseover() {
             drawer.tooltip.removeClass("hidden");
-        }
+        };
 
         function mousemove(d_key, pos) {
             var s = "<strong> ASN: </strong>";
@@ -1010,15 +1016,14 @@ define([
                     .style("fill-opacity", 0.35);
                 drawer.last_hover = d_key.asn;
             }
-
-        }
+        };
 
         function mouseout() {
             d3.selectAll(".area")
                 .style("fill-opacity", 1);
             drawer.last_hover = null;
             drawer.tooltip.addClass("hidden");
-        }
+        };
 
         function click(pos, event) {
             if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey) {
@@ -1029,7 +1034,7 @@ define([
                     bgplay_callback(date);
                 }
             }
-        }
+        };
 
         function rrc_mouse_over(d, pos) {
             var s = "<strong>RRC: </strong>";
@@ -1061,8 +1066,7 @@ define([
                     .style("fill-opacity", 0.35);
                 drawer.last_hover = d;
             }
-        }
-
+        };
 
         function date_mouse_over(d, pos) {
             if (drawer.last_hover != d) {
@@ -1073,7 +1077,7 @@ define([
                     .style("fill-opacity", 0.35);
                 drawer.last_hover = d;
             }
-        }
+        };
 
         function rrc_filter(data) {
             var set = {};
@@ -1098,7 +1102,7 @@ define([
             }
             //return only the rrc_s buckets
             return Object.values(flat);
-        }
+        };
 
         function events_filter(data, tollerance) {
             var set = {};
@@ -1130,12 +1134,12 @@ define([
             flat.push(moments[pos]);
             //return only the events buckets
             return flat;
-        }
-    }
+        };
+    };
 
-//extra functions
-//change color to areas
-//just shuffle the current color set contained in d_sorteds
+    //extra functions
+    //change color to areas
+    //just shuffle the current color set contained in d_sorteds
     GraphDrawer.prototype.shuffle_color_map = function (graph_type) {
         var drawer = this;
         if (graph_type == "stream") {
@@ -1161,9 +1165,9 @@ define([
                 d3.select(this).style("fill", drawer.z(d.key));
             });
         }
-    }
+    };
 
-//remove the chart
+    //remove the chart
     GraphDrawer.prototype.erase_all = function () {
         this.main_svg.select(".chart").remove();
         this.main_svg.select(".background").remove();
@@ -1173,8 +1177,7 @@ define([
         this.mini_svg.select(".chart").remove();
         this.mini_svg.select(".background").remove();
         this.mini_svg.selectAll(".axis").remove();
-    }
-
+    };
 
     return GraphDrawer;
 });

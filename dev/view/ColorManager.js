@@ -109,6 +109,6 @@ define([
             return "black";
     };
 
-  return ColorManager;
+    return ColorManager;
 });
 
