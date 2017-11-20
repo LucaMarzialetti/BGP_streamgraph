@@ -8,8 +8,8 @@ WIDGET_URL = ((typeof EXTERNAL_WIDGET_URL == 'undefined') ? "" : EXTERNAL_WIDGET
  */
 window.atlas = window.atlas || {};
 window.atlas._widgets = window.atlas._widgets || {};
-window.atlas._widgets.impcrashes = window.atlas._widgets.impcrashes || {};
-window.atlas._widgets.impcrashes.urls = window.atlas._widgets.impcrashes.urls || {
+window.atlas._widgets.bgpst = window.atlas._widgets.bgpst || {};
+window.atlas._widgets.bgpst.urls = window.atlas._widgets.bgpst.urls || {
         libs: WIDGET_URL + "dev/libs/",
         env: WIDGET_URL + "dev/environment/",
         connector: WIDGET_URL + "dev/connector/",
@@ -18,7 +18,7 @@ window.atlas._widgets.impcrashes.urls = window.atlas._widgets.impcrashes.urls ||
         controller: WIDGET_URL + "dev/controller/",
         session: WIDGET_URL + "dev/session/"
     };
-window.atlas._widgets.impcrashes.instances = window.atlas._widgets.impcrashes.instances || {
+window.atlas._widgets.bgpst.instances = window.atlas._widgets.bgpst.instances || {
         requested: [],
         running: {},
         callback: {}
@@ -28,13 +28,13 @@ window.atlas._widgets.impcrashes.instances = window.atlas._widgets.impcrashes.in
 if (!window.atlas._widgets.widgetInjectorRequested) { // Only one injector
     window.atlas._widgets.widgetInjectorLoaded = false;
     window.atlas._widgets.widgetInjectorRequested = true;
-    window.atlas._widgets.impcrashes.tmp_scripts = document.getElementsByTagName('script');
-    window.atlas._widgets.impcrashes.tmp_scrip = window.atlas._widgets.impcrashes.
-        tmp_scripts[window.atlas._widgets.impcrashes.tmp_scripts.length - 1];
+    window.atlas._widgets.bgpst.tmp_scripts = document.getElementsByTagName('script');
+    window.atlas._widgets.bgpst.tmp_scrip = window.atlas._widgets.bgpst.
+        tmp_scripts[window.atlas._widgets.bgpst.tmp_scripts.length - 1];
     window.atlas._widgets.injectorScript = document.createElement('script');
     window.atlas._widgets.injectorScript.async = false;
-    window.atlas._widgets.injectorScript.src = window.atlas._widgets.impcrashes.urls.libs + 'require.min.js';
-    window.atlas._widgets.impcrashes.tmp_scrip.parentNode.appendChild(window.atlas._widgets.injectorScript);
+    window.atlas._widgets.injectorScript.src = window.atlas._widgets.bgpst.urls.libs + 'require.min.js';
+    window.atlas._widgets.bgpst.tmp_scrip.parentNode.appendChild(window.atlas._widgets.injectorScript);
 }
 
 /**
@@ -46,7 +46,7 @@ function initWidget(domElement, instanceParams, queryParams){
     run = function(){
         var instances, instance;
 
-        instances = window.atlas._widgets.impcrashes.instances;
+        instances = window.atlas._widgets.bgpst.instances;
         instance = instances.requested.shift();
 
         while (instance){
@@ -55,12 +55,12 @@ function initWidget(domElement, instanceParams, queryParams){
                     waitSeconds: 60
                 });
                 if (instance.instanceParams.dev) { // Load dev version
-                    require([WIDGET_URL + 'impcrashes-loader.js'], function(Widget){
+                    require([WIDGET_URL + 'bgpst-loader.js'], function(Widget){
                         instances.running[instance.domElement] = Widget(instance);
                     });
                 } else { // Load deployed version
-                    require([WIDGET_URL + 'impcrashes-dist.js'], function () {
-                        require(['impcrashes-loader'], function(Widget){
+                    require([WIDGET_URL + 'bgpst-dist.js'], function () {
+                        require(['bgpst-loader'], function(Widget){
                             instances.running[instance.domElement] = Widget(instance);
                         });
                     });
@@ -72,8 +72,8 @@ function initWidget(domElement, instanceParams, queryParams){
         }
     };
 
-    window.atlas._widgets.impcrashes.instances.callback[domElement] = null;
-    window.atlas._widgets.impcrashes.instances.requested
+    window.atlas._widgets.bgpst.instances.callback[domElement] = null;
+    window.atlas._widgets.bgpst.instances.requested
         .push({ domElement: domElement, instanceParams: instanceParams, queryParams: queryParams, callbacks: {} });
 
     if (document.readyState == 'complete'){
@@ -104,10 +104,10 @@ function initWidget(domElement, instanceParams, queryParams){
 
     return {
         ready: function(callback){
-            window.atlas._widgets.impcrashes.instances.callback[domElement] = callback;
+            window.atlas._widgets.bgpst.instances.callback[domElement] = callback;
         },
         shell: function(){
-            var instance = window.atlas._widgets.impcrashes.instances.running[domElement];
+            var instance = window.atlas._widgets.bgpst.instances.running[domElement];
 
             if (instance) {
                 return instance;

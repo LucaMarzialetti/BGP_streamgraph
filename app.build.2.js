@@ -3,42 +3,42 @@
     findNestedDependencies: true,
     preserveLicenseComments: false,
 
-    name: 'impcrashes-loader',
+    name: 'bgpst-loader',
 
     paths:{
-        "impcrashes.env.utils": "dev/environment/utils",
-        "impcrashes.env.config": "dev/environment/config",
-        "impcrashes.env.languages.en": "dev/environment/languages/language.eng",
+        "bgpst.env.utils": "dev/environment/utils",
+        "bgpst.env.config": "dev/environment/config",
+        "bgpst.env.languages.en": "dev/environment/languages/language.eng",
 
         /* libs */
-        "impcrashes.lib.require": "dev/libs/require.min",
-        "impcrashes.lib.jquery-amd": "dev/libs/jquery-libs-amd",
-        "impcrashes.lib.jquery-libs": "dev/libs/jquery-libs",
-        "impcrashes.lib.date-format": "dev/libs/dateFormat",
-        "impcrashes.lib.d3-amd": "dev/libs/d3/js/d3.v3.amd",
-        "impcrashes.lib.mustache": "dev/libs/mustache",
-        "impcrashes.lib.text": "dev/libs/require-text",
-        "impcrashes.lib.stache": "dev/libs/stache",
-        "impcrashes.lib.colorbrewer": "dev/libs/colorbrewer",
-        "impcrashes.lib.d3.legend": "dev/libs/d3.legend",
+        "bgpst.lib.require": "dev/libs/require.min",
+        "bgpst.lib.jquery-amd": "dev/libs/jquery-libs-amd",
+        "bgpst.lib.jquery-libs": "dev/libs/jquery-libs",
+        "bgpst.lib.date-format": "dev/libs/dateFormat",
+        "bgpst.lib.d3-amd": "dev/libs/d3/js/d3.v3.amd",
+        "bgpst.lib.mustache": "dev/libs/mustache",
+        "bgpst.lib.text": "dev/libs/require-text",
+        "bgpst.lib.stache": "dev/libs/stache",
+        "bgpst.lib.colorbrewer": "dev/libs/colorbrewer",
+        "bgpst.lib.d3.legend": "dev/libs/d3.legend",
 
 
         /* view */
-        "impcrashes.view.main": "dev/view/MainView",
-        "impcrashes.view.map": "dev/view/MapView",
-        "impcrashes.view.table": "dev/view/TableView",
-        "impcrashes.view.bar-chart": "dev/view/BarChartView",
+        "bgpst.view.main": "dev/view/MainView",
+        "bgpst.view.map": "dev/view/MapView",
+        "bgpst.view.table": "dev/view/TableView",
+        "bgpst.view.bar-chart": "dev/view/BarChartView",
 
 
         /* controller */
-        "impcrashes.controller.main": "dev/controller/main",
+        "bgpst.controller.main": "dev/controller/main",
 
 
 
         /* connector */
-        "impcrashes.connector.facade": "dev/connector/ConnectorFacade",
-        "impcrashes.connector.translation": "dev/connector/TranslationConnector",
-        "impcrashes.connector.rest": "dev/connector/RestConnector",
+        "bgpst.connector.facade": "dev/connector/ConnectorFacade",
+        "bgpst.connector.translation": "dev/connector/TranslationConnector",
+        "bgpst.connector.rest": "dev/connector/RestConnector",
 
     },
     shim:{
@@ -47,13 +47,13 @@
         extension: '.html', // default = '.html'
         path: 'dev/view/html/' // default = ''
     },
-    stubModules: ["impcrashes.lib.text", "impcrashes.lib.stache"],
+    stubModules: ["bgpst.lib.text", "bgpst.lib.stache"],
     removeCombined: true,
     optimize: "uglify2",//uglify2
     wrapShim: false,
     generateSourceMaps: false,
 
-    out: "impcrashes-dist.js"
+    out: "bgpst-dist.js"
 
 
 })

@@ -10,8 +10,13 @@ define([], function(){
 
     return {
         widgetPrefix: "ic",
+
         dataAPIs:{
-            main: "data/annotatedData.json"  
+            main: "https://stat.ripe.net/data/bgplay/data.json",
+            count: "https://stat.ripe.net/data/ris-peer-count/data.json",
+            cpInfo: "https://stat.ripe.net/data/geoloc/data.json",
+            asInfo: "https://stat.ripe.net/data/as-overview/data.json",
+            ipInfo: "https://stat.ripe.net/data/whats-my-ip/data.json" 
         },
         
         style: {

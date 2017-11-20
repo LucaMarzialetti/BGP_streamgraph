@@ -30,9 +30,9 @@
 /*jslint nomen: true */
 /*global define: false */
 
-var mustacheDep = "impcrashes.lib.mustache";
+var mustacheDep = "bgpst.lib.mustache";
 
-define(["impcrashes.lib.text", mustacheDep], function (text, Mustache) {
+define(["bgpst.lib.text", mustacheDep], function (text, Mustache) {
 
     var sourceMap = {},
         buildMap = {},

@@ -14,6 +14,6 @@ minify -o ${css_dist_location}style-lib-dist.min.css ${css_dist_location}style-l
 
 
 r.js -o app.build.2.js
-uglifyjs impcrashes-dist.js -o impcrashes-dist.js
+uglifyjs bgpst-dist.js -o bgpst-dist.js
 
 cp -fR * ${deployment_dir}

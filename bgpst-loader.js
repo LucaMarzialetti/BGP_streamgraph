@@ -81,7 +81,7 @@ define([
             "queryParams": queryParams
         };
 
-        window.env = env; // TEMP: just for debugging
+        //window.env = env; // TEMP: just for debugging
 
 
 
@@ -136,6 +136,71 @@ define([
             }
 
             callbackReady = window.atlas._widgets.bgpst.instances.callback[parentDom];
+
+            /* bgp stream script to ben run */
+
+            $(".jquery_ui_spinner").spinner();
+            $("button").button();
+            context_manager = new ContextManager();
+            //draw in the svg
+            context_manager.drawer.drawer_init();
+            //setup the gui
+            context_manager.gui_manager.gui_setup();
+
+            //resize listener
+            $(window).resize(function(){
+                context_manager.drawer.drawer_init();
+                if(context_manager.gui_manager.isGraphPresent){
+                    if(context_manager.gui_manager.graph_type=="stream")
+                        context_manager.drawer.draw_streamgraph(
+                            context_manager.ripe_data_broker.current_parsed,
+                            context_manager.gui_manager.graph_type,
+                            context_manager.gui_manager.ripe_data_broker.current_asn_tsv, 
+                            context_manager.gui_manager.drawer.keys, 
+                            context_manager.gui_manager.preserve_map, 
+                            context_manager.gui_manager.ripe_data_broker.current_visibility, 
+                            context_manager.gui_manager.ripe_data_broker.current_parsed.targets, 
+                            context_manager.gui_manager.ripe_data_broker.current_parsed.query_id, 
+                            function(pos){return context_manager.gui_manager.ripe_data_broker.go_to_bgplay(
+                                context_manager.gui_manager.ripe_data_broker.current_starttime,
+                                context_manager.gui_manager.ripe_data_broker.current_endtime,
+                                context_manager.gui_manager.ripe_data_broker.current_targets,
+                                pos)},
+                            null,
+                            null,
+                            true);                      
+                    else
+                        if(context_manager.gui_manager.graph_type=="heat")
+                            context_manager.gui_manager.drawer.draw_heatmap(
+                                context_manager.gui_manager.ripe_data_broker.current_parsed,
+                                context_manager.gui_manager.ripe_data_broker.current_rrc_tsv,
+                                context_manager.gui_manager.ripe_data_broker.current_asn_tsv, 
+                                context_manager.gui_manager.drawer.keys, 
+                                context_manager.gui_manager.preserve_map, 
+                                context_manager.gui_manager.ripe_data_broker.current_visibility, 
+                                context_manager.gui_manager.ripe_data_broker.current_parsed.targets, 
+                                context_manager.gui_manager.ripe_data_broker.current_parsed.query_id, 
+                                function(pos){return ripe_data_broker.go_to_bgplay(
+                                    context_manager.gui_manager.ripe_data_broker.current_starttime,
+                                    context_manager.gui_manager.ripe_data_broker.current_endtime,
+                                    context_manager.gui_manager.ripe_data_broker.current_targets,pos)}, 
+                                context_manager.gui_manager.asn_level, 
+                                context_manager.gui_manager.ip_version, 
+                                context_manager.gui_manager.prepending_prevention, 
+                                context_manager.gui_manager.merge_rrc, 
+                                context_manager.gui_manager.merge_events, 
+                                context_manager.gui_manager.events_labels, 
+                                context_manager.gui_manager.rrc_labels,
+                                context_manager.gui_manager.heatmap_time_map,
+                                null,
+                                true);
+                    }
+                })
+            if(!context_manager.check_request())
+                context_manager.gui_manager.toggleLoader();         
+            
+            /** end to be run **/
+
             if (callbackReady){
                 callbackReady(objectToBeEnriched);
             }

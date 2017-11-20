@@ -17,17 +17,17 @@
  */
 
 define([
-    "impcrashes.env.utils",
-    "impcrashes.env.config",
-    "impcrashes.env.languages.en",
-    "impcrashes.lib.jquery-amd",
-    "impcrashes.lib.d3-amd",
-    "impcrashes.lib.stache!main",
-    "impcrashes.lib.stache!error",
-    "impcrashes.lib.stache!table",
-    "impcrashes.view.map",
-    "impcrashes.view.table",
-    "impcrashes.view.bar-chart"
+    "bgpst.env.utils",
+    "bgpst.env.config",
+    "bgpst.env.languages.en",
+    "bgpst.lib.jquery-amd",
+    "bgpst.lib.d3-amd",
+    "bgpst.lib.stache!main",
+    "bgpst.lib.stache!error",
+    "bgpst.lib.stache!table",
+    "bgpst.view.map",
+    "bgpst.view.table",
+    "bgpst.view.bar-chart"
 ], function(utils, config, lang, $, d3, template, errorTemplate, tableTemplate, MapView, TableView, BarChartView){
 
     var MainView = function(env){
@@ -112,12 +112,14 @@ define([
             };
         };
 
+
+//what initialize the view and buttons
         this.init = function (data) {
             currentStatus = this.getCurrentStatus(data);
 
             // Init dom by appending generated template (mustachejs)
             env.parentDom
-                .addClass("impcrashes-container")
+                .addClass("bgpst-container")
                 .html(template(this));
 
             // Initialise the time slider

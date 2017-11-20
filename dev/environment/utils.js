@@ -1,5 +1,5 @@
 define([
-    "impcrashes.lib.date-format"
+    "bgpst.lib.date-format"
 ], function(){
     var locale, timeZoneOffset;
 

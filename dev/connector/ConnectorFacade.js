@@ -4,16 +4,16 @@
  */
 
 define([
-    "impcrashes.env.config",
-    "impcrashes.lib.jquery-amd",
-    "impcrashes.env.utils",
-    "impcrashes.connector.translation"
+    "bgpst.env.config",
+    "bgpst.lib.jquery-amd",
+    "bgpst.env.utils",
+    "bgpst.connector.translation"
 ], function(config, $, utils, TranslateConnector){
 
     var ConnectorFacade = function (env) {
         var connector = new TranslateConnector(env);
 
-        this.getData = connector.getData
+        this.getData = connector.getData //parameters in translateconn.
     };
 
     return ConnectorFacade;

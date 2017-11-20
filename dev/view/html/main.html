@@ -1,21 +1,333 @@
-<div class="main">
-    <div class="title">{{lang.title}}</div>
-    <div class="controller">
-        <div>Years:
-            <span class="value-slider-start">{{timeRange.min}}</span> -
-            <span class="value-slider-stop">{{timeRange.max}}</span>
-        </div>
-        <div class="slider  bootstrap-slider">
-            <div class="input-label"> </div>
-            <input type="text"/>
-        </div>
-    </div>
-    <div class="table-right"></div>
-    <div class="map-container">
-        <svg></svg>
-    </div>
-    <div class="barchart-container">
-        <svg></svg>
+<div class="loader_mask on_top_z_index full_screen">
+    <div class="spinner">
+        <div class="loading">Loading&#8230;</div>
+        <div class="loading_text">Loading Sources..</div>
     </div>
 </div>
+<div class="body_container blur">   
+    <div class="row first_row left_margin container">
+        <div class="col-sm-3" style="padding-right: 0;padding-left: 0; text-anchor: left">
+            <h2 class="title">Global View</h2>
+        </div>
+        <div class="col-sm-1">
+            <div class="btn-group counter">
+                <label style="margin:0">#Events</label>
+                <div class="counter_events" style="text-align: center;"></div>
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <div class="btn-group counter">
+                <label style="margin:0">#ASN</label>
+                <div class="counter_asn" style="text-align: center;"></div>
+            </div>
+        </div>
+        <div class="col-sm-7 text-right" style="padding-right: 0;padding-left: 0; text-anchor: right">
+            <div class="btn-group other_command_btn steps_btn stream_option" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="checkbox" name="steps" value="steps" autocomplete="off">
+                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+                    Steps
+                </label>
+            </div>
+            <div class="btn-group other_command_btn streaming_btn stream_option" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="checkbox" name="streaming" value="streaming" autocomplete="off">
+                    <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+                    <!--glyphicon glyphicon-stop-->
+                    Streaming
+                </label>
+            </div>
+            <div class="btn-group other_command_btn ip_version" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="checkbox" name="ip_version" value="4" autocomplete="off">
+                    IPv4
+                </label>
+                <label class="btn btn-default">
+                    <input type="checkbox" name="ip_version" value="6" autocomplete="off"> 
+                    IPv6
+                </label>
+            </div>
+            <div class="btn-group other_command_btn graph_type" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="radio" name="graph_type" value="stream" autocomplete="off">
+                    Global
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="graph_type" value="heat" autocomplete="off"> 
+                    Local
+                </label>
+            </div>
+            <span class="dropdown">
+                <button type="button" class="dropdown-toggle other_command_btn option_command_btn btn btn-default text_centerd" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right repositioned">
+                    <li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>
+                    <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>
+                    <li>
+                        <a href="#" class="preserve_color_btn">
+                            Preserve Color Map
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="gather_information_btn">
+                            Gather Information (CP Geo, ASN Detail)
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="localstorage_enabled_btn">
+                            Enable Local Storage
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="prepending_prevention_btn">
+                            AS-Path Anti-Prepending
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li class="heat_option">
+                        <a href="#" class="merge_rrc_btn">
+                            Merge CPs with same paths
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li class="heat_option" style="display: inline-flex;">
+                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
+                            Merge events with same routing
 
+                        </a>
+                        <input type="number" name="merge_events" min="0" max="500" 
+                        style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">
+                    </li>   
+                    <li class="stream_option">
+                        <a href="#" class="global_visibility_btn">
+                            Global visibility (All CPs)
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li style="display: inline-flex;">
+                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
+                            Upstream Level (AS-path hop)
+
+                        </a>
+                        <input type="number" name="asn_lvl" min="0" max="50" 
+                        style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">
+                    </li>
+                </ul>
+            </span>
+            <span class="dropdown">
+                <button type="button" class="dropdown-toggle other_command_btn path_btn btn btn-default text_centerd" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right repositioned">
+                    <li>
+                        <a href="#" class="draw_path_btn">Draw Path</a>
+                    </li>
+                    <li class="heat_option">
+                        <a href="#" class="events_labels_btn">
+                            Events labels
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li class="heat_option">
+                        <a href="#" class="rrc_labels_btn">
+                            CP labels
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li class="heat_option">
+                        <a href="#" class="heatmap_time_btn">
+                            Use time mapping
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>       
+                    <li class="heat_option">
+                        <a href="#" class="scrollbars_btn">
+                            Use scrollbars
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>                       
+                </ul>
+            </span>
+            <span class="dropdown">
+                <button type="button" class="dropdown-toggle other_command_btn list_btn btn btn-default text_centerd" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">
+                   <li class="dropdown-submenu right_arrows">
+                    <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>
+                    <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>
+                </li>
+                <li class="dropdown-submenu right_arrows">
+                    <a tabindex="-1" href="#" class="rrc_list_btn">CP List</a>
+                    <ul class="dropdown-menu dropdown-menu-right no_top_padding rrc_list"></ul>
+                </li>
+            </ul>
+        </span>
+        <span class="dropdown">
+            <button type="button" class="dropdown-toggle other_command_btn sort_btn btn btn-default text_centerd" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right repositioned">
+                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>
+                <li class="divider stream_option"></li>
+                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>
+                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>
+                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>
+                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>
+                <li class="divider stream_option"></li>
+                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>
+                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>
+                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>
+                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>
+                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>
+                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>
+                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>
+                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>
+                <li class="divider stream_option"></li>
+                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>
+                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>
+                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>
+                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li>
+
+                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>
+                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>
+                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>
+                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>
+                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>
+            </ul>
+        </span>
+    </div>
+</div>
+<div class="container controls_container left_margin">
+    <form class="registrationForm">
+        <div class="row">
+            <div class="col-sm-4">
+                <h4>From</h4>
+            </div>
+            <div class="col-sm-4">
+                <h4>To</h4>
+            </div>
+            <div class="col-sm-3">
+                <h4>Target</h4>
+            </div>
+
+            <div class="col-sm-1">
+                <div class="row left_margin">
+                    <div class="col-sm-1">
+                        <div class="radio">
+                          <label><input type="radio" name="ipversion" value="4" checked/>IPv4</label>
+                      </div>  
+                  </div>
+              </div>
+              <div class="row left_margin">
+                <div class="col-sm-1">          
+                    <div class="radio">
+                      <label><input type="radio" name="ipversion" value="6"/>IPv6</label>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="col-sm-2">
+        <div class='input-group date datetimepicker date_only start form-group'>
+            <input type='text' class="form-control" placeholder="Enter date" />
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="col-sm-2">
+        <div class='input-group date datetimepicker time_only start form-group'>
+            <input type='text' class="form-control" placeholder="Enter time" />
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-time"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="col-sm-2">
+        <div class='input-group date datetimepicker date_only end form-group'>
+            <input type='text' class="form-control" placeholder="Enter date"/>
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="col-sm-2">
+        <div class='input-group date datetimepicker time_only end form-group'>
+            <input type='text' class="form-control" placeholder="Enter time" />
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-time"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="form-group input_add">
+            <input type="text" class="form-control add_address fullsized" data-toggle="tooltip" trigger="focus" data-placement="top" title="Press 'Enter' to add" name="add_address" />
+        </div>
+    </div>
+
+    <div class="col-sm-1">
+        <div class="row left_margin">
+            <div class="col-sm-1">
+                <div class="radio">
+                  <label><input type="radio" name="ipversion" value="asn"/>ASN</label>
+              </div>              
+          </div>
+      </div>
+      <div class="row left_margin">
+        <div class="col-sm-1">
+            <div class="radio">
+              <label><input type="radio" name="ipversion" value="free"/>Free</label>
+          </div>
+      </div>
+  </div>
+</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-8">
+        <div class="form-group">
+            <input type="text" class="tokenfield form-control" placeholder="Targets">
+        </div>
+    </div>
+    <div class="col-sm-2">  
+        <button type="button" class="btn btn-default clear_targets_button fullsized text_centerd">Clear Targets</button>                    
+    </div>
+    <div class="col-sm-1">  
+        <button type="button" class="btn btn-default my_ip_button fullsized text_centerd">My IP</button>                    
+    </div>
+    <div class="col-sm-1">  
+        <button type="button" class="btn btn-default go_button fullsized text_centerd">Go</button>                  
+    </div>
+</div>
+</form>
+</div>
+<div class="svg_tooltip hidden"></div>
+<div class="container canvas_container left_margin main_svg">
+    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">
+    </svg>
+</div>
+<div class="container canvas_container left_margin mini_svg" style="height: 35vh">
+    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">
+    </svg>
+</div>
+<div class="last_row footer">
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>
+                <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>
+                <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>
+            </div>
+        </div>
+    </nav>
+</div>
+</div>

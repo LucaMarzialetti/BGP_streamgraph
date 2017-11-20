@@ -1,9 +1,9 @@
 define([
-    "impcrashes.env.config",
-    "impcrashes.env.utils",
-    "impcrashes.lib.jquery-amd",
-    "impcrashes.connector.facade",
-    "impcrashes.view.main"
+    "bgpst.env.config",
+    "bgpst.env.utils",
+    "bgpst.lib.jquery-amd",
+    "bgpst.connector.facade",
+    "bgpst.view.main"
 ], function(config, utils, $, Connector, MainView) {
 
     var main = function (env) {

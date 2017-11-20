@@ -4,10 +4,10 @@
  */
 
 define([
-    "impcrashes.env.config",
-    "impcrashes.env.utils",
-    "impcrashes.lib.jquery-amd",
-    "impcrashes.connector.rest"
+    "bgpst.env.config",
+    "bgpst.env.utils",
+    "bgpst.lib.jquery-amd",
+    "bgpst.connector.rest"
 
 ], function(config, utils, $, Connector) {
 
@@ -68,18 +68,25 @@ define([
             return data;
         };
 
-        this.getData = function () {
+        this.getData = function () {//parameters
             var deferredCall;
 
             deferredCall = $.Deferred();
 
             try {
+                var calls = [];
 
-                connector
+                var call1 = connector
                     .getData()
                     .done(function (json) {
-                        deferredCall.resolve(translateToInternalFormat(json));
+                        // intermediate
                     });
+
+                calls.push(call1);
+
+                $.when.apply(this, args).done(function(){
+                    deferredCall.resolve(json);
+                });
 
             } catch(error) {
                 deferredCall.reject(error);
