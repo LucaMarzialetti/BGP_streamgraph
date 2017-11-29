@@ -6,7 +6,6 @@ define([
 ], function(d3){
 
 	var HeuristicsManager = function(type) {
-		this.current_order, this.current_heuristic;
 		this.date_converter = new DateConverter();
 		this.metrics_manager = new MetricsManager();
 
@@ -23,7 +22,7 @@ define([
 			"s_st":"getSortedAsnByFreqSTDEV",
 			"s_var":"getSortedAsnByFreqVAR",
 			"s_avg":"getSortedAsnByFreqAVG",
-			"s_cum":"getSortedAsnByFreqSUM",
+			"s_cum":"getSortedAsnByFreqSUM"
 		};
 
 		this.HeatmapHeuristics = {
@@ -42,13 +41,12 @@ define([
 		this.default_heuristic_s = "n_f";
 		this.default_heuristic_h = "nf_1";
 		this.setDefaultHeuristic(type);
-		this.current_sort_type;
 	};
 
 	HeuristicsManager.prototype.setDefaultHeuristic = function(type){
 		if(type=="stream")
 			this.current_heuristic=this.default_heuristic_s;
-		else 
+		else
 		if(type=="heat")
 			this.current_heuristic=this.default_heuristic_h;
 	};
@@ -61,46 +59,46 @@ define([
 				//STREAMGRAPH
 				case "lev_rnd_cum" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case "lev_rnd_max" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case "st_rnd_cum" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case"st_inf_cum" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case "st_grdy_cum" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case "n_f" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case "w_cum" :
 					ordering=this[heuristic](current_parsed,this.metrics_manager.sortByWiggleMinSum);
-				break;
+					break;
 				case "w_max" :
 					ordering=this[heuristic](current_parsed,this.metrics_manager.sortByWiggleMinMax);
-				break;
+					break;
 				case "disc" :
 					ordering=null;
-				break;
+					break;
 				case "s_st" :
 					ordering=this[heuristic](current_parsed,this.current_sort_type);
-				break;
+					break;
 				case "s_var" :
 					ordering=this[heuristic](current_parsed,this.current_sort_type);
-				break;
+					break;
 				case "s_avg" :
 					ordering=this[heuristic](current_parsed,this.current_sort_type);
-				break;
+					break;
 				case "s_cum" :
 					ordering=this[heuristic](current_parsed,this.current_sort_type);
-				break;
+					break;
 				default:
 					ordering=null;
-				break;
+					break;
 			}
 		}
 		else
@@ -109,22 +107,22 @@ define([
 			switch(this.current_heuristic){
 				case "st_grdy_cum" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case "nf_1" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case "nf_2" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case"geo" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				case "asn" :
 					ordering=this[heuristic](current_parsed);
-				break;
+					break;
 				default:
 					ordering=null;
-				break;
+					break;
 			}
 		}
 		return ordering;
@@ -162,7 +160,7 @@ define([
 			else {
 				tentatives=tentatives/best_ordering.length;
 			}
-			
+
 		}
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.date_converter.executionTime(start,end));
@@ -226,20 +224,20 @@ define([
 		//var changed=false;
 		console.log("BEST SCORE "+best_score);
 		//while(!changed){
-			var phase = 0;
-			while(phase<phase_max){
-				phase++;
-				console.log("phase "+phase);
-				for(var i=0; i<asn_ordering.length-1; i++){
-					var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
-					var new_score = this.metrics_manager.lineDistanceStdDevScore(this.metrics_manager.lineDistancesStdDev(current_parsed,new_order));
-					if(new_score<best_score){
-						//changed=true;
-						best_score=new_score;
-						best_order=new_order.slice(0);
-						console.log("NEW BEST "+best_score);
-					}
+		var phase = 0;
+		while(phase<phase_max){
+			phase++;
+			console.log("phase "+phase);
+			for(var i=0; i<asn_ordering.length-1; i++){
+				var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
+				var new_score = this.metrics_manager.lineDistanceStdDevScore(this.metrics_manager.lineDistancesStdDev(current_parsed,new_order));
+				if(new_score<best_score){
+					//changed=true;
+					best_score=new_score;
+					best_order=new_order.slice(0);
+					console.log("NEW BEST "+best_score);
 				}
+			}
 			//}
 			//changed=!changed;
 		}
@@ -303,7 +301,7 @@ define([
 			}
 			else
 				tentatives=Math.floor(tentatives/best_cum);
-			
+
 		}
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.date_converter.executionTime(start,end));
@@ -345,7 +343,7 @@ define([
 			}
 			else
 				tentatives=Math.floor(tentatives/ordering_length);
-			
+
 		}
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.date_converter.executionTime(start,end));
@@ -358,20 +356,21 @@ define([
 		var start = moment().valueOf();
 		var new_order = [];
 		for (var i in current_parsed.asn_stdev)
-		    new_order.push([i, current_parsed.asn_stdev[i]])
+			new_order.push([i, current_parsed.asn_stdev[i]])
 		if(sort_type=="asc"){
 			console.log("SORT_STD_DEV_ASC");
 			new_order.sort(function(a, b) {
-			    return a[1] - b[1];
+				return a[1] - b[1];
 			});
-		}
-		else {
+		} else {
 			console.log("SORT_STD_DEV_DSC");
 			new_order.sort(function(a, b) {
-			    return b[1] - a[1];
+				return b[1] - a[1];
 			});
 		}
-		var values=new_order.map((o)=>o[0]);
+		var values=new_order.map(function(o){
+			return o[0];
+		});
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.date_converter.executionTime(start,end));
 		return values;
@@ -382,20 +381,22 @@ define([
 		var start = moment().valueOf();
 		var new_order = [];
 		for (var i in current_parsed.asn_varfreqs)
-		    new_order.push([i, current_parsed.asn_varfreqs[i]])
+			new_order.push([i, current_parsed.asn_varfreqs[i]])
 		if(sort_type=="asc"){
 			console.log("SORT_VAR_ASC");
 			new_order.sort(function(a, b) {
-			    return a[1] - b[1];
+				return a[1] - b[1];
 			});
 		}
 		else {
 			console.log("SORT_VAR_DSC");
 			new_order.sort(function(a, b) {
-			    return b[1] - a[1];
+				return b[1] - a[1];
 			});
 		}
-		var values=new_order.map((o)=>o[0]);
+		var values=new_order.map(function(o){
+			return o[0];
+		});
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.date_converter.executionTime(start,end));
 		return values;
@@ -406,20 +407,20 @@ define([
 		var start = moment().valueOf();
 		var new_order = [];
 		for (var i in current_parsed.asn_avgfreqs)
-		    new_order.push([i, current_parsed.asn_avgfreqs[i]])
+			new_order.push([i, current_parsed.asn_avgfreqs[i]])
 		if(sort_type=="asc"){
 			console.log("SORT_AVG_ASC");
 			new_order.sort(function(a, b) {
-			    return a[1] - b[1];
+				return a[1] - b[1];
 			});
 		}
 		else {
 			console.log("SORT_AVG_DSC");
 			new_order.sort(function(a, b) {
-			    return b[1] - a[1];
+				return b[1] - a[1];
 			});
 		}
-		var values=new_order.map((o)=>o[0]);
+		var values=new_order.map(function(o){return o[0] });
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.date_converter.executionTime(start,end));
 		return values;
@@ -430,20 +431,20 @@ define([
 		var start = moment().valueOf();
 		var new_order = [];
 		for (var i in current_parsed.asn_sumfreqs)
-		    new_order.push([i, current_parsed.asn_sumfreqs[i]])
+			new_order.push([i, current_parsed.asn_sumfreqs[i]])
 		if(sort_type=="asc"){
 			console.log("SORT_SUM_ASC");
 			new_order.sort(function(a, b) {
-			    return a[1] - b[1];
+				return a[1] - b[1];
 			});
 		}
 		else {
 			console.log("SORT_SUM_DSC");
 			new_order.sort(function(a, b) {
-			    return b[1] - a[1];
+				return b[1] - a[1];
 			});
 		}
-		var values=new_order.map((o)=>o[0]);
+		var values=new_order.map(function(o){return o[0]});
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.date_converter.executionTime(start,end));
 		return values;
@@ -588,21 +589,21 @@ define([
 		//var changed=false;
 		console.log("BEST SCORE "+best_score);
 		//while(!changed){
-			var phase = 0;
-			while(phase<phase_max){
-				phase++;
-				console.log("phase "+phase);
-				for(var i=0; i<asn_ordering.length-1; i++){
-					var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
-					var new_wiggle = this.metrics_manager.computeWiggle(current_parsed,new_order);
-					var new_score = this.metrics_manager.wiggleScore(calc_type(new_wiggle,new_order));
-					if(new_score<best_score){
-						//changed=true;
-						best_score=new_score;
-						best_order=new_order.slice(0);
-						console.log("NEW BEST "+best_score);
-					}
+		var phase = 0;
+		while(phase<phase_max){
+			phase++;
+			console.log("phase "+phase);
+			for(var i=0; i<asn_ordering.length-1; i++){
+				var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
+				var new_wiggle = this.metrics_manager.computeWiggle(current_parsed,new_order);
+				var new_score = this.metrics_manager.wiggleScore(calc_type(new_wiggle,new_order));
+				if(new_score<best_score){
+					//changed=true;
+					best_score=new_score;
+					best_order=new_order.slice(0);
+					console.log("NEW BEST "+best_score);
 				}
+			}
 			//}
 			//changed=!changed;
 		}
@@ -653,23 +654,23 @@ define([
 		//var changed=false;
 		console.log("BEST SCORE "+best_score);
 		//while(!changed){
-			var phase = 0;
-			while(phase<phase_max){
-				phase++;
-				console.log("phase "+phase);
-				for(var i=0; i<asn_ordering.length-1; i++){
-					var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
-					var new_disconnections = this.metrics_manager.disconnections(current_parsed,new_order);
-					var new_score = this.metrics_manager.disconnectionsScore(new_disconnections);
-					if(new_score<best_score){
-						//changed=true;
-						best_score=new_score;
-						best_order=new_order.slice(0);
-						console.log("NEW BEST "+best_score);
-					}
+		var phase = 0;
+		while(phase<phase_max){
+			phase++;
+			console.log("phase "+phase);
+			for(var i=0; i<asn_ordering.length-1; i++){
+				var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
+				var new_disconnections = this.metrics_manager.disconnections(current_parsed,new_order);
+				var new_score = this.metrics_manager.disconnectionsScore(new_disconnections);
+				if(new_score<best_score){
+					//changed=true;
+					best_score=new_score;
+					best_order=new_order.slice(0);
+					console.log("NEW BEST "+best_score);
 				}
 			}
-			//changed=!changed;
+		}
+		//changed=!changed;
 		//}
 		return best_order;
 	};

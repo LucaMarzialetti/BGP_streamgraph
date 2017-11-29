@@ -24,7 +24,7 @@ define([
                     resource: resource
                 }
             });
-        }
+        };
 
         // call peer count api
         this.getBGPCount = function (startTimestamp,stopTimestamp) {
@@ -39,7 +39,7 @@ define([
                     endtime: stopTimestamp,
                 }
             });
-        }
+        };
 
         // call geoloc api for collector peer info
         this.getCPInfo = function (resource) {
@@ -53,7 +53,7 @@ define([
                     resource: resource
                 }
             });
-        }
+        };
 
         // call as overview api 
         this.getASInfo = function (resource) {
@@ -67,7 +67,7 @@ define([
                     resource: resource
                 }
             });
-        }
+        };
 
         // call external api for get visitor ip
         this.getASInfo = function () {
@@ -80,7 +80,7 @@ define([
                 data: {
                 }
             });
-        }
+        };
     };
 
     return RestConnector;

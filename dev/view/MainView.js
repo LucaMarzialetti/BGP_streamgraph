@@ -22,13 +22,8 @@ define([
     "bgpst.env.languages.en",
     "bgpst.lib.jquery-amd",
     "bgpst.lib.d3-amd",
-    "bgpst.lib.stache!main",
-    "bgpst.lib.stache!error",
-    "bgpst.lib.stache!table",
-    "bgpst.view.map",
-    "bgpst.view.table",
-    "bgpst.view.bar-chart"
-], function(utils, config, lang, $, d3, template, errorTemplate, tableTemplate, MapView, TableView, BarChartView){
+    "bgpst.lib.stache!main"
+], function(utils, config, lang, $, d3, template){
 
     var MainView = function(env){
         var components, currentStatus, timeRange;
@@ -40,7 +35,7 @@ define([
         };
 
         // Views
-        components = [new MapView(env), new TableView(env), new BarChartView(env)];
+        components = [];
 
         // listening for changes of time range
         utils.observer.subscribe("time.change", function(range){

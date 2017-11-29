@@ -745,24 +745,24 @@ define([
 				$(".list_btn").removeClass("not-active");
 				$(".sort_btn").removeClass("not-active");
 				if(!this.ripe_data_broker.current_parsed.targets.some(function(e){return gui_manager.validator.check_ipv4(e);})){
-					$("input[name='ip_version'][value=4]").parent().addClass("disabled");
-					$("input[name='ip_version'][value=4]").parent().addClass("not-active");
-					$("input[name='ip_version'][value=4]").parent().attr("disabled",true);
+					$("input[name='ip_version'][value='4']").parent().addClass("disabled");
+					$("input[name='ip_version'][value='4']").parent().addClass("not-active");
+					$("input[name='ip_version'][value='4']").parent().attr("disabled",true);
 				}
 				else {
-					$("input[name='ip_version'][value=4]").parent().removeClass("disabled");
-					$("input[name='ip_version'][value=4]").parent().removeClass("not-active");
-					$("input[name='ip_version'][value=4]").parent().attr("disabled",false);
+					$("input[name='ip_version'][value='4']").parent().removeClass("disabled");
+					$("input[name='ip_version'][value='4']").parent().removeClass("not-active");
+					$("input[name='ip_version'][value='4']").parent().attr("disabled",false);
 				}
 				if(!this.ripe_data_broker.current_parsed.targets.some(function(e){return gui_manager.validator.check_ipv6(e);})){
-					$("input[name='ip_version'][value=6]").parent().addClass("disabled");
-					$("input[name='ip_version'][value=6]").parent().addClass("not-active");
-					$("input[name='ip_version'][value=6]").parent().attr("disabled",true);
+					$("input[name='ip_version'][value='6']").parent().addClass("disabled");
+					$("input[name='ip_version'][value='6']").parent().addClass("not-active");
+					$("input[name='ip_version'][value='6']").parent().attr("disabled",true);
 				}
 				else {
-					$("input[name='ip_version'][value=6]").parent().removeClass("disabled");
-					$("input[name='ip_version'][value=6]").parent().removeClass("not-active");
-					$("input[name='ip_version'][value=6]").parent().attr("disabled",false);
+					$("input[name='ip_version'][value='6']").parent().removeClass("disabled");
+					$("input[name='ip_version'][value='6']").parent().removeClass("not-active");
+					$("input[name='ip_version'][value='6']").parent().attr("disabled",false);
 				}
 				if(this.ip_version.indexOf(4)!=-1){
 					$('input[name="ip_version"]').filter('[value="4"]').prop('checked', true);
@@ -817,13 +817,13 @@ define([
 				$(".list_btn").addClass("not-active");
 				$(".sort_btn").addClass("not-active");
 
-				$("input[name='ip_version'][value=6]").parent().addClass("disabled");
-				$("input[name='ip_version'][value=6]").parent().addClass("not-active");
-				$("input[name='ip_version'][value=6]").parent().attr("disabled",true);
+				$("input[name='ip_version'][value='6']").parent().addClass("disabled");
+				$("input[name='ip_version'][value='6']").parent().addClass("not-active");
+				$("input[name='ip_version'][value='6']").parent().attr("disabled",true);
 
-				$("input[name='ip_version'][value=4]").parent().addClass("disabled");
-				$("input[name='ip_version'][value=4]").parent().addClass("not-active");
-				$("input[name='ip_version'][value=4]").parent().attr("disabled",true);
+				$("input[name='ip_version'][value='4']").parent().addClass("disabled");
+				$("input[name='ip_version'][value='4']").parent().addClass("not-active");
+				$("input[name='ip_version'][value='4']").parent().attr("disabled",true);
 
 				$(".counter").addClass("hidden");
 
@@ -874,13 +874,13 @@ define([
 		$("input[name='ipversion']").parent().addClass("not-active");
 		$("input[name='ipversion']").attr("disabled",true);
 
-		$("input[name='ip_version'][value=6]").parent().addClass("disabled");
-		$("input[name='ip_version'][value=6]").parent().addClass("not-active");
-		$("input[name='ip_version'][value=6]").parent().attr("disabled",true);
+		$("input[name='ip_version'][value='6']").parent().addClass("disabled");
+		$("input[name='ip_version'][value='6']").parent().addClass("not-active");
+		$("input[name='ip_version'][value='6']").parent().attr("disabled",true);
 
-		$("input[name='ip_version'][value=4]").parent().addClass("disabled");
-		$("input[name='ip_version'][value=4]").parent().addClass("not-active");
-		$("input[name='ip_version'][value=4]").parent().attr("disabled",true);
+		$("input[name='ip_version'][value='4']").parent().addClass("disabled");
+		$("input[name='ip_version'][value='4']").parent().addClass("not-active");
+		$("input[name='ip_version'][value='4']").parent().attr("disabled",true);
 
 		$("input[name='steps'][value='steps']").parent().addClass("disabled");
 		$("input[name='steps'][value='steps']").parent().addClass("not-active");
@@ -1223,34 +1223,34 @@ define([
 		gui_manager=this;
 		if(!this.streaming){
 			if(this.ripe_data_broker.current_parsed.targets.every(function(e){return gui_manager.validator.check_ipv4(e);})){
-				$("input[name='ip_version'][value=4]").parent().removeClass("disabled");
-				$("input[name='ip_version'][value=4]").parent().removeClass("not-active");
-				$("input[name='ip_version'][value=4]").parent().attr("disabled",false);
+				$("input[name='ip_version'][value='4']").parent().removeClass("disabled");
+				$("input[name='ip_version'][value='4']").parent().removeClass("not-active");
+				$("input[name='ip_version'][value='4']").parent().attr("disabled",false);
 				this.ip_version=[4];
 			}
 			else {
-				$("input[name='ip_version'][value=4]").parent().addClass("disabled");
-				$("input[name='ip_version'][value=4]").parent().addClass("not-active");
-				$("input[name='ip_version'][value=4]").parent().attr("disabled",true);
+				$("input[name='ip_version'][value='4']").parent().addClass("disabled");
+				$("input[name='ip_version'][value='4']").parent().addClass("not-active");
+				$("input[name='ip_version'][value='4']").parent().attr("disabled",true);
 			}
 			if(this.ripe_data_broker.current_parsed.targets.every(function(e){return gui_manager.validator.check_ipv6(e);})){
-				$("input[name='ip_version'][value=6]").parent().removeClass("disabled");
-				$("input[name='ip_version'][value=6]").parent().removeClass("not-active");
-				$("input[name='ip_version'][value=6]").parent().attr("disabled",false);
+				$("input[name='ip_version'][value='6']").parent().removeClass("disabled");
+				$("input[name='ip_version'][value='6']").parent().removeClass("not-active");
+				$("input[name='ip_version'][value='6']").parent().attr("disabled",false);
 				this.ip_version=[6];
 			}
 			else{
-				$("input[name='ip_version'][value=6]").parent().addClass("disabled");
-				$("input[name='ip_version'][value=6]").parent().addClass("not-active");
-				$("input[name='ip_version'][value=6]").parent().attr("disabled",true);
+				$("input[name='ip_version'][value='6']").parent().addClass("disabled");
+				$("input[name='ip_version'][value='6']").parent().addClass("not-active");
+				$("input[name='ip_version'][value='6']").parent().attr("disabled",true);
 			}
 			if(this.ripe_data_broker.current_parsed.targets.some(function(e){return gui_manager.validator.check_ipv4(e);}) && this.ripe_data_broker.current_parsed.targets.some(function(e){return gui_manager.validator.check_ipv6(e);})){
-				$("input[name='ip_version'][value=4]").parent().removeClass("disabled");
-				$("input[name='ip_version'][value=4]").parent().removeClass("not-active");
-				$("input[name='ip_version'][value=4]").parent().attr("disabled",false);
-				$("input[name='ip_version'][value=6]").parent().removeClass("disabled");
-				$("input[name='ip_version'][value=6]").parent().removeClass("not-active");
-				$("input[name='ip_version'][value=6]").parent().attr("disabled",false);
+				$("input[name='ip_version'][value='4']").parent().removeClass("disabled");
+				$("input[name='ip_version'][value='4']").parent().removeClass("not-active");
+				$("input[name='ip_version'][value='4']").parent().attr("disabled",false);
+				$("input[name='ip_version'][value='6']").parent().removeClass("disabled");
+				$("input[name='ip_version'][value='6']").parent().removeClass("not-active");
+				$("input[name='ip_version'][value='6']").parent().attr("disabled",false);
 				if(this.ip_version.length==0)
 					this.ip_version=[4];
 			}

@@ -2,6 +2,7 @@
  * Some require.js configurations
  */
 
+
 requirejs.config({
     waitSeconds: 30,
     paths:{
