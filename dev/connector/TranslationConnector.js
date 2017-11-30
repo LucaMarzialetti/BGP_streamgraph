@@ -22,10 +22,10 @@ define([
             try {
                 this.current_parsed = this.parser.ripe_response_parse(data, this.current_starttime, this.current_endtime);
                 if(this.GuiManager.gather_information){
-                    console.log("=== RipeBroker Starting gathering RRC Info");
-                    this.GuiManager.rrc_info_done=false;
+                    console.log("=== RipeBroker Starting gathering CP Info");
+                    this.GuiManager.cp_info_done=false;
                     setTimeout(function(){
-                        this.getRRCInfo(this.current_parsed.resources,0)
+                        this.getCPInfo(this.current_parsed.resources,0)
                     },0);
                 }
                 this.context.storeContext(this.current_starttime,"last_context_starttime");

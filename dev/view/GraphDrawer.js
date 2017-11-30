@@ -606,8 +606,8 @@ define([
     };
 
     //function used to draw the data - already parsed as TSV
-    GraphDrawer.prototype.draw_heatmap = function (current_parsed, tsv_incoming_data, stream_tsv, keys_order, preserve_color_map, global_visibility, targets, query_id, bgplay_callback, level, ip_version, prepending, collapse_rrc, collapse_events, events_labels, rrc_labels, timemap, events_range, redraw_minimap) {
-        var known_rrc = current_parsed.known_rrc;
+    GraphDrawer.prototype.draw_heatmap = function (current_parsed, tsv_incoming_data, stream_tsv, keys_order, preserve_color_map, global_visibility, targets, query_id, bgplay_callback, level, ip_version, prepending, collapse_cp, collapse_events, events_labels, cp_labels, timemap, events_range, redraw_minimap) {
+        var known_cp = current_parsed.known_cp;
         var drawer = this;
         this.erase_all();
         var parseDate = this.parseDate();
@@ -616,7 +616,7 @@ define([
         var data = [];
         this.events = [];
         this.event_set = [];
-        this.rrc_set = [];
+        this.cp_set = [];
         this.asn_set = [];
 
         /* brush the selection */
@@ -628,7 +628,7 @@ define([
 
         for (var i = 0; i < tsv_data.length; i++) {
             if (!(this.events_range && !(moment(tsv_data[i].date).isSameOrAfter(this.events_range[0]) && moment(tsv_data[i].date).isSameOrBefore(this.events_range[1]))))
-                data.push(type(tsv_data[i], this.asn_set, this.rrc_set, this.event_set, level, prepending));
+                data.push(type(tsv_data[i], this.asn_set, this.cp_set, this.event_set, level, prepending));
         }
 
         // FILTRA PER EVENTS
@@ -639,15 +639,15 @@ define([
             }.bind(this));
         }
         this.events = this.event_set.slice(0);
-        //FILTRA PER RRC
-        if (collapse_rrc) {
-            var rrc_to_filter = rrc_filter(data);
+        //FILTRA PER CP
+        if (collapse_cp) {
+            var cp_to_filter = cp_filter(data);
             data = data.filter(function (e) {
                 var k = false;
-                for (var i in rrc_to_filter) k = k || rrc_to_filter[i].indexOf(e.rrc) == 0;
+                for (var i in cp_to_filter) k = k || cp_to_filter[i].indexOf(e.cp) == 0;
                 return k;
             });
-            this.rrc_set = rrc_to_filter.map(function (e) {
+            this.cp_set = cp_to_filter.map(function (e) {
                 return e[0];
             });
         }
@@ -663,18 +663,18 @@ define([
 
         if (keys_order) {
             if (keys_order.length < 0)
-                this.ordering = this.rrc_set;
+                this.ordering = this.cp_set;
             else
                 this.ordering = keys_order;
-            if (collapse_rrc)
+            if (collapse_cp)
                 this.keys = keys_order.filter(function (e) {
-                    return drawer.rrc_set.indexOf(e) >= 0;
+                    return drawer.cp_set.indexOf(e) >= 0;
                 }); //QUI
             else
                 this.keys = keys_order;
         }
         else
-            this.keys = this.rrc_set;
+            this.keys = this.cp_set;
 
         //data filter
         // if(this.events_range){
@@ -696,7 +696,7 @@ define([
         if (events_labels)
             margin_y += this.sizes.def_labels_margins.y;
 
-        if (rrc_labels)
+        if (cp_labels)
             margin_x += this.sizes.def_labels_margins.x;
 
         if (timemap) {
@@ -746,19 +746,19 @@ define([
             });
 
         //labels vertical
-        var RRCLabels = g
+        var CPLabels = g
             .append("g")
-            .attr("class", "axis rrc_axis")
+            .attr("class", "axis cp_axis")
             .attr("transform", "translate(" + 0 + "," + (margin_y + gridSize_y / 2 + drawer.sizes.def_cell_margins.y) + ")")
             .selectAll(".dayLabel")
             .data(this.keys)
             .enter().append("text")
             .text(function (d) {
-                if (collapse_rrc)
-                    for (var i in rrc_to_filter) {
-                        if (rrc_to_filter[i].indexOf(d) != -1) {
-                            var l = rrc_to_filter[i].length;
-                            if (rrc_to_filter[i].length > 1)
+                if (collapse_cp)
+                    for (var i in cp_to_filter) {
+                        if (cp_to_filter[i].indexOf(d) != -1) {
+                            var l = cp_to_filter[i].length;
+                            if (cp_to_filter[i].length > 1)
                                 return l;
                             else
                                 return d;
@@ -777,11 +777,11 @@ define([
             .on('mouseout', mouseout)
             .on('mouseover', mouseover)
             .on("mousemove", function (d) {
-                rrc_mouse_over(d, d3.mouse(this))
+                cp_mouse_over(d, d3.mouse(this))
             });
 
-        if (!rrc_labels)
-            $(".rrc_axis").css("display", "none");
+        if (!cp_labels)
+            $(".cp_axis").css("display", "none");
         //labels horizontal
         var EventsLabels = g
             .append("g")
@@ -835,10 +835,10 @@ define([
                 }
             })
             .attr("y", function (d) {
-                return (drawer.keys.indexOf(d.rrc) * (gridSize_y + drawer.sizes.def_cell_margins.y));
+                return (drawer.keys.indexOf(d.cp) * (gridSize_y + drawer.sizes.def_cell_margins.y));
             })
             .attr("class", function (d) {
-                return "area area" + d.rrc.replace(/[\.:]/g, "-") + " area" + d.date.replace(/:/g, "-") + " area" + d.asn
+                return "area area" + d.cp.replace(/[\.:]/g, "-") + " area" + d.date.replace(/:/g, "-") + " area" + d.asn
             })
             .attr("width", function (d) {
                 if (timemap) {
@@ -861,8 +861,8 @@ define([
             .on('mouseout', mouseout)
             .on('mouseover', mouseover);
 
-        //FLAGS rrc
-        if (!collapse_rrc) {
+        //FLAGS cp
+        if (!collapse_cp) {
             var FlagLabels = g
                 .append("g")
                 .attr("transform", "translate(" + (margin_x - 45) + "," + (margin_y - (this.sizes.def_min_grid_size.y + (this.sizes.def_min_grid_size.y / 4 * 3))) + ")")
@@ -884,7 +884,7 @@ define([
                 .text(function (d) {
                     var s = "";
                     try {
-                        var geo = current_parsed.known_rrc[d]['geo'].split("-")[0];
+                        var geo = current_parsed.known_cp[d]['geo'].split("-")[0];
                         s += geo;
                     }
                     catch (err) {
@@ -904,7 +904,7 @@ define([
                 .attr("xlink:href", function (d) {
                     var s = "/css/flags/2.8.0/flags/4x3/";
                     try {
-                        var geo = current_parsed.known_rrc[d]['geo'].split("-")[0];
+                        var geo = current_parsed.known_cp[d]['geo'].split("-")[0];
                         s += geo.toLowerCase() + ".svg";
                     }
                     catch (err) {
@@ -941,9 +941,9 @@ define([
         this.current_query_id = query_id;
         this.draw_over(this.main_svg, this.sizes);
 
-        function type(d, asn_set, rrc_set, event_set, level, prepending) {
-            if (rrc_set.indexOf(d.rrc) == -1)
-                rrc_set.push(d.rrc);
+        function type(d, asn_set, cp_set, event_set, level, prepending) {
+            if (cp_set.indexOf(d.cp) == -1)
+                cp_set.push(d.cp);
             if (event_set.indexOf(d.date) == -1)
                 event_set.push(d.date);
             var asn_path = JSON.parse(d.asn_path);
@@ -977,19 +977,19 @@ define([
                 s += "<span class='flag-icon flag-icon-" + ac.toLowerCase().trim() + "'></span>";
             }
             s += "<br/><strong>Date: </strong><span>" + formatDate(parseDate(d_key.date)) + "</span>";
-            s += "<br/><strong>RRC: </strong>";
-            if (collapse_rrc) {
-                for (var i in rrc_to_filter)
-                    if (rrc_to_filter[i].indexOf(d_key.rrc) != -1) {
-                        var list = rrc_to_filter[i];
+            s += "<br/><strong>CP: </strong>";
+            if (collapse_cp) {
+                for (var i in cp_to_filter)
+                    if (cp_to_filter[i].indexOf(d_key.cp) != -1) {
+                        var list = cp_to_filter[i];
                         if (list.length > 1)
                             s += "<br/>";
                         for (var j in list) {
                             var r = list[j];
                             s += "<span>" + r;
-                            var rrc_country = current_parsed.known_rrc[r];
-                            if (rrc_country) {
-                                var cc = rrc_country["geo"].trim().split("-")[0];
+                            var cp_country = current_parsed.known_cp[r];
+                            if (cp_country) {
+                                var cc = cp_country["geo"].trim().split("-")[0];
                                 s += "<span> (" + cc + ") </span>";
                                 s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
                             }
@@ -998,10 +998,10 @@ define([
                     }
             }
             else {
-                s += d_key.rrc;
-                var rrc_country = current_parsed.known_rrc[d_key.rrc];
-                if (rrc_country) {
-                    var cc = rrc_country["geo"].trim().split("-")[0];
+                s += d_key.cp;
+                var cp_country = current_parsed.known_cp[d_key.cp];
+                if (cp_country) {
+                    var cc = cp_country["geo"].trim().split("-")[0];
                     s += "<span> (" + cc + ") </span>";
                     s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
                 }
@@ -1044,12 +1044,12 @@ define([
             }
         };
 
-        function rrc_mouse_over(d, pos) {
-            var s = "<strong>RRC: </strong>";
-            if (collapse_rrc) {
-                for (var i in rrc_to_filter)
-                    if (rrc_to_filter[i].indexOf(d) != -1)
-                        var list = rrc_to_filter[i];
+        function cp_mouse_over(d, pos) {
+            var s = "<strong>CP: </strong>";
+            if (collapse_cp) {
+                for (var i in cp_to_filter)
+                    if (cp_to_filter[i].indexOf(d) != -1)
+                        var list = cp_to_filter[i];
                 if (Array.isArray(list)) {
                     s += "<br/>";
                     for (var i in list)
@@ -1069,7 +1069,7 @@ define([
             if (drawer.last_hover != d) {
                 d3.selectAll(".area")
                     .filter(function (e) {
-                        return (e.rrc != d);
+                        return (e.cp != d);
                     })
                     .style("fill-opacity", 0.35);
                 drawer.last_hover = d;
@@ -1087,19 +1087,19 @@ define([
             }
         };
 
-        function rrc_filter(data) {
+        function cp_filter(data) {
             var set = {};
             var flat = {};
-            /*for every RRC build a map RRC -> ASNs */
+            /*for every CP build a map CP -> ASNs */
             for (var i in data) {
                 var d = data[i];
                 var tmp = [];
-                if (set[d.rrc])
-                    tmp = set[d.rrc];
+                if (set[d.cp])
+                    tmp = set[d.cp];
                 tmp.push(d.asn);
-                set[d.rrc] = tmp;
+                set[d.cp] = tmp;
             }
-            /*group RRCs with same map value*/
+            /*group CPs with same map value*/
             for (var i in set) {
                 var tmp = [];
                 var k = JSON.stringify(set[i]);
@@ -1108,7 +1108,7 @@ define([
                 tmp.push(i);
                 flat[k] = tmp;
             }
-            //return only the rrc_s buckets
+            //return only the cp_s buckets
             return Object.values(flat);
         };
 

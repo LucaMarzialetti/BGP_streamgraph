@@ -25,7 +25,7 @@ a#as_list_btn+.popover .popover-content {
 	padding: 0;
 }
 
-a#rrc_list_btn+.popover .popover-content {
+a#cp_list_btn+.popover .popover-content {
 	overflow-x: hidden;
 	overflow-y: scroll;
 	max-height: 300px;
@@ -300,7 +300,7 @@ ol.drag_sort_list li.placeholder:before {
 
 
 
-/** as and rrc list**/
+/** as and cp list**/
 .dropdown-submenu {
 	position: relative;
 }
@@ -387,13 +387,13 @@ ol.drag_sort_list li.placeholder:before {
 	white-space: nowrap;
 }
 
-.dropdown-menu.rrc_list {
+.dropdown-menu.cp_list {
 	min-width: auto;
 	width: auto;
 }
  
 
-.dropdown-menu.rrc_list > li{
+.dropdown-menu.cp_list > li{
 	padding: 3px 20px;
 	text-align: center;
 	border: gray;

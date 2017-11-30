@@ -58,7 +58,7 @@ define([
 		var type = params["w.type"];
 		var level = params["w.level"];
 		var prepending = params["w.prepending"];
-		var merge_rrc = params["w.merge_rrc"];
+		var merge_cp = params["w.merge_cp"];
 		var merge_events = params["w.merge_events"];
 		var timemap = params["w.timemap"];
 		var global_vis = params["w.global"];
@@ -101,10 +101,10 @@ define([
 					if(!isNaN(level))
 						this.GuiManager.asn_level = level;
 				}
-				//merge rrc
-				if(merge_rrc)
-				if(merge_rrc == 'true'|| merge_rrc == 'false')
-					this.GuiManager.merge_rrc = merge_rrc == 'true';
+				//merge cp
+				if(merge_cp)
+				if(merge_cp == 'true'|| merge_cp == 'false')
+					this.GuiManager.merge_cp = merge_cp == 'true';
 				//merge events
 				if(merge_events){
 					merge_events = parseInt(merge_events);
@@ -141,10 +141,10 @@ define([
 				}
 				//heuristic
 				if(heuristic)
-					this.GuiManager.RipeDataBroker.heuristics_manager.current_heuristic = heuristic;
+					this.GuiManager.RipeDataBroker.HeuristicsManager.current_heuristic = heuristic;
 				//sort_type
 				if(heuristic_sort_type)
-					this.GuiManager.RipeDataBroker.heuristics_manager.current_sort_type = heuristic_sort_type;
+					this.GuiManager.RipeDataBroker.HeuristicsManager.current_sort_type = heuristic_sort_type;
 				this.GuiManager.RipeDataBroker.getData();
 				request_done = true;
 			}

@@ -43,12 +43,12 @@ define([
 		this.graph_type = "stream";
 		this.streaming = false;
 		this.steps = false;
-		this.merge_rrc = false;
+		this.merge_cp = false;
 		this.merge_events = 1;
 		this.events_labels = false;
-		this.rrc_labels = false;
+		this.cp_labels = false;
 		this.use_scrollbars = false;
-		this.rrc_info_done = false;
+		this.cp_info_done = false;
 		this.asn_info_done = false;
 		this.gather_information = true;
 		this.heatmap_time_map = true;
@@ -571,14 +571,14 @@ define([
 		url_to_push+="&w.type="+GuiManager.graph_type;
 		url_to_push+="&w.level="+GuiManager.asn_level;
 		url_to_push+="&w.prepending="+GuiManager.prepending_prevention;
-		url_to_push+="&w.merge_rrc="+GuiManager.merge_rrc;
+		url_to_push+="&w.merge_cp="+GuiManager.merge_cp;
 		url_to_push+="&w.merge_events="+GuiManager.merge_events;
 		url_to_push+="&w.timemap="+GuiManager.heatmap_time_map;
 		url_to_push+="&w.global="+GuiManager.global_visibility;
 		url_to_push+="&w.info="+GuiManager.gather_information;
-		url_to_push+="&w.heu="+GuiManager.RipeDataBroker.heuristics_manager.current_heuristic;
-		if(GuiManager.RipeDataBroker.heuristics_manager.current_sort_type)
-			url_to_push+="&w.sort_type="+GuiManager.RipeDataBroker.heuristics_manager.current_sort_type;
+		url_to_push+="&w.heu="+GuiManager.RipeDataBroker.HeuristicsManager.current_heuristic;
+		if(GuiManager.RipeDataBroker.HeuristicsManager.current_sort_type)
+			url_to_push+="&w.sort_type="+GuiManager.RipeDataBroker.HeuristicsManager.current_sort_type;
 		url_to_push+="&w.colors="+GuiManager.preserve_map;
 		if(GuiManager.drawer.events_range){
 			url_to_push+="&w.brush_s="+GuiManager.DateConverter.formatRipe(GuiManager.drawer.events_range[0]);
@@ -647,9 +647,9 @@ define([
 		this.local_storage_enabled_btn_setup();
 		this.prepending_prevention_btn_setup();
 		this.merge_events_btn_setup();
-		this.merge_rrc_btn_setup();
+		this.merge_cp_btn_setup();
 		this.events_labels_btn_setup();
-		this.rrc_labels_btn_setup();
+		this.cp_labels_btn_setup();
 		this.scrollbars_btn_setup();
 		this.heatmap_time_btn_setup();
 		this.global_visiblity_btn_setup();
@@ -659,7 +659,7 @@ define([
 		this.streaming_btn_setup();
 		this.steps_btn_setup();
 		this.asn_list_btn_setup();
-		this.rrc_list_btn_setup();
+		this.cp_list_btn_setup();
 		this.boolean_checker();
 		/***********************************************/
 		this.sort_asn_ascstdev_btn_setup();
@@ -965,17 +965,17 @@ define([
 		});
 	};
 
-	GuiManager.prototype.merge_rrc_btn_setup = function () {
+	GuiManager.prototype.merge_cp_btn_setup = function () {
 		var GuiManager = this;
-		$(".merge_rrc_btn").on("click", function(e){
+		$(".merge_cp_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			GuiManager.merge_rrc = !GuiManager.merge_rrc;
+			GuiManager.merge_cp = !GuiManager.merge_cp;
 			if(GuiManager.isGraphPresent) {
 				GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
-				if(GuiManager.merge_rrc)
-					GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length+"/"+GuiManager.RipeDataBroker.current_parsed.rrc_set.length);
+				if(GuiManager.merge_cp)
+					GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length+"/"+GuiManager.RipeDataBroker.current_parsed.cp_set.length);
 				else
 					GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length);
 			}
@@ -1008,13 +1008,13 @@ define([
 		});
 	};
 
-	GuiManager.prototype.rrc_labels_btn_setup = function () {
+	GuiManager.prototype.cp_labels_btn_setup = function () {
 		var GuiManager = this;
-		$(".rrc_labels_btn").on("click", function(e){
+		$(".cp_labels_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			GuiManager.rrc_labels = !GuiManager.rrc_labels;
+			GuiManager.cp_labels = !GuiManager.cp_labels;
 			if(GuiManager.isGraphPresent)
 				GuiManager.RipeDataBroker.loadCurrentState(false,null,false);
 		});
@@ -1111,13 +1111,13 @@ define([
 			$(".prepending_prevention_btn").parent().addClass("active");
 		}
 
-		if(!this.merge_rrc){
-			$(".merge_rrc_btn").find("span").addClass("hidden");
-			$(".merge_rrc_btn").parent().removeClass("active");
+		if(!this.merge_cp){
+			$(".merge_cp_btn").find("span").addClass("hidden");
+			$(".merge_cp_btn").parent().removeClass("active");
 		}
 		else{
-			$(".merge_rrc_btn").find("span").removeClass("hidden");
-			$(".merge_rrc_btn").parent().addClass("active");
+			$(".merge_cp_btn").find("span").removeClass("hidden");
+			$(".merge_cp_btn").parent().addClass("active");
 		}
 
 		if(!this.events_labels){
@@ -1129,13 +1129,13 @@ define([
 			$(".events_labels_btn").parent().addClass("active");
 		}
 
-		if(!this.rrc_labels){
-			$(".rrc_labels_btn").find("span").addClass("hidden");
-			$(".rrc_labels_btn").parent().removeClass("active");
+		if(!this.cp_labels){
+			$(".cp_labels_btn").find("span").addClass("hidden");
+			$(".cp_labels_btn").parent().removeClass("active");
 		}
 		else{
-			$(".rrc_labels_btn").find("span").removeClass("hidden");
-			$(".rrc_labels_btn").parent().addClass("active");
+			$(".cp_labels_btn").find("span").removeClass("hidden");
+			$(".cp_labels_btn").parent().addClass("active");
 		}
 
 		if(!this.heatmap_time_map){
@@ -1205,11 +1205,11 @@ define([
 			}
 			else 
 				$("body").css("overflow-y","scroll");
-			$(".counter_asn").parent().find("label").text("#RRC");
+			$(".counter_asn").parent().find("label").text("#CP");
 			$(".stream_option").addClass("hidden");
 			$(".heat_option").removeClass("hidden");
 		}
-		GuiManager.RipeDataBroker.heuristics_manager.setDefaultHeuristic(GuiManager.graph_type);
+		GuiManager.RipeDataBroker.HeuristicsManager.setDefaultHeuristic(GuiManager.graph_type);
 		if(GuiManager.isGraphPresent)
 			GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 		});
@@ -1331,13 +1331,13 @@ define([
 				$(".asn_list_btn").parent().addClass("not-active");
 				$(".asn_list_btn").parent().addClass("disabled");
 			}
-			if(GuiManager.rrc_info_done){
-				$(".rrc_list_btn").parent().removeClass("not-active");
-				$(".rrc_list_btn").parent().removeClass("disabled");
+			if(GuiManager.cp_info_done){
+				$(".cp_list_btn").parent().removeClass("not-active");
+				$(".cp_list_btn").parent().removeClass("disabled");
 			}
 			else {
-				$(".rrc_list_btn").parent().addClass("not-active");
-				$(".rrc_list_btn").parent().addClass("disabled");
+				$(".cp_list_btn").parent().addClass("not-active");
+				$(".cp_list_btn").parent().addClass("disabled");
 			}
 		});
 	};
@@ -1384,38 +1384,38 @@ define([
 		});
 	};
 
-	GuiManager.prototype.rrc_list_btn_setup = function() {
+	GuiManager.prototype.cp_list_btn_setup = function() {
 		var GuiManager = this;
-		$(".rrc_list_btn").hover(function(event){
+		$(".cp_list_btn").hover(function(event){
 			var html = "";
 			var set;
 			if(GuiManager.graph_type == "stream")
-				set = GuiManager.RipeDataBroker.current_parsed.rrc_set;
+				set = GuiManager.RipeDataBroker.current_parsed.cp_set;
 			else
 			if(GuiManager.graph_type == "heat")
 				set = GuiManager.drawer.keys;
 			for(var i in set) {
-				var rrc = set[i];
+				var cp = set[i];
 				html+="<li>";
-				html+="<div> ID: "+rrc+"</div>";
-				var info = GuiManager.RipeDataBroker.current_parsed.known_rrc[rrc];
+				html+="<div> ID: "+cp+"</div>";
+				var info = GuiManager.RipeDataBroker.current_parsed.known_cp[cp];
 				if(info){
 					html+="<div> IP: "+info["ip"]+"</div>";
-					html+="<div> Peering with RRC: "+info["rrc"]+"</div>";
+					html+="<div> Peering with CP: "+info["cp"]+"</div>";
 					html+="<div> From AS: "+info["as_number"]+"</div>";
 					var country = info["geo"].trim().split("-")[0];
 					html+='<div> Country: ('+country+') <span class="flag-icon flag-icon-'+country.toLowerCase()+'" alt="'+country+'" title="'+country+'"></span></div>';
 				}
 				html+="</li>";
 			}
-			$(".rrc_list").html(html);
+			$(".cp_list").html(html);
 			if(set.length<11){
-				$(".rrc_list").css("height","auto");
-				$(".rrc_list").css("overflow-y","visible");
+				$(".cp_list").css("height","auto");
+				$(".cp_list").css("overflow-y","visible");
 			}
 			else {
-				$(".rrc_list").css("height","");
-				$(".rrc_list").css("overflow-y","");
+				$(".cp_list").css("height","");
+				$(".cp_list").css("overflow-y","");
 			}
 		});
 	};
@@ -1426,8 +1426,8 @@ define([
 		var manager = this;
 		$(".lev_dist_randwalk_cum_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "lev_rnd_cum";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "lev_rnd_cum";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
@@ -1437,8 +1437,8 @@ define([
 		var manager = this;
 		$(".lev_dist_randwalk_max_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "lev_rnd_max";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "lev_rnd_max";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
@@ -1449,8 +1449,8 @@ define([
 		var manager = this;
 		$(".point_dist_by_randwalk_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "st_rnd_cum";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "st_rnd_cum";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
@@ -1460,8 +1460,8 @@ define([
 		var manager = this;
 		$(".point_dist_by_inference_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "st_inf_cum";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "st_inf_cum";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
@@ -1472,8 +1472,8 @@ define([
 		var manager = this;
 		$(".point_dist_greedy_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "st_grdy_cum";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "st_grdy_cum";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
@@ -1484,8 +1484,8 @@ define([
 	var manager = this;
 		$(".exchange_greedy_sort_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "n_f";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "n_f";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1496,8 +1496,8 @@ define([
 	var manager = this;
 		$(".wiggle_sum_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "w_cum";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "w_cum";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1507,8 +1507,8 @@ define([
 	var manager = this;
 		$(".wiggle_max_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "w_max";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "w_max";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1519,8 +1519,8 @@ define([
 		var manager = this;
 		$(".sort_asn_ascstdev_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_st";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = "asc";
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_st";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = "asc";
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1530,8 +1530,8 @@ define([
 		var manager = this;
 		$(".sort_asn_dscstdev_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_st";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = "dsc";
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_st";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = "dsc";
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1541,8 +1541,8 @@ define([
 		var manager = this;
 		$(".sort_asn_ascvar_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_var";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = "asc";
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_var";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = "asc";
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1552,8 +1552,8 @@ define([
 		var manager = this;
 		$(".sort_asn_dscvar_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_var";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = "dsc";
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_var";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = "dsc";
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1563,8 +1563,8 @@ define([
 		var manager = this;
 		$(".sort_asn_ascavg_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_avg";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = "asc";
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_avg";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = "asc";
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1574,8 +1574,8 @@ define([
 		var manager = this;
 		$(".sort_asn_dscavg_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_avg";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = "dsc";
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_avg";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = "dsc";
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1585,8 +1585,8 @@ define([
 		var manager = this;
 		$(".sort_asn_ascsum_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_cum";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = "asc";
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_cum";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = "asc";
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1596,8 +1596,8 @@ define([
 		var manager = this;
 		$(".sort_asn_dscsum_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_cum";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = "dsc";
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_cum";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = "dsc";
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1608,8 +1608,8 @@ define([
 		var manager = this;
 		$(".heat_greedy_sort_1_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "nf_1";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "nf_1";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1619,8 +1619,8 @@ define([
 		var manager = this;
 		$(".heat_greedy_sort_2_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "nf_2";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "nf_2";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1630,8 +1630,8 @@ define([
 		var manager = this;
 		$(".heat_stdev_sort_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "st_grdy_cum";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "st_grdy_cum";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1641,8 +1641,8 @@ define([
 		var manager = this;
 		$(".heat_country_sort").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "geo";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "geo";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
@@ -1652,8 +1652,8 @@ define([
 		var manager = this;
 		$(".heat_as_sort").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.RipeDataBroker.heuristics_manager.current_heuristic = "asn";
-			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.HeuristicsManager.current_heuristic = "asn";
+			manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
 			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});

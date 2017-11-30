@@ -7,11 +7,11 @@ define([
 	"bgpst.view.metrics",
 	"bgpst.controller.functions",
 	"bgpst.lib.moment"
-], function(DateConverter, metrics_manager, functions, moment){
+], function(DateConverter, MetricsManager, functions, moment){
 
 	var HeuristicsManager = function(type) {
 		this.DateConverter = new DateConverter();
-		this.metrics_manager = new MetricsManager();
+		this.MetricsManager = new MetricsManager();
 
 		this.StreamgraphHeuristics = {
 			"lev_rnd_cum":"asnStdDevByPointMinimizationRandomWalker",
@@ -31,8 +31,8 @@ define([
 
 		this.HeatmapHeuristics = {
 			"st_grdy_cum":"getHeatStdev",
-			"nf_1":"getSortedRRCByExchanges_level",
-			"nf_2":"getSortedRRCByExchanges_level_var",
+			"nf_1":"getSortedCPByExchanges_level",
+			"nf_2":"getSortedCPByExchanges_level_var",
 			"geo":"getGeoOrder",
 			"asn":"getASNOrder"
 		};
@@ -80,10 +80,10 @@ define([
 					ordering = this[heuristic](current_parsed);
 					break;
 				case "w_cum" :
-					ordering = this[heuristic](current_parsed,this.metrics_manager.sortByWiggleMinSum);
+					ordering = this[heuristic](current_parsed,this.MetricsManager.sortByWiggleMinSum);
 					break;
 				case "w_max" :
-					ordering = this[heuristic](current_parsed,this.metrics_manager.sortByWiggleMinMax);
+					ordering = this[heuristic](current_parsed,this.MetricsManager.sortByWiggleMinMax);
 					break;
 				case "disc" :
 					ordering = null;
@@ -137,8 +137,8 @@ define([
 		var start = moment().valueOf();
 		var best_ordering = current_parsed.asn_set;
 		var theorical_devs = current_parsed.asn_stdev;
-		var best_devs = this.metrics_manager.lineDistancesStdDev(current_parsed, best_ordering);
-		var best_cum =  Math.floor(this.metrics_manager.lineDistanceStdDevScore(best_devs));
+		var best_devs = this.MetricsManager.lineDistancesStdDev(current_parsed, best_ordering);
+		var best_cum =  Math.floor(this.MetricsManager.lineDistanceStdDevScore(best_devs));
 		var tentatives = best_cum*Object.keys(best_devs).length;
 		var temperature = 1;
 		var done_ordering = [];
@@ -147,8 +147,8 @@ define([
 		while(tentatives > 0){
 			var new_seq = random_sort(asn_ordering);
 			if(!contains(done_ordering,new_seq)){
-				var new_devs = this.metrics_manager.lineDistancesStdDev(current_parsed, new_seq);
-				var new_cum = Math.floor(this.metrics_manager.lineDistanceStdDevScore(new_devs));
+				var new_devs = this.MetricsManager.lineDistancesStdDev(current_parsed, new_seq);
+				var new_cum = Math.floor(this.MetricsManager.lineDistanceStdDevScore(new_devs));
 				if(new_cum < best_cum){
 					best_devs = new_devs;
 					best_cum = new_cum;
@@ -201,13 +201,13 @@ define([
 		var best_choose = left[0];
 		var best_order = done.slice(0);
 		best_order.push(best_choose);
-		var best_dist = Object.values(this.metrics_manager.lineDistancesStdDev(current_parsed, best_order));
+		var best_dist = Object.values(this.MetricsManager.lineDistancesStdDev(current_parsed, best_order));
 		var best_score = cumulate(best_dist);
 		for(var i = 1; i<left.length; i++){
 			var try_choose = left[i];
 			var try_order = done.slice(0);
 			try_order.push(try_choose);
-			var try_dist = Object.values(this.metrics_manager.lineDistancesStdDev(current_parsed, try_order));
+			var try_dist = Object.values(this.MetricsManager.lineDistancesStdDev(current_parsed, try_order));
 			var try_score = cumulate(try_dist);
 			if(try_score <= best_score){
 				if(try_score<best_score || (max(try_dist)<max(best_dist)&&try_score == best_score)) {
@@ -222,7 +222,7 @@ define([
 
 	HeuristicsManager.prototype.stdDevBubbles = function(current_parsed, asn_ordering){
 		var improved = false;
-		var best_score = this.metrics_manager.lineDistanceStdDevScore(this.metrics_manager.lineDistancesStdDev(current_parsed,asn_ordering));
+		var best_score = this.MetricsManager.lineDistanceStdDevScore(this.MetricsManager.lineDistancesStdDev(current_parsed,asn_ordering));
 		var best_order = asn_ordering.slice(0);
 		var phase_max = asn_ordering.length-1;
 		//var changed = false;
@@ -234,7 +234,7 @@ define([
 			console.log("phase "+phase);
 			for(var i = 0; i<asn_ordering.length-1; i++){
 				var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
-				var new_score = this.metrics_manager.lineDistanceStdDevScore(this.metrics_manager.lineDistancesStdDev(current_parsed,new_order));
+				var new_score = this.MetricsManager.lineDistanceStdDevScore(this.MetricsManager.lineDistancesStdDev(current_parsed,new_order));
 				if(new_score<best_score){
 					//changed = true;
 					best_score = new_score;
@@ -275,7 +275,7 @@ define([
 		var start = moment().valueOf();
 		var best_ordering = current_parsed.asn_set.slice(0);
 		var ordering_length = best_ordering.length;
-		var best_lev = this.metrics_manager.computeLevenshteinDistance(current_parsed,best_ordering);
+		var best_lev = this.MetricsManager.computeLevenshteinDistance(current_parsed,best_ordering);
 		var best_cum = cumulate(best_lev);
 		var best_avg = Math.floor(average(best_lev,best_cum));
 		var best_max = max(best_lev);
@@ -288,7 +288,7 @@ define([
 			var new_seq = random_sort(current_parsed.asn_set);
 			if(!contains(done_ordering,new_seq)){
 				done_ordering.push(new_seq);
-				var new_dist = this.metrics_manager.computeLevenshteinDistance(current_parsed,new_seq);
+				var new_dist = this.MetricsManager.computeLevenshteinDistance(current_parsed,new_seq);
 				var new_dist_tot = cumulate(new_dist);
 				if(new_dist_tot<best_cum) {
 					best_ordering = new_seq;
@@ -316,7 +316,7 @@ define([
 		var start = moment().valueOf();
 		var best_ordering = current_parsed.asn_set.slice(0);
 		var ordering_length = best_ordering.length;
-		var best_lev = this.metrics_manager.computeLevenshteinDistance(current_parsed,best_ordering);
+		var best_lev = this.MetricsManager.computeLevenshteinDistance(current_parsed,best_ordering);
 		var best_cum = cumulate(best_lev);
 		var best_avg = Math.floor(average(best_lev,best_cum));
 		var best_max = max(best_lev);
@@ -329,7 +329,7 @@ define([
 			var new_seq = random_sort(current_parsed.asn_set);
 			if(!contains(done_ordering,new_seq)){
 				done_ordering.push(new_seq);
-				var new_dist = this.metrics_manager.computeLevenshteinDistance(current_parsed,new_seq);
+				var new_dist = this.MetricsManager.computeLevenshteinDistance(current_parsed,new_seq);
 				var new_dist_tot = cumulate(new_dist);
 				var new_dist_max = max(new_dist);
 				if(new_dist_max<best_max) {
@@ -532,7 +532,7 @@ define([
 				//straigth
 				block = blocks[left[b]];
 				var new_order = base.concat(block);
-				var new_score = this.metrics_manager.lineDistanceStdDevScore(this.metrics_manager.lineDistancesStdDev(current_parsed,new_order));
+				var new_score = this.MetricsManager.lineDistanceStdDevScore(this.MetricsManager.lineDistancesStdDev(current_parsed,new_order));
 				if(new_score<best_score){
 					best_score = new_score;
 					best_index = b;
@@ -545,7 +545,7 @@ define([
 				if(Array.isArray(block)){
 					block = blocks[left[b]].slice(0).reverse();
 					new_order = base.concat(block);
-					new_score = this.metrics_manager.lineDistanceStdDevScore(this.metrics_manager.lineDistancesStdDev(current_parsed,new_order));
+					new_score = this.MetricsManager.lineDistanceStdDevScore(this.MetricsManager.lineDistancesStdDev(current_parsed,new_order));
 					if(new_score<best_score){
 						best_score = new_score;
 						best_index = b;
@@ -571,8 +571,8 @@ define([
 			for(var j in left){
 				var temp = fixed_order.slice(0);
 				temp.push(left[j]);
-				var w = this.metrics_manager.computeWiggle(current_parsed,temp);
-				var curr_w = this.metrics_manager.wiggleScore(calc_type(w,temp));
+				var w = this.MetricsManager.computeWiggle(current_parsed,temp);
+				var curr_w = this.MetricsManager.wiggleScore(calc_type(w,temp));
 				if(curr_w<best_w){
 					best_w = curr_w;
 					best_order = temp.slice(0);
@@ -587,7 +587,7 @@ define([
 
 	HeuristicsManager.prototype.wiggleBubblesPhase = function(current_parsed, asn_ordering, calc_type){
 		var improved = false;
-		var best_score = this.metrics_manager.wiggleScore(calc_type(this.metrics_manager.computeWiggle(current_parsed,asn_ordering,calc_type), asn_ordering));
+		var best_score = this.MetricsManager.wiggleScore(calc_type(this.MetricsManager.computeWiggle(current_parsed,asn_ordering,calc_type), asn_ordering));
 		var best_order = asn_ordering.slice(0);
 		var phase_max = asn_ordering.length-1;
 		//var changed = false;
@@ -599,8 +599,8 @@ define([
 			console.log("phase "+phase);
 			for(var i = 0; i<asn_ordering.length-1; i++){
 				var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
-				var new_wiggle = this.metrics_manager.computeWiggle(current_parsed,new_order);
-				var new_score = this.metrics_manager.wiggleScore(calc_type(new_wiggle,new_order));
+				var new_wiggle = this.MetricsManager.computeWiggle(current_parsed,new_order);
+				var new_score = this.MetricsManager.wiggleScore(calc_type(new_wiggle,new_order));
 				if(new_score<best_score){
 					//changed = true;
 					best_score = new_score;
@@ -637,8 +637,8 @@ define([
 			for(var j in left){
 				var temp = fixed_order.slice(0);
 				temp.push(left[j]);
-				var w = this.metrics_manager.disconnections(current_parsed,temp);
-				var curr_w = this.metrics_manager.disconnectionsScore(w);
+				var w = this.MetricsManager.disconnections(current_parsed,temp);
+				var curr_w = this.MetricsManager.disconnectionsScore(w);
 				if(curr_w<best_w){
 					best_w = curr_w;
 					best_order = temp.slice(0);
@@ -652,7 +652,7 @@ define([
 	};
 
 	HeuristicsManager.prototype.disconnectionsBubblesPhase = function(current_parsed, asn_ordering){
-		var best_score = this.metrics_manager.disconnectionsScore(this.metrics_manager.disconnections(current_parsed,asn_ordering));
+		var best_score = this.MetricsManager.disconnectionsScore(this.MetricsManager.disconnections(current_parsed,asn_ordering));
 		var best_order = asn_ordering.slice(0);
 		var phase_max = asn_ordering.length-1;
 		//var changed = false;
@@ -664,8 +664,8 @@ define([
 			console.log("phase "+phase);
 			for(var i = 0; i<asn_ordering.length-1; i++){
 				var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
-				var new_disconnections = this.metrics_manager.disconnections(current_parsed,new_order);
-				var new_score = this.metrics_manager.disconnectionsScore(new_disconnections);
+				var new_disconnections = this.MetricsManager.disconnections(current_parsed,new_order);
+				var new_score = this.MetricsManager.disconnectionsScore(new_disconnections);
 				if(new_score<best_score){
 					//changed = true;
 					best_score = new_score;
@@ -692,10 +692,10 @@ define([
 	};
 
 	/************************ HEAT SORTING ************************/
-	HeuristicsManager.prototype.sortRRCByASOrdering_level = function(current_parsed,asn_ordering){
+	HeuristicsManager.prototype.sortCPByASOrdering_level = function(current_parsed,asn_ordering){
 		var start = moment().valueOf();
-		var rrc_composition = current_parsed.rrc_by_composition;
-		var tail_set = Object.keys(rrc_composition);
+		var cp_composition = current_parsed.cp_by_composition;
+		var tail_set = Object.keys(cp_composition);
 		var result = [];
 		//buckets
 		var buckets = {};
@@ -705,30 +705,30 @@ define([
 		}
 		//find max depth
 		var max_depth = 0;
-		for(var r in rrc_composition)
-			max_depth = Math.max(max_depth, rrc_composition[r].length);
+		for(var r in cp_composition)
+			max_depth = Math.max(max_depth, cp_composition[r].length);
 		//for every depth and every as in the ordering
 		for(var i = 1; i <= max_depth; i++){
 			var current_set = [];
 			var temp = [];
-			tail_set.forEach(function(e){if(rrc_composition[e].length == i) current_set.push(e); else temp.push(e);});
+			tail_set.forEach(function(e){if(cp_composition[e].length == i) current_set.push(e); else temp.push(e);});
 			tail_set = temp;
 			for(var c in current_set){
-				var rrc = current_set[c];
-				var asn = rrc_composition[rrc][(i-1)];
+				var cp = current_set[c];
+				var asn = cp_composition[cp][(i-1)];
 				if(asn == "null")
 					asn = null;
 				else
 					asn = parseInt(asn);
-				buckets[asn].push(rrc);
+				buckets[asn].push(cp);
 			}
 		}
 		//recompose
 		for(var i in asn_ordering){
 			var as = asn_ordering[i];
 			for(var j in buckets[as]){
-				var rrc = buckets[as][j];
-				result.push(rrc);
+				var cp = buckets[as][j];
+				result.push(cp);
 			}
 		}
 		var end = moment().valueOf();
@@ -736,10 +736,10 @@ define([
 		return result;
 	};
 
-	HeuristicsManager.prototype.sortRRCByASOrdering_level_var = function(current_parsed,asn_ordering){
+	HeuristicsManager.prototype.sortCPByASOrdering_level_var = function(current_parsed,asn_ordering){
 		var start = moment().valueOf();
-		var rrc_composition = current_parsed.rrc_by_composition;
-		var tail_set = Object.keys(rrc_composition);
+		var cp_composition = current_parsed.cp_by_composition;
+		var tail_set = Object.keys(cp_composition);
 		var result = [];
 		//buckets
 		var buckets = {};
@@ -749,31 +749,31 @@ define([
 		}
 		//find max depth
 		var max_depth = 0;
-		for(var r in rrc_composition)
-			max_depth = Math.max(max_depth, rrc_composition[r].length);
+		for(var r in cp_composition)
+			max_depth = Math.max(max_depth, cp_composition[r].length);
 		//for every depth and every as in the ordering
 		for(var i = 1; i <= max_depth; i++){
 			var current_set = [];
 			var temp = [];
-			tail_set.forEach(function(e){if(rrc_composition[e].length == i) current_set.push(e); else temp.push(e);});
+			tail_set.forEach(function(e){if(cp_composition[e].length == i) current_set.push(e); else temp.push(e);});
 			tail_set = temp;
 			for(var c in current_set){
-				var rrc = current_set[c];
+				var cp = current_set[c];
 				//here the variation get always the first 
-				var asn = rrc_composition[rrc][0];
+				var asn = cp_composition[cp][0];
 				if(asn == "null")
 					asn = null;
 				else
 					asn = parseInt(asn);
-				buckets[asn].push(rrc);
+				buckets[asn].push(cp);
 			}
 		}
 		//recompose
 		for(var i in asn_ordering){
 			var as = asn_ordering[i];
 			for(var j in buckets[as]){
-				var rrc = buckets[as][j];
-				result.push(rrc);
+				var cp = buckets[as][j];
+				result.push(cp);
 			}
 		}
 		var end = moment().valueOf();
@@ -781,16 +781,16 @@ define([
 		return result;
 	};
 
-	HeuristicsManager.prototype.sortRRCByGeoOrder = function(current_parsed){
+	HeuristicsManager.prototype.sortCPByGeoOrder = function(current_parsed){
 		var geo_counter = [];
-		for(var r in current_parsed.rrc_set){
-			var rrc = current_parsed.rrc_set[r];
-			var geo = current_parsed.known_rrc[rrc]['geo'].split("-")[0];
+		for(var r in current_parsed.cp_set){
+			var cp = current_parsed.cp_set[r];
+			var geo = current_parsed.known_cp[cp]['geo'].split("-")[0];
 			var to_insert = geo_counter[geo];
 			if(!to_insert){
 				to_insert = [];
 			}
-			to_insert.push(rrc);
+			to_insert.push(cp);
 			geo_counter[geo] = to_insert;
 		}
 		var sorted_geo = sorted_by_field_key_length(geo_counter);
@@ -804,14 +804,14 @@ define([
 		return order;
 	};
 
-	HeuristicsManager.prototype.sortRRCByAsnOrder = function(current_parsed){
+	HeuristicsManager.prototype.sortCPByAsnOrder = function(current_parsed){
 		var geo_counter = [];
 		var empty = [];
-		for(var r in current_parsed.rrc_by_composition){
-			var rrc = r;
-			var as = current_parsed.rrc_by_composition[rrc][0];
+		for(var r in current_parsed.cp_by_composition){
+			var cp = r;
+			var as = current_parsed.cp_by_composition[cp][0];
 			if(as == "null") {
-				empty.push(rrc);
+				empty.push(cp);
 			}
 			else{
 				var as_string = current_parsed.known_asn[as];
@@ -822,7 +822,7 @@ define([
 				if(!to_insert){
 					to_insert = [];
 				}
-				to_insert.push(rrc);
+				to_insert.push(cp);
 				geo_counter[geo] = to_insert;
 			}
 		}
@@ -838,19 +838,19 @@ define([
 	};
 
 	/**************************************************************************************/
-	HeuristicsManager.prototype.getSortedRRCByExchanges_level = function(current_parsed){
+	HeuristicsManager.prototype.getSortedCPByExchanges_level = function(current_parsed){
 		var start = moment().valueOf();
 		var asn_ordering = this.getSortedASByExchanges(current_parsed)
-		var order = this.sortRRCByASOrdering_level(current_parsed,current_parsed.asn_set);
+		var order = this.sortCPByASOrdering_level(current_parsed,current_parsed.asn_set);
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
 		return order;
 	};
 
-	HeuristicsManager.prototype.getSortedRRCByExchanges_level_var = function(current_parsed){
+	HeuristicsManager.prototype.getSortedCPByExchanges_level_var = function(current_parsed){
 		var start = moment().valueOf();
 		var asn_ordering = this.getSortedASByExchanges(current_parsed)
-		var order = this.sortRRCByASOrdering_level_var(current_parsed,current_parsed.asn_set);
+		var order = this.sortCPByASOrdering_level_var(current_parsed,current_parsed.asn_set);
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
 		return order;
@@ -859,7 +859,7 @@ define([
 	HeuristicsManager.prototype.getHeatStdev = function(current_parsed){
 		var start = moment().valueOf();
 		var asn_ordering = this.asnStdDevByPointMinimizationGreedy(current_parsed)
-		var order = this.sortRRCByASOrdering_level_var(current_parsed,current_parsed.asn_set);
+		var order = this.sortCPByASOrdering_level_var(current_parsed,current_parsed.asn_set);
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
 		return order;
@@ -867,7 +867,7 @@ define([
 
 	HeuristicsManager.prototype.getGeoOrder = function(current_parsed){
 		var start = moment().valueOf();
-		var order = this.sortRRCByGeoOrder(current_parsed);
+		var order = this.sortCPByGeoOrder(current_parsed);
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
 		return order;
@@ -875,7 +875,7 @@ define([
 
 	HeuristicsManager.prototype.getASNOrder = function(current_parsed){
 		var start = moment().valueOf();
-		var order = this.sortRRCByAsnOrder(current_parsed);
+		var order = this.sortCPByAsnOrder(current_parsed);
 		var end = moment().valueOf();
 		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
 		return order;

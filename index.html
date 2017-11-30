@@ -54,8 +54,8 @@
 <!-- svg drawer -->
 		<script type="text/javascript" src="scripts/interface/graph_drawer.js"></script>
 		<script type="text/javascript" src="scripts/interface/ColorManager.js"></script>
-		<script type="text/javascript" src="scripts/interface/metrics_manager.js"></script>
-		<script type="text/javascript" src="scripts/interface/heuristics_manager.js"></script>
+		<script type="text/javascript" src="scripts/interface/MetricsManager.js"></script>
+		<script type="text/javascript" src="scripts/interface/HeuristicsManager.js"></script>
 <!-- pqtrees -->
 		<script type="text/javascript" src="scripts/pq_tree/sorted_circular_doubly_linked_list.js"></script>
 <!-- coming soon pq trees -->
@@ -163,7 +163,7 @@
 								</a>
 							</li>
 							<li class="heat_option">
-								<a href="#" class="merge_rrc_btn">
+								<a href="#" class="merge_cp_btn">
 									Merge CPs with same paths
 									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 								</a>
@@ -207,7 +207,7 @@
 								</a>
 							</li>
 							<li class="heat_option">
-								<a href="#" class="rrc_labels_btn">
+								<a href="#" class="cp_labels_btn">
 									CP labels
 									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 								</a>
@@ -236,8 +236,8 @@
 							 	<ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>
 							 </li>
 							 <li class="dropdown-submenu right_arrows">
-							 	<a tabindex="-1" href="#" class="rrc_list_btn">CP List</a>
-							 	<ul class="dropdown-menu dropdown-menu-right no_top_padding rrc_list"></ul>
+							 	<a tabindex="-1" href="#" class="cp_list_btn">CP List</a>
+							 	<ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>
 							 </li>
 						</ul>
 					</span>
@@ -442,7 +442,7 @@
 						if(context_manager.GuiManager.graph_type=="heat")
 							context_manager.GuiManager.drawer.draw_heatmap(
 								context_manager.GuiManager.RipeDataBroker.current_parsed,
-								context_manager.GuiManager.RipeDataBroker.current_rrc_tsv,
+								context_manager.GuiManager.RipeDataBroker.current_cp_tsv,
 								context_manager.GuiManager.RipeDataBroker.current_asn_tsv, 
 								context_manager.GuiManager.drawer.keys, 
 								context_manager.GuiManager.preserve_map, 
@@ -456,10 +456,10 @@
 								context_manager.GuiManager.asn_level, 
 								context_manager.GuiManager.ip_version, 
 								context_manager.GuiManager.prepending_prevention, 
-								context_manager.GuiManager.merge_rrc, 
+								context_manager.GuiManager.merge_cp, 
 								context_manager.GuiManager.merge_events, 
 								context_manager.GuiManager.events_labels, 
-								context_manager.GuiManager.rrc_labels,
+								context_manager.GuiManager.cp_labels,
 								context_manager.GuiManager.heatmap_time_map,
 								null,
 								true);

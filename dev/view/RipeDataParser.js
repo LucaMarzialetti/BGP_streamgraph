@@ -8,7 +8,7 @@ define([
     var RipeDataParser = function() {
         console.log("==== RipeParser Starting");
         this.validator = new Validator();
-        this.rrc_map;
+        this.cp_map;
         this.states = [];
         this.events = [];
         this.resources = [];
@@ -16,13 +16,13 @@ define([
         this.last_date;
 
         this.asn_set = [];
-        this.rrc_set = [];
+        this.cp_set = [];
         this.asn_freqs = [];
         this.asn_sumfreqs = [];
         this.asn_avgfreqs = [];
         this.asn_varfreqs = [];
         this.asn_stdev = [];
-        this.rrc_shiftings = {};
+        this.cp_shiftings = {};
 
         this.fake_head = false;
         this.fake_tail = false;
@@ -30,18 +30,18 @@ define([
         this.query_endtime = "";
 
         this.known_asn = {};
-        this.known_rrc = {};
+        this.known_cp = {};
 
         console.log("==== RipeParser Ready");
     };
 
     /**manage the events and state of the announcement**/
-    //the level of detail is by RRC and only later cumulated to ASN view
+    //the level of detail is by CP and only later cumulated to ASN view
     //there are fiew global variables used to maintain the state of the flow
     //states_asn:array of states, each state is a normalized vector of ASN weight on routing
-    //states:array of states, each state is rrc routing
+    //states:array of states, each state is cp routing
     //events:array of timestamps, one for each state
-    //rrc_map:object used to maintain the current state
+    //cp_map:object used to maintain the current state
     //last_date:last timestamp seen
 
     //ripe_response_parse();
@@ -51,7 +51,7 @@ define([
         //json = require('./data.json');
         //global variables init
         var data = json['data'];
-        this.rrc_map = {};
+        this.cp_map = {};
         this.states = {};
         this.events = [];
         this.resources = [];
@@ -59,7 +59,7 @@ define([
         this.last_date = data['query_starttime'];
         this.asn_distributions = [];
         this.asn_set = [];
-        this.rrc_set = [];
+        this.cp_set = [];
         this.asn_freqs = {};
         this.asn_sumfreqs = {};
         this.asn_avgfreqs = {};
@@ -81,7 +81,7 @@ define([
         this.resources = data.sources;
         //inizializza la mappa in base al numero di targets
         for(var t in this.targets){
-            this.rrc_map[this.targets[t]] = {};
+            this.cp_map[this.targets[t]] = {};
             this.states[this.targets[t]] = [];
         }
         //stato iniziale
@@ -100,22 +100,22 @@ define([
             console.log(this.events);
             console.log(this.resources);
             console.log(this.targets);
-            console.log(this.rrc_set);
+            console.log(this.cp_set);
         }
         if(print_on){
             this.print_json_to_file(this.states,'states.json');
             this.print_json_to_file(this.events,'events.json');
             this.print_json_to_file(this.targets,'targets.json');
             this.print_json_to_file(this.resources,'resources.json');
-            this.print_json_to_file(this.rrc_set,'map.json');
+            this.print_json_to_file(this.cp_set,'map.json');
         }
         return {
             query_id:json['query_id'],
-            states:this.states,			//array of values % by rrc
+            states:this.states,			//array of values % by cp
             events:this.events,			//array of timestamps
             targets:this.targets,		//array of targets
-            resources:this.resources,	//array of RRC by asn
-            rrc_set: this.rrc_set,		//array of cp
+            resources:this.resources,	//array of CP by asn
+            cp_set: this.cp_set,		//array of cp
             asn_set: this.asn_set,
 
             asn_freqs:this.asn_freqs,
@@ -131,7 +131,7 @@ define([
             fake_tail:this.fake_tail,
 
             known_asn: this.known_asn,
-            known_rrc: this.known_rrc
+            known_cp: this.known_cp
         }
     };
 
@@ -151,22 +151,22 @@ define([
         //data_check();
     };
 
-    //initialize the rrc_map
+    //initialize the cp_map
     RipeDataParser.prototype.makeIntialStateMapping = function(data) {
         var initial_state = data['initial_state'];
         for(var i in initial_state){
             var state = initial_state[i];
             var path = state['path'];
-            var rrc_id = state['source_id'];
-            if(this.rrc_set.indexOf(rrc_id) == -1)
-                this.rrc_set.push(rrc_id);
-            this.rrc_map[state['target_prefix']][rrc_id] = path;
+            var cp_id = state['source_id'];
+            if(this.cp_set.indexOf(cp_id) == -1)
+                this.cp_set.push(cp_id);
+            this.cp_map[state['target_prefix']][cp_id] = path;
         }
     };
 
     //fetch updates event using timestamp to cumultate the effects
     //everytime the last_date is different from the current event timestamp a new "state" as a snapshot is taken
-    //from the rrc_map
+    //from the cp_map
     RipeDataParser.prototype.fetchUpdates = function(data) {
         var updates = data['events'];
         this.last_date = updates[0]['timestamp'];
@@ -176,9 +176,9 @@ define([
             var e_s_id = e_attrs['source_id'];
             var e_target = e_attrs['target_prefix'];
             var e_type = e['type'];
-            //if its a new resource add to rrc_set
-            if(this.rrc_set.indexOf(e_s_id) == -1)
-                this.rrc_set.push(e_s_id);
+            //if its a new resource add to cp_set
+            if(this.cp_set.indexOf(e_s_id) == -1)
+                this.cp_set.push(e_s_id);
             //make snapshot if timestamp is different
             if(this.last_date != e['timestamp']){
                 this.snapshotOfState();
@@ -186,10 +186,10 @@ define([
             }
             switch(e_type){
                 case 'A':
-                    this.rrc_map[e_target][e_s_id] = e_attrs['path'];
+                    this.cp_map[e_target][e_s_id] = e_attrs['path'];
                     break;
                 case 'W':
-                    this.rrc_map[e_target][e_s_id] = "";
+                    this.cp_map[e_target][e_s_id] = "";
                     break;
                 default:
                     break;
@@ -197,24 +197,24 @@ define([
         }
     };
 
-    //take a snapshot of the rrc_map
-    //cumulate the single RRC announcement into ASN view
+    //take a snapshot of the cp_map
+    //cumulate the single CP announcement into ASN view
     RipeDataParser.prototype.snapshotOfState = function() {
         for(var t in this.targets)
-            this.states[this.targets[t]].push(JSON.parse(JSON.stringify(this.rrc_map[this.targets[t]])));
+            this.states[this.targets[t]].push(JSON.parse(JSON.stringify(this.cp_map[this.targets[t]])));
         this.events.push(this.last_date);
     };
 
-    //zero fill the rrcs in every moment
+    //zero fill the cps in every moment
     RipeDataParser.prototype.zeroFilling = function(start,end) {
         for(var t in this.targets){
             var tgt = this.targets[t];
             for(var i in this.states[tgt]){
                 var e = this.states[tgt][i];
-                for(var r in this.rrc_set){
-                    var rrc = this.rrc_set[r];
-                    if(!e[rrc])
-                        e[rrc] = [];
+                for(var r in this.cp_set){
+                    var cp = this.cp_set[r];
+                    if(!e[cp])
+                        e[cp] = [];
                 }
             }
         }
@@ -237,13 +237,13 @@ define([
         //}
     };
 
-    //object of rrc and an array of states for any of them
-    // MAP OF RRC AND THEIR ASN TRAVERSED
-    RipeDataParser.prototype.states_rrc = function(parsed,level,antiprepending){
-        this.states_by_rrc = {};
+    //object of cp and an array of states for any of them
+    // MAP OF CP AND THEIR ASN TRAVERSED
+    RipeDataParser.prototype.states_cp = function(parsed,level,antiprepending){
+        this.states_by_cp = {};
         //init
-        for(var r in parsed.rrc_set)
-            this.states_by_rrc[parsed.rrc_set[r]] = [];
+        for(var r in parsed.cp_set)
+            this.states_by_cp[parsed.cp_set[r]] = [];
         //popolate
         for(var t in parsed.targets){
             var tgt = parsed.targets[t];
@@ -251,48 +251,48 @@ define([
             for(var s in states){
                 var state = states[s];
                 for(var r in state){
-                    var rrc = state[r];
+                    var cp = state[r];
                     if(antiprepending)
-                        rrc = no_consecutive_repetition(rrc);
-                    if(rrc.length>level)
-                        this.states_by_rrc[r].push(rrc[rrc.length-level-1]);
+                        cp = no_consecutive_repetition(cp);
+                    if(cp.length>level)
+                        this.states_by_cp[r].push(cp[cp.length-level-1]);
                     else
-                        this.states_by_rrc[r].push(null);
+                        this.states_by_cp[r].push(null);
                 }
             }
         }
-        parsed.states_by_rrc = this.states_by_rrc;
+        parsed.states_by_cp = this.states_by_cp;
     };
 
-    //object of rrc and their asn sorted for occurrences
-    //MAP OF RRC AND ASN COMPOSITION (ORDERED SET OF ASN FOR THAT RRC)
-    RipeDataParser.prototype.rrc_composition = function(parsed){
-        this.rrc_by_composition = {};
-        for(var r in parsed.rrc_set) {
-            var rrc = parsed.rrc_set[r];
-            var asn_seq = parsed.states_by_rrc[rrc];
-            this.rrc_by_composition[rrc] = sort_by_occurrences(asn_seq);
+    //object of cp and their asn sorted for occurrences
+    //MAP OF CP AND ASN COMPOSITION (ORDERED SET OF ASN FOR THAT CP)
+    RipeDataParser.prototype.cp_composition = function(parsed){
+        this.cp_by_composition = {};
+        for(var r in parsed.cp_set) {
+            var cp = parsed.cp_set[r];
+            var asn_seq = parsed.states_by_cp[cp];
+            this.cp_by_composition[cp] = sort_by_occurrences(asn_seq);
         }
-        parsed.rrc_by_composition = this.rrc_by_composition;
+        parsed.cp_by_composition = this.cp_by_composition;
     }; 
 
-    //object of rrc and their asn seqs changed
-    //MAP OF RRC AND ASN TRAVERSED (SEQUENCE OF ASN TRAVERSED)
-    RipeDataParser.prototype.rrc_seqs = function(parsed){
-        this.rrc_by_seqs = {};
-        for(var r in parsed.rrc_set) {
-            var rrc = parsed.rrc_set[r];
-            var asn_seq = parsed.states_by_rrc[rrc];
-            this.rrc_by_seqs[rrc] = no_consecutive_repetition(asn_seq);
+    //object of cp and their asn seqs changed
+    //MAP OF CP AND ASN TRAVERSED (SEQUENCE OF ASN TRAVERSED)
+    RipeDataParser.prototype.cp_seqs = function(parsed){
+        this.cp_by_seqs = {};
+        for(var r in parsed.cp_set) {
+            var cp = parsed.cp_set[r];
+            var asn_seq = parsed.states_by_cp[cp];
+            this.cp_by_seqs[cp] = no_consecutive_repetition(asn_seq);
         }
-        parsed.rrc_by_seqs = this.rrc_by_seqs;
+        parsed.cp_by_seqs = this.cp_by_seqs;
     };
 
     //MAP OF ASN (AND EXCHANGES FOR OTHER ASN COUNTED)
     RipeDataParser.prototype.asn_exchanges = function(parsed){
         this.asn_by_exchanges = {}
-        for(var i in parsed.rrc_set){
-            var as_list = parsed.rrc_by_seqs[parsed.rrc_set[i]];
+        for(var i in parsed.cp_set){
+            var as_list = parsed.cp_by_seqs[parsed.cp_set[i]];
             if(as_list.length>1){
                 for(var a = 0; a<as_list.length-1; a++){
                     var pre = as_list[a];
@@ -310,22 +310,22 @@ define([
         parsed.asn_by_exchanges = this.asn_by_exchanges;
     };
 
-    RipeDataParser.prototype.get_rrc_shiftings = function(parsed){
-        this.rrc_shiftings = {};
+    RipeDataParser.prototype.get_cp_shiftings = function(parsed){
+        this.cp_shiftings = {};
         for(var t in parsed.targets){
-            this.rrc_shiftings[parsed.targets[t]] = {};
+            this.cp_shiftings[parsed.targets[t]] = {};
         }
-        for(var r in parsed.rrc_set) {
-            this.rrc_shiftings[parsed.rrc_set[r]] = [];
+        for(var r in parsed.cp_set) {
+            this.cp_shiftings[parsed.cp_set[r]] = [];
         }
-        for(var r in parsed.rrc_set) {
-            var rrc = parsed.rrc_set[r];
+        for(var r in parsed.cp_set) {
+            var cp = parsed.cp_set[r];
             for(var s in parsed.states){
-                var  val = parsed.states[s][rrc];
-                this.rrc_shiftings[rrc].push(val);
+                var  val = parsed.states[s][cp];
+                this.cp_shiftings[cp].push(val);
             }
         }
-        parsed.rrc_shiftings = this.rrc_shiftings;
+        parsed.cp_shiftings = this.cp_shiftings;
     };
 
     /* compute the frequency analysis */
@@ -367,7 +367,7 @@ define([
             var node = data.sources[a];
             var id = node["id"];
             var ip = node["ip"];
-            var rrc = node["rrc"];
+            var cp = node["cp"];
             var as_number = node["as_number"];
             var geo_of_as = this.known_asn[as_number];
             if(geo_of_as){
@@ -375,10 +375,10 @@ define([
                 var geo = geo_of_as.substr(index+1).split("-")[0].trim();
             }
             if(geo){
-                this.known_rrc[id] = {
+                this.known_cp[id] = {
                     "ip":ip,
                     "id":id,
-                    "rrc":rrc,
+                    "cp":cp,
                     "as_number":as_number,
                     "geo":geo
                 }
@@ -451,7 +451,7 @@ define([
         this.computeAsnFrequencies(this.asn_distributions);
         this.computeDifferenceVector(data);
         this.computeDistanceVector(data);
-        this.get_rrc_shiftings(data);
+        this.get_cp_shiftings(data);
         data.asn_freqs = this.asn_freqs;
         data.asn_sumfreqs = this.asn_sumfreqs;
         data.asn_avgfreqs = this.asn_avgfreqs;
@@ -546,8 +546,8 @@ define([
         var dummy_state = {};
 
         if(data.fake_tail || data.fake_tail){
-            for(var d in this.rrc_set)
-                dummy_state[this.rrc_set[d]] = [];
+            for(var d in this.cp_set)
+                dummy_state[this.cp_set[d]] = [];
         }
 
         for(var t in data.targets) {
@@ -574,8 +574,8 @@ define([
 
         console.log(real_events)
         var converted_data = [];
-        var header = "date\trrc\tasn_path";
-        var rrc_set = data.rrc_set.sort();
+        var header = "date\tcp\tasn_path";
+        var cp_set = data.cp_set.sort();
         var include_ipv4 = target_types.indexOf(4)!= -1;
         var include_ipv6 = target_types.indexOf(6)!= -1;
         converted_data.push(header);
@@ -584,12 +584,12 @@ define([
             if((include_ipv4 && this.validator.check_ipv4(tgt)) || (include_ipv6 && this.validator.check_ipv6(tgt))) {
                 for(var i in real_states[tgt]){
                     var state = real_states[tgt][i];
-                    for(var j in rrc_set){
-                        var path = state[rrc_set[j]];
+                    for(var j in cp_set){
+                        var path = state[cp_set[j]];
                         if(!Array.isArray(path))
                             path = [];
                         var line = real_events[i];
-                        line+="\t"+rrc_set[j]+"\t"+JSON.stringify(path);
+                        line+="\t"+cp_set[j]+"\t"+JSON.stringify(path);
                         converted_data.push(line);
                     }
                 }

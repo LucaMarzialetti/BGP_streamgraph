@@ -194,7 +194,7 @@ define([
                         if(context_manager.GuiManager.graph_type=="heat")
                             context_manager.GuiManager.drawer.draw_heatmap(
                                 context_manager.GuiManager.RipeDataBroker.current_parsed,
-                                context_manager.GuiManager.RipeDataBroker.current_rrc_tsv,
+                                context_manager.GuiManager.RipeDataBroker.current_cp_tsv,
                                 context_manager.GuiManager.RipeDataBroker.current_asn_tsv, 
                                 context_manager.GuiManager.drawer.keys, 
                                 context_manager.GuiManager.preserve_map, 
@@ -208,10 +208,10 @@ define([
                                 context_manager.GuiManager.asn_level, 
                                 context_manager.GuiManager.ip_version, 
                                 context_manager.GuiManager.prepending_prevention, 
-                                context_manager.GuiManager.merge_rrc, 
+                                context_manager.GuiManager.merge_cp, 
                                 context_manager.GuiManager.merge_events, 
                                 context_manager.GuiManager.events_labels, 
-                                context_manager.GuiManager.rrc_labels,
+                                context_manager.GuiManager.cp_labels,
                                 context_manager.GuiManager.heatmap_time_map,
                                 null,
                                 true);
