@@ -1,7 +1,7 @@
 define([
   /*graph drawer*/
   /*gui manager*/
-], function(d3){
+], function(){
 
 	var ContextManager = function() {
 		console.log("= Context Manager Starting");
@@ -149,7 +149,7 @@ define([
 				request_done = true;
 			}
 			catch(e){
-				alert(e)
+				alert(e);
 				this.gui_manager.ripe_data_broker.current_starttime=null;
 				this.gui_manager.ripe_data_broker.current_endtime=null;
 				this.gui_manager.ripe_data_broker.current_targets=null;

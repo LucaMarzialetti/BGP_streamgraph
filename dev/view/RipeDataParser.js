@@ -13,13 +13,13 @@ define([
             this.asn_distributions=[],
             this.last_date;
 
-        this.asn_set=[],
-            this.rrc_set=[],
-            this.asn_freqs=[],
-            this.asn_sumfreqs=[],
-            this.asn_avgfreqs=[],
-            this.asn_varfreqs=[],
-            this.asn_stdev=[];
+        this.asn_set=[];
+        this.rrc_set=[];
+        this.asn_freqs=[];
+        this.asn_sumfreqs=[];
+        this.asn_avgfreqs=[];
+        this.asn_varfreqs=[];
+        this.asn_stdev=[];
         this.rrc_shiftings={};
 
         this.fake_head = false;
@@ -63,7 +63,7 @@ define([
         this.asn_avgfreqs={};
         this.asn_varfreqs={};
         this.asn_stdev={};
-        
+
         //fetch nodes and cp
         this.fetchNodes(data);
         this.fetchCP(data);

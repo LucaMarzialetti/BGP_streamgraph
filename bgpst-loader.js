@@ -28,6 +28,9 @@ requirejs.config({
         /* view */
         "bgpst.view.main": window.atlas._widgets.bgpst.urls.view + "MainView",
         "bgpst.view.color": window.atlas._widgets.bgpst.urls.view + "ColorManager",
+        "bgpst.view.graph": window.atlas._widgets.bgpst.urls.view + "GraphDrawer",
+        "bgpst.view.gui": window.atlas._widgets.bgpst.urls.view + "GuiManager",
+        "bgpst.view.context": window.atlas._widgets.bgpst.urls.view + "ContextManager",
 
 
         /* controller */
@@ -58,8 +61,9 @@ define([
     "bgpst.env.config",
     "bgpst.env.languages.en",
     "bgpst.lib.jquery-amd",
-    "bgpst.controller.main"
-], function(utils, config, language, $, main){
+    "bgpst.controller.main",
+    "bgpst.view.context"
+], function(utils, config, language, $, main, ContextManager){
 
     return function(instance){
         var env, instanceParams, queryParams, parentDom, styleDownloads, objectToBeEnriched;
