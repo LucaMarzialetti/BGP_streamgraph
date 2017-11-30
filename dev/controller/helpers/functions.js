@@ -43,25 +43,25 @@ define([
   //swap two position of an array 
   const swap = (i,j,a) => {
     var tmp = a[i];
-    a[i]=a[j];
-    a[j]=tmp;
+    a[i] = a[j];
+    a[j] = tmp;
     return a;
   };
 
   //sum all values in the array
   const cumulate = (a) => {
-    if(a && a!=[])
+    if(a && a != [])
       return a.reduce((pv, cv) => pv+cv, 0);
   };
 
   //find the average value of the array, if cumulate is given skip the process to make it
   const average = (a,cum_a) => {
-    if(a && a!=[]){
+    if(a && a != []){
       let cum;
       if(!cum_a)
-        cum=cumulate(a);
+        cum = cumulate(a);
       else
-        cum=cum_a;
+        cum = cum_a;
       let n = a.length;
       return cum/n;
     }
@@ -69,12 +69,12 @@ define([
 
   //find the variance of the array, if the average is given skip the process to make it
   const variance = (a,avg_a) => {
-    if(a && a!=[]){
+    if(a && a != []){
       let avg;
       if(!avg_a)
-        avg=average(a);
+        avg = average(a);
       else
-        avg=avg_a;
+        avg = avg_a;
       let v = a.map((num) => Math.pow(num - avg, 2));
       return average(v);
     }
@@ -82,46 +82,46 @@ define([
 
   //find the std deviation of the array, if the variance is given skip the process to make it
   const std_dev = (a, varx_a) => {
-    if(a && a!=[]) {
+    if(a && a != []) {
       let varx;
       if(!varx_a)
-        varx=variance(a);
+        varx = variance(a);
       else
-        varx=varx_a;
+        varx = varx_a;
       return Math.sqrt(varx);
     }
   };
 
   //find the max in the array
   const max = (a) => {
-    if(a && a!=[])
+    if(a && a != [])
       return a.reduce(function(va,vb){return Math.max(va,vb)});
   };
 
   //find the min in the array
   const min = (a) => {
-    if(a && a!=[])
+    if(a && a != [])
       return a.reduce(function(va,vb){return Math.min(va,vb)});
   };
 
   //find the position of every occourrence in the array of C
   const occurrences_positions = (a,c) => {
-    if(a && a!=[]){
+    if(a && a != []){
       var pos = []
-      a.forEach(function(v,i,array){if(v==c) pos.push(i)});
+      a.forEach(function(v,i,array){if(v == c) pos.push(i)});
       return pos;
     }
   };
 
   //randomically sort an array
   const random_sort = (a,b) => {
-    if(a && a!=[])
+    if(a && a != [])
       return a.slice(0,b).sort(function() { return 0.5 - Math.random();});
   };
 
   //check if 2 array are equal with json stringification
   const equal = (a,b) => {
-    return JSON.stringify(a)==JSON.stringify(b);
+    return JSON.stringify(a) == JSON.stringify(b);
   };
 
   //check if a multidimensional array contains an array v1
@@ -133,8 +133,8 @@ define([
   const differences_count = (a,b) => {
     var l = Math.min(a.length,b.length);
     var diff = 0;
-    for(var i=0; i<l; i++)
-      if(a[i]!==b[i])
+    for(var i = 0; i<l; i++)
+      if(a[i] !== b[i])
         diff++;
     diff+=(a.length+b.length)-(l*2);
     return diff;
@@ -175,12 +175,12 @@ define([
     for (var e in a) {
         sortable.push([e, Object.keys(a[e]).length]);
     }
-    if(type=="ASC")
+    if(type == "ASC")
       sortable.sort(function(a, b) {
           return a[1] - b[1];
       });
     else 
-    if(type="DSC"){
+    if(type = "DSC"){
       sortable.sort(function(a, b) {
         return b[1] - a[1];
       });
@@ -193,12 +193,12 @@ define([
     for (var e in a) {
         sortable.push([e, max(Object.values(a[e]))]);
     }
-    if(type=="ASC")
+    if(type == "ASC")
       sortable.sort(function(a, b) {
           return a[1] - b[1];
       });
     else 
-    if(type="DSC"){
+    if(type = "DSC"){
       sortable.sort(function(a, b) {
         return b[1] - a[1];
       });
@@ -211,12 +211,12 @@ define([
     for (var e in a) {
         sortable.push([e, a[e]]);
     }
-    if(type=="ASC")
+    if(type == "ASC")
       sortable.sort(function(a, b) {
           return a[1] - b[1];
       });
     else 
-    if(type="DSC"){
+    if(type = "DSC"){
       sortable.sort(function(a, b) {
         return b[1] - a[1];
       });

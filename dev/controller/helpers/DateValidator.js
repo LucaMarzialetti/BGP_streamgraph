@@ -7,7 +7,7 @@ define([
 	};
 
 	DateValidator.prototype.checkdate = function(str){
-		if(str&&str!="")
+		if(str&&str != "")
 			try {
 				return moment(str).isValid();
 			}
@@ -19,7 +19,7 @@ define([
 	};
 
 	DateValidator.prototype.checkdate_format = function(str,format){
-		if(str&&str!="")
+		if(str&&str != "")
 			try{
 				return moment(str,format,true).isValid();
 			}

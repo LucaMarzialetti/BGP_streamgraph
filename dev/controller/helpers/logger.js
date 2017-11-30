@@ -25,7 +25,7 @@ define([
 	};
 
 	Logger.prototype.log_to_console = function(string, caller){
-		if(this.registred_components[caller]==true)
+		if(this.registred_components[caller] == true)
 			console.log(string);
 	};
 

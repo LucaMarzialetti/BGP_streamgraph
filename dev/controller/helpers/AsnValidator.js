@@ -10,8 +10,8 @@ define([
 		var regex = new RegExp(asnregex);
 		try{
 			var number = str.replace(/^(A|a)(S|s)/,"").trim();
-			number=parseInt(number);
-			return (regex.test(str)&&number<=4294967294);
+			number = parseInt(number);
+			return (regex.test(str)&&number <= 4294967294);
 		}
 		catch(e){
 			return false;
