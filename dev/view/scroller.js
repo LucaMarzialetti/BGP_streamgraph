@@ -1,6 +1,6 @@
 define([
     /*contiene dei DOM element dinamici cercati su root del DOM*/
-], function(d3){
+], function(){
 
     /**
      *

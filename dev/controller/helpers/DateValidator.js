@@ -1,6 +1,6 @@
 define([
- /*moment*/
-], function(d3){
+	"bgpst.lib.moment"
+], function(moment){
 
 	var DateValidator = function(){
 

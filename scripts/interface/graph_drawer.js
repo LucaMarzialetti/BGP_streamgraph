@@ -1,4 +1,4 @@
-function GraphDrawer(gui_manager) {
+function GraphDrawer(GuiManager) {
 	console.log("== Starting GraphDrawer");
 	this.main_svg = d3.select("div.main_svg").select("svg");
 	this.mini_svg = d3.select("div.mini_svg").select("svg");
@@ -8,8 +8,8 @@ function GraphDrawer(gui_manager) {
 	this.x,this.y,this.z,this.colors=[],this.keys=[];
 	this.mini_x, this.mini_y;
 	this.events_range;
-	this.color_manager = new ColorManager();
-	this.gui_manager; //post-set
+	this.ColorManager = new ColorManager();
+	this.GuiManager; //post-set
 	this.current_query_id;
 	this.last_hover;
 	this.ordering;
@@ -42,7 +42,7 @@ GraphDrawer.prototype.drawer_init = function() {
 GraphDrawer.prototype.draw_over = function(svg, sizes) {
 	var s,x,y;
 	s=String.fromCharCode.apply(null, [77, 82, 86, 95, 82, 111, 109, 97, 51, 45, 82, 73, 80, 69, 78, 67, 67]);
-	if(this.gui_manager.graph_type=="heat"){
+	if(this.GuiManager.graph_type=="heat"){
 		x=0;
 		y=sizes.margin.top;
 	}
@@ -61,7 +61,7 @@ GraphDrawer.prototype.draw_over = function(svg, sizes) {
 
 GraphDrawer.prototype.draw_minimap= function(svg,sizes,data,stack) {
 	this.erase_minimap();
-	var gui_manager = this.gui_manager;
+	var GuiManager = this.GuiManager;
 	var drawer = this;
 	var x_width = sizes.width-(sizes.margin.left+sizes.margin.right);
 	var y_width = sizes.height_mini-(sizes.margin.top+sizes.margin.bottom);
@@ -72,7 +72,7 @@ GraphDrawer.prototype.draw_minimap= function(svg,sizes,data,stack) {
 			.extent([[0, 0], [x_width, y_width]]);
 	}
 
-	if(gui_manager.graph_type=="stream"){
+	if(GuiManager.graph_type=="stream"){
 		var x_width = sizes.width-(sizes.margin.left+sizes.margin.right);
 		var y_width = sizes.height_mini-(sizes.margin.top+sizes.margin.bottom);
 		var margin_left = sizes.margin.left+sizes.margin.right*2;
@@ -80,7 +80,7 @@ GraphDrawer.prototype.draw_minimap= function(svg,sizes,data,stack) {
 		var axis_margin = sizes.height_mini-sizes.margin.top;
 	}
 	else 
-	if(gui_manager.graph_type=="heat"){
+	if(GuiManager.graph_type=="heat"){
 		var x_width = sizes.width-(sizes.margin.left+sizes.margin.right);
 		var y_width = sizes.height_mini-(sizes.margin.top+sizes.margin.bottom);
 		var margin_left = sizes.margin.left+sizes.margin.right*2;
@@ -91,7 +91,7 @@ GraphDrawer.prototype.draw_minimap= function(svg,sizes,data,stack) {
 	this.mini_x = d3.scaleTime().range([0, x_width]);
 	this.mini_y = d3.scaleLinear().range([y_width, 0]);
 
-	if(gui_manager.graph_type=="stream" &&data&&stack){
+	if(GuiManager.graph_type=="stream" &&data&&stack){
 		if(!(data&&stack))
 			draw_background(svg,sizes);
 		else {	
@@ -100,7 +100,7 @@ GraphDrawer.prototype.draw_minimap= function(svg,sizes,data,stack) {
 		}
 	}
 	else
-	if(gui_manager.graph_type=="heat"){
+	if(GuiManager.graph_type=="heat"){
 		if(!(data&&stack))
 			draw_background(svg,sizes);
 		else {
@@ -143,12 +143,12 @@ GraphDrawer.prototype.draw_minimap= function(svg,sizes,data,stack) {
 			if(!drawer.events_range || !(moment(start).isSame(drawer.events_range[0]) && moment(end).isSame(drawer.events_range[1]))){
 				drawer.events_range=[moment(start),moment(end)];
 				drawer.check_brush();
-				gui_manager.ripe_data_broker.brush(drawer.events_range);
+				GuiManager.RipeDataBroker.brush(drawer.events_range);
 			}
 		}
 		else{
 			drawer.events_range=null;
-			gui_manager.ripe_data_broker.brush();
+			GuiManager.RipeDataBroker.brush();
 		}
 	}
 
@@ -333,8 +333,8 @@ GraphDrawer.prototype.draw_streamgraph = function(current_parsed, graph_type, ts
 	var g = this.main_svg.append("g")
 		.attr("transform", "translate(" + (1+this.sizes.margin.left+this.sizes.margin.right*2) + "," + this.sizes.margin.top + ")")
 		.attr("class","chart")
-		.on('mouseout', function(){if(!drawer.gui_manager.steps) mouseout()})
-		.on('mouseover', function(){if(!drawer.gui_manager.steps) mouseover()})
+		.on('mouseout', function(){if(!drawer.GuiManager.steps) mouseout()})
+		.on('mouseover', function(){if(!drawer.GuiManager.steps) mouseover()})
 		.on('click', function(){click(d3.mouse(this), d3.event)});
 
 	this.y.domain([0,1]);
@@ -372,7 +372,7 @@ GraphDrawer.prototype.draw_streamgraph = function(current_parsed, graph_type, ts
 		.style("fill", function(d) { return drawer.z(d.key); })
 		.style("opacity",1)
 		.attr("d", area)
-		.on('mousemove', function(d){if(!drawer.gui_manager.steps) mousemove(d,d3.mouse(this))});
+		.on('mousemove', function(d){if(!drawer.GuiManager.steps) mousemove(d,d3.mouse(this))});
 	
 	layer.filter(function(d) { return d[d.length - 1][1] - d[d.length - 1][0] > 0.025; })
 		.append("text")
@@ -382,7 +382,7 @@ GraphDrawer.prototype.draw_streamgraph = function(current_parsed, graph_type, ts
 		.style("font", "10px sans-serif")
 		.style("text-anchor", "end")
 		.style("z-index","999")
-		.style("fill",  function(d) { return drawer.color_manager.furthestLabelColor(drawer.z(d.key))})
+		.style("fill",  function(d) { return drawer.ColorManager.furthestLabelColor(drawer.z(d.key))})
 		.text(function(d) { return d.key; });
 
 	this.main_svg.selectAll(".axis--x")
@@ -512,10 +512,10 @@ GraphDrawer.prototype.common_for_streamgraph = function(tsv_data, keys_order, ev
 
 	this.keys = data.columns.slice(2);
 	//if colors are not enought in the pallette
-	if(this.color_manager.d_sorteds.length<this.keys.length)
-		this.color_manager.sortcolors(this.keys.length-this.color_manager.d_sorteds.length);
+	if(this.ColorManager.d_sorteds.length<this.keys.length)
+		this.ColorManager.sortcolors(this.keys.length-this.ColorManager.d_sorteds.length);
 	if(!preserve_color_map || this.current_query_id!=query_id || this.colors.length!=this.keys.length){
-		this.colors = this.color_manager.d_sorteds.map(function(c){return c.lab.rgb()}).slice(0,this.keys.length);
+		this.colors = this.ColorManager.d_sorteds.map(function(c){return c.lab.rgb()}).slice(0,this.keys.length);
 		this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
 		this.z.domain(this.keys);
 	}
@@ -1049,7 +1049,7 @@ GraphDrawer.prototype.draw_heatmap = function(current_parsed, tsv_incoming_data,
 GraphDrawer.prototype.shuffle_color_map = function(graph_type){
 	var drawer = this;
 	if(graph_type=="stream") {
-		this.colors = random_sort(this.color_manager.d_sorteds.map(function(c){return c.lab.rgb()}),this.keys.length);
+		this.colors = random_sort(this.ColorManager.d_sorteds.map(function(c){return c.lab.rgb()}),this.keys.length);
 		this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
 		this.z.domain(this.keys);
 		d3.selectAll(".area").each(function(d, i) {
@@ -1058,7 +1058,7 @@ GraphDrawer.prototype.shuffle_color_map = function(graph_type){
 	}
 	else 
 	if(graph_type=="heat"){
-		this.colors = random_sort(this.color_manager.d_sorteds.map(function(c){return c.lab.rgb()}),this.asn_set.length);
+		this.colors = random_sort(this.ColorManager.d_sorteds.map(function(c){return c.lab.rgb()}),this.asn_set.length);
 		this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
 		this.z.domain(this.asn_set);
 		d3.select(".main_svg").selectAll(".area").each(function(d, i) {

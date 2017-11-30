@@ -1,6 +1,6 @@
 define([
- /*moment*/
-], function(d3){
+	"bgpst.lib.moment"
+], function(moment){
 
 	var DateConverter = function(){
 		this.ripestat_data_format = "YYYY-MM-DDTHH:mm:ss";

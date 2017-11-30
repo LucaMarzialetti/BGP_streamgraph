@@ -1,31 +1,33 @@
 define([
     /*validator*/
     /*functions*/
-], function(d3){
+    "bgpst.controller.validator",
+    "bgpst.controller.functions"
+], function(validator, functions){
 
     var RipeDataParser = function() {
         console.log("==== RipeParser Starting");
         this.validator = new Validator();
-        this.rrc_map,
-            this.states=[],
-            this.events=[],
-            this.resources=[],
-            this.asn_distributions=[],
-            this.last_date;
+        this.rrc_map;
+        this.states = [];
+        this.events = [];
+        this.resources = [];
+        this.asn_distributions = [];
+        this.last_date;
 
-        this.asn_set=[];
-        this.rrc_set=[];
-        this.asn_freqs=[];
-        this.asn_sumfreqs=[];
-        this.asn_avgfreqs=[];
-        this.asn_varfreqs=[];
-        this.asn_stdev=[];
-        this.rrc_shiftings={};
+        this.asn_set = [];
+        this.rrc_set = [];
+        this.asn_freqs = [];
+        this.asn_sumfreqs = [];
+        this.asn_avgfreqs = [];
+        this.asn_varfreqs = [];
+        this.asn_stdev = [];
+        this.rrc_shiftings = {};
 
         this.fake_head = false;
         this.fake_tail = false;
-        this.query_starttime="";
-        this.query_endtime="";
+        this.query_starttime = "";
+        this.query_endtime = "";
 
         this.known_asn = {};
         this.known_rrc = {};
@@ -58,19 +60,19 @@ define([
         this.asn_distributions = [];
         this.asn_set = [];
         this.rrc_set = [];
-        this.asn_freqs={};
-        this.asn_sumfreqs={};
-        this.asn_avgfreqs={};
-        this.asn_varfreqs={};
-        this.asn_stdev={};
+        this.asn_freqs = {};
+        this.asn_sumfreqs = {};
+        this.asn_avgfreqs = {};
+        this.asn_varfreqs = {};
+        this.asn_stdev = {};
 
         //fetch nodes and cp
         this.fetchNodes(data);
         this.fetchCP(data);
 
         //date
-        this.query_starttime=data['query_starttime'];
-        this.query_endtime=data['query_endtime'];
+        this.query_starttime = data['query_starttime'];
+        this.query_endtime = data['query_endtime'];
 
         //estraggo i targets
         for(var t in data['targets']){
@@ -79,8 +81,8 @@ define([
         this.resources = data.sources;
         //inizializza la mappa in base al numero di targets
         for(var t in this.targets){
-            this.rrc_map[this.targets[t]]={};
-            this.states[this.targets[t]]=[];
+            this.rrc_map[this.targets[t]] = {};
+            this.states[this.targets[t]] = [];
         }
         //stato iniziale
         if(data.initial_state.length>0)
@@ -91,7 +93,8 @@ define([
         //zero fill
         this.zeroFilling(start,end);
         //for debugging
-        var log_on=false, print_on=false;
+        var log_on = false;
+        var print_on = false;
         if(log_on) {
             console.log(this.states);
             console.log(this.events);
@@ -155,9 +158,9 @@ define([
             var state = initial_state[i];
             var path = state['path'];
             var rrc_id = state['source_id'];
-            if(this.rrc_set.indexOf(rrc_id)==-1)
+            if(this.rrc_set.indexOf(rrc_id) == -1)
                 this.rrc_set.push(rrc_id);
-            this.rrc_map[state['target_prefix']][rrc_id]=path;
+            this.rrc_map[state['target_prefix']][rrc_id] = path;
         }
     };
 
@@ -174,19 +177,19 @@ define([
             var e_target = e_attrs['target_prefix'];
             var e_type = e['type'];
             //if its a new resource add to rrc_set
-            if(this.rrc_set.indexOf(e_s_id)==-1)
+            if(this.rrc_set.indexOf(e_s_id) == -1)
                 this.rrc_set.push(e_s_id);
             //make snapshot if timestamp is different
-            if(this.last_date!=e['timestamp']){
+            if(this.last_date != e['timestamp']){
                 this.snapshotOfState();
-                this.last_date=e['timestamp'];
+                this.last_date = e['timestamp'];
             }
             switch(e_type){
                 case 'A':
-                    this.rrc_map[e_target][e_s_id]=e_attrs['path'];
+                    this.rrc_map[e_target][e_s_id] = e_attrs['path'];
                     break;
                 case 'W':
-                    this.rrc_map[e_target][e_s_id]="";
+                    this.rrc_map[e_target][e_s_id] = "";
                     break;
                 default:
                     break;
@@ -211,7 +214,7 @@ define([
                 for(var r in this.rrc_set){
                     var rrc = this.rrc_set[r];
                     if(!e[rrc])
-                        e[rrc]=[];
+                        e[rrc] = [];
                 }
             }
         }
@@ -219,18 +222,18 @@ define([
         //PATCH EVENT BEFORE AND AFTER
         if(moment(this.events[0]).isAfter(moment(start))){
             console.log("ADDED HEAD FAKE EVENT");
-            this.fake_head=true;
-            this.query_starttime=start;
+            this.fake_head = true;
+            this.query_starttime = start;
         }
         else
-            this.fake_head=false;
+            this.fake_head = false;
         if(moment(this.events[this.events.length-1]).isBefore(moment(end))){
             console.log("ADDED TAIL FAKE EVENT");
-            this.fake_tail=true;
-            this.query_endtime=end;
+            this.fake_tail = true;
+            this.query_endtime = end;
         }
         else
-            this.fake_tail=false;
+            this.fake_tail = false;
         //}
     };
 
@@ -240,7 +243,7 @@ define([
         this.states_by_rrc = {};
         //init
         for(var r in parsed.rrc_set)
-            this.states_by_rrc[parsed.rrc_set[r]]=[];
+            this.states_by_rrc[parsed.rrc_set[r]] = [];
         //popolate
         for(var t in parsed.targets){
             var tgt = parsed.targets[t];
@@ -258,7 +261,7 @@ define([
                 }
             }
         }
-        parsed.states_by_rrc=this.states_by_rrc;
+        parsed.states_by_rrc = this.states_by_rrc;
     };
 
     //object of rrc and their asn sorted for occurrences
@@ -268,10 +271,10 @@ define([
         for(var r in parsed.rrc_set) {
             var rrc = parsed.rrc_set[r];
             var asn_seq = parsed.states_by_rrc[rrc];
-            this.rrc_by_composition[rrc]=sort_by_occurrences(asn_seq);
+            this.rrc_by_composition[rrc] = sort_by_occurrences(asn_seq);
         }
-        parsed.rrc_by_composition=this.rrc_by_composition;
-    };
+        parsed.rrc_by_composition = this.rrc_by_composition;
+    }; 
 
     //object of rrc and their asn seqs changed
     //MAP OF RRC AND ASN TRAVERSED (SEQUENCE OF ASN TRAVERSED)
@@ -280,9 +283,9 @@ define([
         for(var r in parsed.rrc_set) {
             var rrc = parsed.rrc_set[r];
             var asn_seq = parsed.states_by_rrc[rrc];
-            this.rrc_by_seqs[rrc]=no_consecutive_repetition(asn_seq);
+            this.rrc_by_seqs[rrc] = no_consecutive_repetition(asn_seq);
         }
-        parsed.rrc_by_seqs=this.rrc_by_seqs;
+        parsed.rrc_by_seqs = this.rrc_by_seqs;
     };
 
     //MAP OF ASN (AND EXCHANGES FOR OTHER ASN COUNTED)
@@ -291,50 +294,50 @@ define([
         for(var i in parsed.rrc_set){
             var as_list = parsed.rrc_by_seqs[parsed.rrc_set[i]];
             if(as_list.length>1){
-                for(var a=0; a<as_list.length-1; a++){
+                for(var a = 0; a<as_list.length-1; a++){
                     var pre = as_list[a];
                     var post = as_list[a+1];
                     if(!this.asn_by_exchanges[pre])
-                        this.asn_by_exchanges[pre]={};
+                        this.asn_by_exchanges[pre] = {};
                     var counter = this.asn_by_exchanges[pre][post];
                     if(!counter)
-                        counter=0;
+                        counter = 0;
                     counter++;
-                    this.asn_by_exchanges[pre][post]=counter;
+                    this.asn_by_exchanges[pre][post] = counter;
                 }
             }
         }
-        parsed.asn_by_exchanges=this.asn_by_exchanges;
+        parsed.asn_by_exchanges = this.asn_by_exchanges;
     };
 
     RipeDataParser.prototype.get_rrc_shiftings = function(parsed){
         this.rrc_shiftings = {};
         for(var t in parsed.targets){
-            this.rrc_shiftings[parsed.targets[t]]={};
+            this.rrc_shiftings[parsed.targets[t]] = {};
         }
         for(var r in parsed.rrc_set) {
-            this.rrc_shiftings[parsed.rrc_set[r]]=[];
+            this.rrc_shiftings[parsed.rrc_set[r]] = [];
         }
         for(var r in parsed.rrc_set) {
-            var rrc=parsed.rrc_set[r];
+            var rrc = parsed.rrc_set[r];
             for(var s in parsed.states){
                 var  val = parsed.states[s][rrc];
                 this.rrc_shiftings[rrc].push(val);
             }
         }
-        parsed.rrc_shiftings=this.rrc_shiftings;
+        parsed.rrc_shiftings = this.rrc_shiftings;
     };
 
     /* compute the frequency analysis */
     RipeDataParser.prototype.computeAsnFrequencies = function(data){
         //initialization
-        this.asn_freqs={};
-        this.asn_sumfreqs={};
-        this.asn_avgfreqs={};
-        this.asn_varfreqs={};
-        this.asn_stdev={};
+        this.asn_freqs = {};
+        this.asn_sumfreqs = {};
+        this.asn_avgfreqs = {};
+        this.asn_varfreqs = {};
+        this.asn_stdev = {};
         for(var a in this.asn_set)
-            this.asn_freqs[this.asn_set[a]]=[];
+            this.asn_freqs[this.asn_set[a]] = [];
         for(var i in data){
             for(var a in this.asn_set){
                 this.asn_freqs[this.asn_set[a]].push(data[i][this.asn_set[a]]);
@@ -342,10 +345,10 @@ define([
         }
         //compute cumulate, avg, variance and std_dev
         for(var a in this.asn_freqs){
-            this.asn_sumfreqs[a]=cumulate(this.asn_freqs[a]);
-            this.asn_avgfreqs[a]=average(this.asn_freqs[a],this.asn_sumfreqs[a]);
-            this.asn_varfreqs[a]=variance(this.asn_freqs[a],this.asn_avgfreqs[a]);
-            this.asn_stdev[a]=std_dev(this.asn_freqs[a],this.asn_varfreqs[a]);
+            this.asn_sumfreqs[a] = cumulate(this.asn_freqs[a]);
+            this.asn_avgfreqs[a] = average(this.asn_freqs[a],this.asn_sumfreqs[a]);
+            this.asn_varfreqs[a] = variance(this.asn_freqs[a],this.asn_avgfreqs[a]);
+            this.asn_stdev[a] = std_dev(this.asn_freqs[a],this.asn_varfreqs[a]);
         }
     };
 
@@ -355,7 +358,7 @@ define([
             var asn = node["as_number"];
             var owner = node["owner"];
             if(!this.known_asn[asn])
-                this.known_asn[asn]=owner;
+                this.known_asn[asn] = owner;
         }
     };
 
@@ -372,7 +375,7 @@ define([
                 var geo = geo_of_as.substr(index+1).split("-")[0].trim();
             }
             if(geo){
-                this.known_rrc[id]={
+                this.known_rrc[id] = {
                     "ip":ip,
                     "id":id,
                     "rrc":rrc,
@@ -398,11 +401,11 @@ define([
 
     RipeDataParser.prototype.comune_converter = function(data, antiprepending, level, target_types) {
         this.asn_distributions = [];
-        var include_ipv4=target_types.indexOf(4)!=-1;
-        var include_ipv6=target_types.indexOf(6)!=-1;
+        var include_ipv4 = target_types.indexOf(4)!= -1;
+        var include_ipv6 = target_types.indexOf(6)!= -1;
 
         this.asn_set = [];
-        this.local_visibility=0;
+        this.local_visibility = 0;
         //initialize
         for(var i in data.events)
             this.asn_distributions.push({});
@@ -412,29 +415,29 @@ define([
             if((include_ipv4 && this.validator.check_ipv4(tgt)) || (include_ipv6 && this.validator.check_ipv6(tgt))) {
                 for(var i in data.states[tgt]) {
                     var state = data.states[tgt][i];
-                    var tot=0;
+                    var tot = 0;
                     for(var e in state) {
                         var path = state[e];
                         if(antiprepending) {
                             //antiprepending-da-spostare
-                            path=no_consecutive_repetition(path);
+                            path = no_consecutive_repetition(path);
                         }
-                        if(path!=="" && path.length>(level)) {
+                        if(path != = "" && path.length>(level)) {
                             var asn = path[path.length-(level+1)];
                             //update the asn list if wasnt discovered
-                            if(this.asn_set.indexOf(asn)==-1)
+                            if(this.asn_set.indexOf(asn) == -1)
                                 this.asn_set.push(asn);
                             //update counters
                             var temp = this.asn_distributions[i][asn];
                             if(!temp)
                                 temp = 0;
-                            this.asn_distributions[i][asn]=(temp+1);
+                            this.asn_distributions[i][asn] = (temp+1);
                             tot++;
                         }
                     }
-                    this.asn_distributions[i]['tot_number']=tot;
+                    this.asn_distributions[i]['tot_number'] = tot;
                     if(tot>this.local_visibility)
-                        this.local_visibility=tot;
+                        this.local_visibility = tot;
                 }
             }
         }
@@ -442,21 +445,21 @@ define([
         for(var i in this.asn_distributions)
             for(var a in this.asn_set){
                 if(!this.asn_distributions[i][this.asn_set[a]])
-                    this.asn_distributions[i][this.asn_set[a]]=0;
+                    this.asn_distributions[i][this.asn_set[a]] = 0;
             }
-        data.asn_distributions=this.asn_distributions;
+        data.asn_distributions = this.asn_distributions;
         this.computeAsnFrequencies(this.asn_distributions);
         this.computeDifferenceVector(data);
         this.computeDistanceVector(data);
         this.get_rrc_shiftings(data);
-        data.asn_freqs=this.asn_freqs;
-        data.asn_sumfreqs=this.asn_sumfreqs;
-        data.asn_avgfreqs=this.asn_avgfreqs;
-        data.asn_varfreqs=this.asn_varfreqs;
-        data.asn_stdev=this.asn_stdev;
-        data.query_starttime=this.query_starttime;
-        data.query_endtime=this.query_endtime;
-        data.local_visibility=this.local_visibility;
+        data.asn_freqs = this.asn_freqs;
+        data.asn_sumfreqs = this.asn_sumfreqs;
+        data.asn_avgfreqs = this.asn_avgfreqs;
+        data.asn_varfreqs = this.asn_varfreqs;
+        data.asn_stdev = this.asn_stdev;
+        data.query_starttime = this.query_starttime;
+        data.query_endtime = this.query_endtime;
+        data.local_visibility = this.local_visibility;
     };
 
     //convert the data to a TSV format for streamgraph
@@ -465,72 +468,72 @@ define([
 
         var real_states = data.asn_distributions.concat();
         var real_events = data.events.concat();
-        var dummy_state={};
+        var dummy_state = {};
 
-        if(data.fake_tail||data.fake_tail){
+        if(data.fake_tail || data.fake_tail){
             for(var d in this.asn_set){
-                dummy_state[this.asn_set[d]]=0;
+                dummy_state[this.asn_set[d]] = 0;
             }
-            dummy_state['tot_number']=0;
+            dummy_state['tot_number'] = 0;
         }
 
         if(data.fake_head){
-            real_states=[dummy_state].concat(real_states);
-            real_events=[data.query_starttime].concat(real_events);
+            real_states = [dummy_state].concat(real_states);
+            real_events = [data.query_starttime].concat(real_events);
             console.log(real_states)
         }
 
         if(data.fake_tail){
-            real_states=real_states.concat(real_states[real_states.length-1]);
-            real_events=real_events.concat(data.query_endtime);
+            real_states = real_states.concat(real_states[real_states.length-1]);
+            real_events = real_events.concat(data.query_endtime);
         }
 
         //parse to TSV
         var converted_data = [];
         //TSV header
-        var header="date\ttot_number";
+        var header = "date\ttot_number";
         for(var i in this.asn_set)
             header+="\t"+this.asn_set[i];
         converted_data.push(header);
         //TSV DATA
         var last_values ="";
         var length = real_events.length-1;
-        for(var i=0; i<length; i++){
+        for(var i = 0; i<length; i++){
             var date = real_events[i]+"\t";
             var tot = real_states[i]['tot_number'];
-            var values="";
+            var values = "";
             for(var j in this.asn_set){
-                var value=real_states[i][this.asn_set[j]];
+                var value = real_states[i][this.asn_set[j]];
                 if(!value)
-                    value=0;
+                    value = 0;
                 values+="\t"+value;
             }
-            values=tot+values;
-            line=date+values;
+            values = tot+values;
+            line = date+values;
 
             //PATCH FOR STREAMGRAPH AVOID INTERPOLATION
-            if(last_values!="" && last_values!=values && i<data.events.length-2){
+            if(last_values != "" && last_values != values && i<data.events.length-2){
                 converted_data.push(date+last_values);
             }
             converted_data.push(line);
-            last_values=values;
+            last_values = values;
         }
 
-        var last_date= real_events[length]+"\t";
+        var last_date = real_events[length]+"\t";
         var last_tot = real_states[length]['tot_number'];
         var last_values ="";
         for(var j in this.asn_set){
-            var value=real_states[length][this.asn_set[j]];
+            var value = real_states[length][this.asn_set[j]];
             if(!value)
-                value=0;
+                value = 0;
             last_values+="\t"+value;
         }
-        last_values=last_tot+last_values;
+        last_values = last_tot+last_values;
         converted_data.push(date+last_values);
         converted_data.push(last_date+last_values);
 
         var converted = converted_data.join("\n");
-        data.asn_set=this.asn_set;
+        data.asn_set = this.asn_set;
         return converted;
     };
 
@@ -538,43 +541,43 @@ define([
     RipeDataParser.prototype.convert_to_heatmap_tsv = function(data,antiprepending, level, target_types) {
         this.comune_converter(data,antiprepending,level,target_types);
 
-        var real_states={};
-        var real_events=data.events.concat();
-        var dummy_state={};
+        var real_states = {};
+        var real_events = data.events.concat();
+        var dummy_state = {};
 
-        if(data.fake_tail||data.fake_tail){
+        if(data.fake_tail || data.fake_tail){
             for(var d in this.rrc_set)
-                dummy_state[this.rrc_set[d]]=[];
+                dummy_state[this.rrc_set[d]] = [];
         }
 
         for(var t in data.targets) {
             var tgt = data.targets[t];
-            real_states[tgt]=data.states[tgt].concat();
+            real_states[tgt] = data.states[tgt].concat();
         }
 
         if(data.fake_head){
             for(var t in data.targets) {
                 var tgt = data.targets[t];
-                real_states[tgt]=[dummy_state].concat(real_states[tgt]);
+                real_states[tgt] = [dummy_state].concat(real_states[tgt]);
             }
-            real_events=[data.query_starttime].concat(real_events);
+            real_events = [data.query_starttime].concat(real_events);
         }
 
         if(data.fake_tail){
             for(var t in data.targets) {
                 var tgt = data.targets[t];
                 //real_states[tgt]=real_states[tgt].concat(real_states[tgt][real_states[tgt].length-1]);
-                real_states[tgt]=real_states[tgt].concat(dummy_state);
+                real_states[tgt] = real_states[tgt].concat(dummy_state);
             }
-            real_events=real_events.concat(data.query_endtime);
+            real_events = real_events.concat(data.query_endtime);
         }
 
         console.log(real_events)
         var converted_data = [];
-        var header="date\trrc\tasn_path";
+        var header = "date\trrc\tasn_path";
         var rrc_set = data.rrc_set.sort();
-        var include_ipv4=target_types.indexOf(4)!=-1;
-        var include_ipv6=target_types.indexOf(6)!=-1;
+        var include_ipv4 = target_types.indexOf(4)!= -1;
+        var include_ipv6 = target_types.indexOf(6)!= -1;
         converted_data.push(header);
         for(var t in data.targets){
             var tgt = data.targets[t];
@@ -584,7 +587,7 @@ define([
                     for(var j in rrc_set){
                         var path = state[rrc_set[j]];
                         if(!Array.isArray(path))
-                            path=[];
+                            path = [];
                         var line = real_events[i];
                         line+="\t"+rrc_set[j]+"\t"+JSON.stringify(path);
                         converted_data.push(line);

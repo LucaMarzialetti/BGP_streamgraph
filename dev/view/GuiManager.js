@@ -1,52 +1,65 @@
 define([
-  /*jquery*/
-  /*ripe data broker*/
-  /*moment*/
-  /*RipeDataBroker*/
-  /*Validator*/
-  /*DateConverter*/
-  /*EPPZScrollTo*/
-  /*context*/
-  /*drawer*/
-  /*uso di chiamate DOM su tutto l'albero, dalla root del DOM*/
-], function(d3){
+	/*Validator*/
+	/*DateConverter*/
+	/*RipeDataBroker*/
+	/*context*/
+	/*drawer*/
+	/*Scroller*/
+	
+	/*moment*/
+	/*jquery*/
+
+	/*uso di chiamate DOM su tutto l'albero, dalla root del DOM*/
+
+	"bgpst.controller.validator",
+	"bgpst.controller.dateconverter",
+	"bgpst.view.broker",
+	"bgpst.view.context",
+	"bgpst.view.graphdrawer",
+	"bgpst.view.scroller",
+	"bgpst.lib.moment",
+
+	"bgpst.lib.jquery-amd",
+	"bgpst.lib.jquery-libs"
+
+], function(Validator, DateConverter, RipeDataBroker, ContextManager, GraphDrawer, EPPZScrollTo, moment, jquery){
 	
 	//setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
 	var GuiManager = function(drawer, context) {
 		console.log("== GuiManager Starting");
-		this.max_tokens=5;
+		this.max_tokens = 5;
 		this.current_local_ip;
 		/***************************************************************************/
 		this.loader = $(".loading_text");
 		this.mask = $("div.loader_mask");
 		this.container = $("div.body_container");
-		this.isGraphPresent=false;
-		this.preserve_map=true;
-		this.localstorage_enabled=true;
-		this.global_visibility=true;
-		this.prepending_prevention=true;
-		this.asn_level=1;
-		this.ip_version=[4];
-		this.graph_type="stream";
-		this.streaming=false;
-		this.steps=false;
-		this.merge_rrc=false;
-		this.merge_events=1;
-		this.events_labels=false;
-		this.rrc_labels=false;
+		this.isGraphPresent = false;
+		this.preserve_map = true;
+		this.localstorage_enabled = true;
+		this.global_visibility = true;
+		this.prepending_prevention = true;
+		this.asn_level = 1;
+		this.ip_version = [4];
+		this.graph_type = "stream";
+		this.streaming = false;
+		this.steps = false;
+		this.merge_rrc = false;
+		this.merge_events = 1;
+		this.events_labels = false;
+		this.rrc_labels = false;
 		this.use_scrollbars = false;
-		this.rrc_info_done=false;
-		this.asn_info_done=false;
-		this.gather_information=true;
-		this.heatmap_time_map=true;
-		this.streaming_speed=10000;
-		this.url=location.protocol + '//' + location.host + location.pathname;
+		this.rrc_info_done = false;
+		this.asn_info_done = false;
+		this.gather_information = true;
+		this.heatmap_time_map = true;
+		this.streaming_speed = 10000;
+		this.url = location.protocol + '//' + location.host + location.pathname;
 		/****************************************************************************/
 		this.drawer = drawer;
 		this.context = context;
-		this.ripe_data_broker = new RipeDataBroker(this.drawer, this.context, this);
+		this.RipeDataBroker = new RipeDataBroker(this.drawer, this.context, this);
 		this.validator = new Validator();
-		this.date_converter = new DateConverter();
+		this.DateConverter = new DateConverter();
 		this.scroller = new EPPZScrollTo();
 		console.log("== GuiManager Ready");
 
@@ -93,7 +106,7 @@ define([
 
 	//setup the pickers <-- TO CALL AT SETUP
 	GuiManager.prototype.pickers_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		/*formats & date linking*/
 		$('.datetimepicker.date_only.start').datetimepicker({
 			format:'l',
@@ -116,18 +129,18 @@ define([
 		$(".datetimepicker.date_only.start").on("dp.change", function (e) {
 			var date_start = $('.datetimepicker.date_only.start').data("DateTimePicker").date();
 			var date_end = $('.datetimepicker.date_only.end').data("DateTimePicker").date();
-			if(date_end==null||date_end==undefined)
+			if(date_end == null || date_end == undefined)
 				$('.datetimepicker.date_only.end').data("DateTimePicker").date(date_start);
 			$('.datetimepicker.date_only.end').data("DateTimePicker").minDate(e.date);
 		});
 		$(".datetimepicker.time_only.start").on("dp.change", function (e) {
-			gui_manager.check_end_time(e);
+			GuiManager.check_end_time(e);
 		});
 		$('.datetimepicker.date_only').on("dp.change", function (e) {
-			gui_manager.check_end_time(e);
+			GuiManager.check_end_time(e);
 		});
 		$('.datetimepicker').on("dp.change", function (e) {
-			gui_manager.UIerror_check(this);
+			GuiManager.UIerror_check(this);
 
 		});
 
@@ -138,11 +151,11 @@ define([
 
 		//setting current date
 		var cur_date = moment();
-		$('.datetimepicker.date_only.end').data("DateTimePicker").date(this.date_converter.formatInterface(cur_date));
-		$('.datetimepicker.time_only.end').data("DateTimePicker").date(this.date_converter.formatInterfaceTime(cur_date));
+		$('.datetimepicker.date_only.end').data("DateTimePicker").date(this.DateConverter.formatInterface(cur_date));
+		$('.datetimepicker.time_only.end').data("DateTimePicker").date(this.DateConverter.formatInterfaceTime(cur_date));
 		var day_before = moment().subtract(1,'days');
-		$('.datetimepicker.date_only.start').data("DateTimePicker").date(this.date_converter.formatInterface(day_before));
-		$('.datetimepicker.time_only.start').data("DateTimePicker").date(this.date_converter.formatInterfaceTime(day_before));
+		$('.datetimepicker.date_only.start').data("DateTimePicker").date(this.DateConverter.formatInterface(day_before));
+		$('.datetimepicker.time_only.start').data("DateTimePicker").date(this.DateConverter.formatInterfaceTime(day_before));
 	};
 
 	//avoid time clipping on hours time pickers
@@ -150,10 +163,10 @@ define([
 		var date_start = $('.datetimepicker.date_only.start').data("DateTimePicker").date();
 		var date_end = $('.datetimepicker.date_only.end').data("DateTimePicker").date();
 		var time_start = $('.datetimepicker.time_only.start').data("DateTimePicker").date();
-		if(date_start==null && date_end==null)
+		if(date_start == null && date_end == null)
 			$('.datetimepicker.time_only.end').data("DateTimePicker").minDate(time_start);
 		else
-		if(moment(date_start).isSame(date_end,'date') && !((time_start==null)||(time_start=="")||(time_start==undefined))) {
+		if(moment(date_start).isSame(date_end,'date') && !((time_start == null)||(time_start == "")||(time_start == undefined))) {
 			$('.datetimepicker.time_only.end').data("DateTimePicker").minDate(time_start);
 		}
 		else 
@@ -162,53 +175,53 @@ define([
 
 	//setup the tokenfield <-- TO CALL AT SETUP
 	GuiManager.prototype.tokenfield_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		//tokenfield
-		$('.tokenfield').tokenfield();//{limit:gui_manager.max_tokens}
+		$('.tokenfield').tokenfield();//{limit:GuiManager.max_tokens}
 		//var placeholder=$('.tokenfield').find('input').attr('placeholder');
-		//$('.tokenfield').find('input').attr('placeholder', placeholder+" ("+gui_manager.max_tokens+" max)");
+		//$('.tokenfield').find('input').attr('placeholder', placeholder+" ("+GuiManager.max_tokens+" max)");
 		$('.tokenfield').on('keydown',function(e){
 			e.preventDefault();
 			e.stopPropagation();
 		});
 		$('.tokenfield').on("change",function(e) {
-			gui_manager.UIerror_check($(this).parent().parent());
+			GuiManager.UIerror_check($(this).parent().parent());
 		});
 	};
 
 	/**if the field get updated remove the error class**/
 	GuiManager.prototype.UIerror_check = function(e) {
 		var val = $(e).find('input').val();
-		if(val!=null && val!="" && val!=undefined)
+		if(val != null && val != "" && val != undefined)
 			$(e).removeClass("has-error");
 	};
 
 	//setup the input address <-- TO CALL AT SETUP
 	GuiManager.prototype.input_address_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$('input.add_address').on('keydown',function(e){
 			var version = $("input[name='ipversion']:checked").val();
 			var val = $(this).parent().find('input').val();
 			var valid = false;
-			if((val!=null && val!=undefined && val!="") && gui_manager.valid_address())
+			if((val != null && val != undefined && val != "") && GuiManager.valid_address())
 				var valid = true;
-			if(e.which==13) {
+			if(e.which == 13) {
 				e.preventDefault();
 				if(valid) {
 					switch(version) {
 						case "asn":
-							val="AS"+val;
+							val = "AS"+val;
 						break;
 						case "4":
 							var bar = $('input[name="add_bar"]').val();
-							if(bar!="" && bar!=null && bar!=undefined)
-								val=val+"/"+bar;
+							if(bar != "" && bar != null && bar != undefined)
+								val = val+"/"+bar;
 							$('input[name="add_bar"]').val("");
 						break;
 						case "6":
 							var bar = $('input[name="add_bar"]').val();
-							if(bar!="" && bar!=null && bar!=undefined)
-								val=val+"/"+bar;
+							if(bar != "" && bar != null && bar != undefined)
+								val = val+"/"+bar;
 							$('input[name="add_bar"]').val("");
 						break;
 					}
@@ -222,7 +235,7 @@ define([
 
 		$('input.add_address').on('keyup',function(e){
 			var val = $(this).parent().find('input').val();
-			if(val==null || val==undefined || val==""){
+			if(val == null || val == undefined || val == ""){
 				$(this).parent().removeClass("has-success");
 				$(this).parent().removeClass("has-error");
 			}
@@ -231,9 +244,9 @@ define([
 		$('input.add_address').on('paste',function(e){
 			var pasteData = e.originalEvent.clipboardData.getData('text');
 			var fields;
-			if(gui_manager.validator.check_ipv4(pasteData)||gui_manager.validator.check_ipv6(pasteData)||gui_manager.validator.check_asn(pasteData)){
-				if(gui_manager.validator.check_asn(pasteData)){
-					fields=pasteData.replace(/^(A|a)(S|s)/,"").trim();
+			if(GuiManager.validator.check_ipv4(pasteData)||GuiManager.validator.check_ipv6(pasteData)||GuiManager.validator.check_asn(pasteData)){
+				if(GuiManager.validator.check_asn(pasteData)){
+					fields = pasteData.replace(/^(A|a)(S|s)/,"").trim();
 					$('input[name="ipversion"][value="asn"]').prop('checked', true);
 					$('input.add_address').val(fields);
 					$('input[name="ipversion"]').change();
@@ -242,11 +255,11 @@ define([
 				}
 				else {
 					fields = pasteData.trim().split("/");
-					if(fields.length==2)
-						if((gui_manager.validator.check_ipv6(fields[0])&&parseInt(fields[1])<129)||(gui_manager.validator.check_ipv4(fields[0])&&parseInt(fields[1])<33)){
-							if(gui_manager.validator.check_ipv4(fields[0]))
+					if(fields.length == 2)
+						if((GuiManager.validator.check_ipv6(fields[0])&&parseInt(fields[1])<129)||(GuiManager.validator.check_ipv4(fields[0])&&parseInt(fields[1])<33)){
+							if(GuiManager.validator.check_ipv4(fields[0]))
 								$('input[name="ipversion"][value="4"]').prop('checked', true);
-							if(gui_manager.validator.check_ipv6(fields[0]))
+							if(GuiManager.validator.check_ipv6(fields[0]))
 								$('input[name="ipversion"][value="6"]').prop('checked', true);
 							$('input.add_address').val(fields[0]);
 							$('input[name="ipversion"]').change();
@@ -260,7 +273,7 @@ define([
 
 		$('input.add_address').on('focusout',function(e){
 			var val = $('input.add_address').val();
-			if(val=="")
+			if(val == "")
 				$('input.add_address').parent().removeClass("has-error");
 		});
 	};
@@ -268,7 +281,7 @@ define([
 	//setup the bar address <-- TO CALL WHEN BAR IS CREATED
 	GuiManager.prototype.input_bar_setup = function() {
 		$('input.bar').on('keydown',function(e){
-			if(e.which==13) {
+			if(e.which == 13) {
 				e.preventDefault();
 				$('input.add_address').trigger(e);
 				$('input.add_address').focus();
@@ -278,7 +291,7 @@ define([
 
 		$('input.bar').on('focusout',function(e){
 			var val = $('input.bar').val();
-			if(val=="")
+			if(val == "")
 				$('input.bar').parent().removeClass("has-error");
 		});
 	};
@@ -297,36 +310,36 @@ define([
 	//radio button setup
 	//call the new validator on the address field  <-- TO CALL AT SETUP FUNCTION
 	GuiManager.prototype.ipversion_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$('input[name="ipversion"]').on('change',function(e){
 
-			gui_manager.validator_destroy();
+			GuiManager.validator_destroy();
 			var version = $("input[name='ipversion']:checked").val();
 			//destroy old validator
 			$('input.add_address').parent().find('.asnumber').remove();
 			$('input.add_address').parent().find('.bar').remove();
 			switch(version) {
 				case "4" : 
-					gui_manager.set_ipv4_validator();
+					GuiManager.set_ipv4_validator();
 				break;
 				case "6" :
-					gui_manager.set_ipv6_validator();
+					GuiManager.set_ipv6_validator();
 				break;
 				case "asn" :
-					gui_manager.set_asn_validator();
+					GuiManager.set_asn_validator();
 				break;
 				case "free" :
-					gui_manager.set_free_validator();
+					GuiManager.set_free_validator();
 				break;
 				default :
 				break;
 			}
 			//call the new validator to validate
-			gui_manager.validator_validate();
+			GuiManager.validator_validate();
 			$('input.add_address').parent().find('input.add_address').trigger('focus');
 		});
 		//default first validaor
-		gui_manager.set_ipv4_validator();
+		GuiManager.set_ipv4_validator();
 	};
 
 	//call the validation method
@@ -500,7 +513,7 @@ define([
 	//go_button click setup  <-- TO CALL AT SETUP FUNCTION
 	//check if the fields are valid and then submit the query to RIPEstat rest API
 	GuiManager.prototype.go_button_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".go_button").on('click',function(){
 			var time_start = $(".datetimepicker.time_only.start").find("input").val();
 			var time_end = $(".datetimepicker.time_only.end").find("input").val();
@@ -509,76 +522,76 @@ define([
 			var tgs = $(".tokenfield").find("input").val().replace(/\s/g, '');
 			var bar = $("input.bar").val();
 			var input = $("input.add_address").val();
-			if(tgs==""&&$("div.input_add").hasClass("has-success")){
-				var tgs=input;
-				if(gui_manager.validator.check_asn(tgs))
-					tgs="AS"+tgs;
+			if(tgs == ""&&$("div.input_add").hasClass("has-success")){
+				var tgs = input;
+				if(GuiManager.validator.check_asn(tgs))
+					tgs = "AS"+tgs;
 				else
-				if(bar!=""&&bar!=null&&!isNaN(parseInt(bar)))
+				if(bar != ""&&bar != null&&!isNaN(parseInt(bar)))
 					tgs+="/"+bar;
 			}
 			var check = true;
-			if(time_start==null || time_start==""){
-				check=false;
+			if(time_start == null || time_start == ""){
+				check = false;
 				$(".datetimepicker.time_only.start").addClass("has-error");
 			}
-			if(time_end==null || time_end==""){
-				check=false;
+			if(time_end == null || time_end == ""){
+				check = false;
 				$(".datetimepicker.time_only.end").addClass("has-error");
 			}
-			if(date_start==null || date_start==""){
-				check=false;
+			if(date_start == null || date_start == ""){
+				check = false;
 				$(".datetimepicker.date_only.start").addClass("has-error");
 			}
-			if(date_end==null || date_end==""){
-				check=false;		
+			if(date_end == null || date_end == ""){
+				check = false;		
 				$(".datetimepicker.date_only.end").addClass("has-error");	
 			}
-			if(tgs==null || tgs==""){
-				check=false;
+			if(tgs == null || tgs == ""){
+				check = false;
 				$(".tokenfield").parent().addClass("has-error");
 			}
 			if(check){
 				$("input.add_address").val("");
 				$("input.bar").val("");
 				$("div.input_add").removeClass("has-success");
-				gui_manager.changeLoaderText("Connecting to RIPEStat");
-				gui_manager.toggleLoader();
-				gui_manager.ripe_data_broker.requestBuilderData(date_start,time_start,date_end,time_end,tgs);
-				gui_manager.ripe_data_broker.getData();
+				GuiManager.changeLoaderText("Connecting to RIPEStat");
+				GuiManager.toggleLoader();
+				GuiManager.RipeDataBroker.requestBuilderData(date_start,time_start,date_end,time_end,tgs);
+				GuiManager.RipeDataBroker.getData();
 			}
 		});
 	};
 
 	GuiManager.prototype.url_string = function() {
-		var gui_manager=this;
-		var url_to_push =gui_manager.url+"?";
-		url_to_push+='w.starttime='+gui_manager.ripe_data_broker.current_starttime;
-		url_to_push+="&w.endtime="+gui_manager.ripe_data_broker.current_endtime;
-		url_to_push+="&w.type="+gui_manager.graph_type;
-		url_to_push+="&w.level="+gui_manager.asn_level;
-		url_to_push+="&w.prepending="+gui_manager.prepending_prevention;
-		url_to_push+="&w.merge_rrc="+gui_manager.merge_rrc;
-		url_to_push+="&w.merge_events="+gui_manager.merge_events;
-		url_to_push+="&w.timemap="+gui_manager.heatmap_time_map;
-		url_to_push+="&w.global="+gui_manager.global_visibility;
-		url_to_push+="&w.info="+gui_manager.gather_information;
-		url_to_push+="&w.heu="+gui_manager.ripe_data_broker.heuristics_manager.current_heuristic;
-		if(gui_manager.ripe_data_broker.heuristics_manager.current_sort_type)
-			url_to_push+="&w.sort_type="+gui_manager.ripe_data_broker.heuristics_manager.current_sort_type;
-		url_to_push+="&w.colors="+gui_manager.preserve_map;
-		if(gui_manager.drawer.events_range){
-			url_to_push+="&w.brush_s="+gui_manager.date_converter.formatRipe(gui_manager.drawer.events_range[0]);
-			url_to_push+="&w.brush_e="+gui_manager.date_converter.formatRipe(gui_manager.drawer.events_range[1]);
+		var GuiManager = this;
+		var url_to_push =GuiManager.url+"?";
+		url_to_push+='w.starttime='+GuiManager.RipeDataBroker.current_starttime;
+		url_to_push+="&w.endtime="+GuiManager.RipeDataBroker.current_endtime;
+		url_to_push+="&w.type="+GuiManager.graph_type;
+		url_to_push+="&w.level="+GuiManager.asn_level;
+		url_to_push+="&w.prepending="+GuiManager.prepending_prevention;
+		url_to_push+="&w.merge_rrc="+GuiManager.merge_rrc;
+		url_to_push+="&w.merge_events="+GuiManager.merge_events;
+		url_to_push+="&w.timemap="+GuiManager.heatmap_time_map;
+		url_to_push+="&w.global="+GuiManager.global_visibility;
+		url_to_push+="&w.info="+GuiManager.gather_information;
+		url_to_push+="&w.heu="+GuiManager.RipeDataBroker.heuristics_manager.current_heuristic;
+		if(GuiManager.RipeDataBroker.heuristics_manager.current_sort_type)
+			url_to_push+="&w.sort_type="+GuiManager.RipeDataBroker.heuristics_manager.current_sort_type;
+		url_to_push+="&w.colors="+GuiManager.preserve_map;
+		if(GuiManager.drawer.events_range){
+			url_to_push+="&w.brush_s="+GuiManager.DateConverter.formatRipe(GuiManager.drawer.events_range[0]);
+			url_to_push+="&w.brush_e="+GuiManager.DateConverter.formatRipe(GuiManager.drawer.events_range[1]);
 		}
-		url_to_push+="&w.resources="+gui_manager.ripe_data_broker.current_targets;
+		url_to_push+="&w.resources="+GuiManager.RipeDataBroker.current_targets;
 		history.pushState("", 'BGPStreamgraph', url_to_push);
 	};
 
 	//cache the current local ip <-- TO CALL AT SETUP FUNCTION
 	//return the current pubblic ip of the local machine  <-- TO CALL AT SETUP FUNCTION
 	GuiManager.prototype.get_local_ip = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$.ajax({
 	        type: "GET",
 	        data: {},
@@ -586,7 +599,7 @@ define([
 	        error: function(response) {
 	        	console.log(response);
 	        	var code = parseInt(response.status/100);
-	        	if(code==0)
+	        	if(code == 0)
 	        		alert("IpInfo: Blocked by client, may disable AdBlock.");
 	        	else
 	            switch(code) {
@@ -602,7 +615,7 @@ define([
 	        success: function(response) {
 	        	console.log("== GUiManager IP info");
 	        	console.log(response);
-				gui_manager.current_local_ip=response.ip;
+				GuiManager.current_local_ip = response.ip;
 	        }
 	    });
 	};
@@ -610,11 +623,11 @@ define([
 	//my_ip_button click setup  <-- TO CALL AT SETUP FUNCTION
 	//check for the current machine pubblic ip
 	GuiManager.prototype.my_ip_button_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".my_ip_button").on("click", function(){
-			if(!gui_manager.current_local_ip)
-				gui_manager.get_local_ip();
-			gui_manager.set_address(gui_manager.current_local_ip)
+			if(!GuiManager.current_local_ip)
+				GuiManager.get_local_ip();
+			GuiManager.set_address(GuiManager.current_local_ip)
 		});
 	};
 
@@ -680,19 +693,19 @@ define([
 	};
 
 	GuiManager.prototype.shuffle_color_map_btn_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".shuffle_color_map_btn").on("click", function(e){
-			if(gui_manager.isGraphPresent)
-				gui_manager.drawer.shuffle_color_map(gui_manager.graph_type);
+			if(GuiManager.isGraphPresent)
+				GuiManager.drawer.shuffle_color_map(GuiManager.graph_type);
 		});
 	};
 
 	GuiManager.prototype.draw_last_data_btn_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".draw_last_data_btn").on("click", function(e){
-			gui_manager.changeLoaderText("Restoring Context");
-			gui_manager.toggleLoader();
-			setTimeout(function(){gui_manager.context.restoreContext();gui_manager.draw_functions_btn_enabler();gui_manager.toggleLoader();},0);
+			GuiManager.changeLoaderText("Restoring Context");
+			GuiManager.toggleLoader();
+			setTimeout(function(){GuiManager.context.restoreContext();GuiManager.draw_functions_btn_enabler();GuiManager.toggleLoader();},0);
 		});
 	};
 
@@ -709,7 +722,7 @@ define([
 
 	//d3.select("svg").select(".chart").node()
 	GuiManager.prototype.draw_functions_btn_enabler = function() {
-		gui_manager=this;
+		GuiManager = this;
 		if(!this.streaming){
 			$(".option_command_btn").removeClass("disabled");
 			$(".clear_targets_button").removeClass("disabled");
@@ -744,7 +757,7 @@ define([
 				$(".path_btn").removeClass("not-active");
 				$(".list_btn").removeClass("not-active");
 				$(".sort_btn").removeClass("not-active");
-				if(!this.ripe_data_broker.current_parsed.targets.some(function(e){return gui_manager.validator.check_ipv4(e);})){
+				if(!this.RipeDataBroker.current_parsed.targets.some(function(e){return GuiManager.validator.check_ipv4(e);})){
 					$("input[name='ip_version'][value='4']").parent().addClass("disabled");
 					$("input[name='ip_version'][value='4']").parent().addClass("not-active");
 					$("input[name='ip_version'][value='4']").parent().attr("disabled",true);
@@ -754,7 +767,7 @@ define([
 					$("input[name='ip_version'][value='4']").parent().removeClass("not-active");
 					$("input[name='ip_version'][value='4']").parent().attr("disabled",false);
 				}
-				if(!this.ripe_data_broker.current_parsed.targets.some(function(e){return gui_manager.validator.check_ipv6(e);})){
+				if(!this.RipeDataBroker.current_parsed.targets.some(function(e){return GuiManager.validator.check_ipv6(e);})){
 					$("input[name='ip_version'][value='6']").parent().addClass("disabled");
 					$("input[name='ip_version'][value='6']").parent().addClass("not-active");
 					$("input[name='ip_version'][value='6']").parent().attr("disabled",true);
@@ -764,7 +777,7 @@ define([
 					$("input[name='ip_version'][value='6']").parent().removeClass("not-active");
 					$("input[name='ip_version'][value='6']").parent().attr("disabled",false);
 				}
-				if(this.ip_version.indexOf(4)!=-1){
+				if(this.ip_version.indexOf(4) != -1){
 					$('input[name="ip_version"]').filter('[value="4"]').prop('checked', true);
 					$('input[name="ip_version"]').filter('[value="4"]').parent().addClass("active");
 				}
@@ -772,7 +785,7 @@ define([
 					$('input[name="ip_version"]').filter('[value="4"]').prop('checked', false);
 					$('input[name="ip_version"]').filter('[value="4"]').parent().removeClass("active");
 				}
-				if(this.ip_version.indexOf(6)!=-1){
+				if(this.ip_version.indexOf(6) != -1){
 					$('input[name="ip_version"]').filter('[value="6"]').prop('checked', true);
 					$('input[name="ip_version"]').filter('[value="6"]').parent().addClass("active");
 				}
@@ -782,7 +795,7 @@ define([
 				}
 				$(".counter").removeClass("hidden");
 				this.draggable_setup();
-				if(this.graph_type=="stream"){
+				if(this.graph_type == "stream"){
 					$("input[name='steps'][value='steps']").parent().removeClass("disabled");
 					$("input[name='steps'][value='steps']").parent().removeClass("not-active");
 					$("input[name='steps'][value='steps']").parent().attr("disabled",false);
@@ -793,7 +806,7 @@ define([
 					$("input[name='streaming'][value='streaming']").parent().attr("disabled",false);
 					$(".streaming_btn").removeClass("not-active");
 				}
-				if(this.graph_type=="heat"){
+				if(this.graph_type == "heat"){
 					$("input[name='steps'][value='steps']").parent().addClass("disabled");
 					$("input[name='steps'][value='steps']").parent().addClass("not-active");
 					$("input[name='steps'][value='steps']").parent().attr("disabled",true);
@@ -896,137 +909,137 @@ define([
 	};
 
 	GuiManager.prototype.erase_graph_btn_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".erase_graph_btn").on("click", function(e){
-			gui_manager.drawer.drawer_init();
-			gui_manager.isGraphPresent=false;
-			gui_manager.draw_functions_btn_enabler();
+			GuiManager.drawer.drawer_init();
+			GuiManager.isGraphPresent = false;
+			GuiManager.draw_functions_btn_enabler();
 		});
 	};
 
 	GuiManager.prototype.gather_information_btn_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".gather_information_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.gather_information=!gui_manager.gather_information;
-			gui_manager.url_string();
+			GuiManager.gather_information = !GuiManager.gather_information;
+			GuiManager.url_string();
 		});
 	};
 
 	GuiManager.prototype.preserve_color_map_btn_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".preserve_color_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.preserve_map=!gui_manager.preserve_map;
-			gui_manager.url_string();
+			GuiManager.preserve_map = !GuiManager.preserve_map;
+			GuiManager.url_string();
 		});
 	};
 
 	GuiManager.prototype.local_storage_enabled_btn_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".localstorage_enabled_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.localstorage_enabled=!gui_manager.localstorage_enabled;
+			GuiManager.localstorage_enabled = !GuiManager.localstorage_enabled;
 		});
 	};
 
 	GuiManager.prototype.prepending_prevention_btn_setup = function () {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".prepending_prevention_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.prepending_prevention=!gui_manager.prepending_prevention;
-			if(gui_manager.isGraphPresent)
-				if(gui_manager.graph_type=="stream")
-					gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
+			GuiManager.prepending_prevention = !GuiManager.prepending_prevention;
+			if(GuiManager.isGraphPresent)
+				if(GuiManager.graph_type == "stream")
+					GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 				else
-				if(gui_manager.graph_type=="heat")
-					gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
+				if(GuiManager.graph_type == "heat")
+					GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 		});
 	};
 
 	GuiManager.prototype.merge_rrc_btn_setup = function () {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".merge_rrc_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.merge_rrc=!gui_manager.merge_rrc;
-			if(gui_manager.isGraphPresent) {
-				gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
-				if(gui_manager.merge_rrc)
-					gui_manager.update_counters(".counter_asn", gui_manager.drawer.keys.length+"/"+gui_manager.ripe_data_broker.current_parsed.rrc_set.length);
+			GuiManager.merge_rrc = !GuiManager.merge_rrc;
+			if(GuiManager.isGraphPresent) {
+				GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
+				if(GuiManager.merge_rrc)
+					GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length+"/"+GuiManager.RipeDataBroker.current_parsed.rrc_set.length);
 				else
-					gui_manager.update_counters(".counter_asn", gui_manager.drawer.keys.length);
+					GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length);
 			}
 		});
 	};
 
 	GuiManager.prototype.merge_events_btn_setup = function () {
-		var gui_manager = this;
+		var GuiManager = this;
 		$("input[name='merge_events']:input").on("change", function( e, ui ) {
-			gui_manager.merge_events=$("input[name='merge_events']").spinner("value");
-			if(gui_manager.isGraphPresent) {
-				gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
-				if(gui_manager.merge_events)
-					gui_manager.update_counters(".counter_events",gui_manager.drawer.event_set.length+"/"+gui_manager.ripe_data_broker.current_parsed.events.length);
+			GuiManager.merge_events = $("input[name='merge_events']").spinner("value");
+			if(GuiManager.isGraphPresent) {
+				GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
+				if(GuiManager.merge_events)
+					GuiManager.update_counters(".counter_events",GuiManager.drawer.event_set.length+"/"+GuiManager.RipeDataBroker.current_parsed.events.length);
 				else
-					gui_manager.update_counters(".counter_events",gui_manager.ripe_data_broker.current_parsed.events.length);
+					GuiManager.update_counters(".counter_events",GuiManager.RipeDataBroker.current_parsed.events.length);
 			}
 		});
 	};
 
 	GuiManager.prototype.events_labels_btn_setup = function () {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".events_labels_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.events_labels=!gui_manager.events_labels;
-			if(gui_manager.isGraphPresent)
-				gui_manager.ripe_data_broker.loadCurrentState(false,null,false);
+			GuiManager.events_labels = !GuiManager.events_labels;
+			if(GuiManager.isGraphPresent)
+				GuiManager.RipeDataBroker.loadCurrentState(false,null,false);
 		});
 	};
 
 	GuiManager.prototype.rrc_labels_btn_setup = function () {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".rrc_labels_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.rrc_labels=!gui_manager.rrc_labels;
-			if(gui_manager.isGraphPresent)
-				gui_manager.ripe_data_broker.loadCurrentState(false,null,false);
+			GuiManager.rrc_labels = !GuiManager.rrc_labels;
+			if(GuiManager.isGraphPresent)
+				GuiManager.RipeDataBroker.loadCurrentState(false,null,false);
 		});
 	};
 
 	GuiManager.prototype.heatmap_time_btn_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".heatmap_time_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.heatmap_time_map=!gui_manager.heatmap_time_map;
-			if(gui_manager.isGraphPresent)
-				gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
+			GuiManager.heatmap_time_map = !GuiManager.heatmap_time_map;
+			if(GuiManager.isGraphPresent)
+				GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 		});
 	};
 
 	GuiManager.prototype.scrollbars_btn_setup = function () {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".scrollbars_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.use_scrollbars=!gui_manager.use_scrollbars;
-			if(gui_manager.use_scrollbars){
+			GuiManager.use_scrollbars = !GuiManager.use_scrollbars;
+			if(GuiManager.use_scrollbars){
 				$("svg").parent().css("overflow","scroll");
 
 			}
@@ -1037,18 +1050,18 @@ define([
 	};
 
 	GuiManager.prototype.global_visiblity_btn_setup = function () {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".global_visibility_btn").on("click", function(e){
 			var target = e.target;
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
-			gui_manager.global_visibility=!gui_manager.global_visibility;
-			if(gui_manager.isGraphPresent)
-				if(gui_manager.graph_type=="stream")
-					gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
+			GuiManager.global_visibility = !GuiManager.global_visibility;
+			if(GuiManager.isGraphPresent)
+				if(GuiManager.graph_type == "stream")
+					GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 				else
-				if(gui_manager.graph_type=="heat")
-					gui_manager.ripe_data_broker.loadCurrentState(false,null,true);	
+				if(GuiManager.graph_type == "heat")
+					GuiManager.RipeDataBroker.loadCurrentState(false,null,true);	
 		});
 	};
 
@@ -1143,7 +1156,7 @@ define([
 			$(".scrollbars_btn").parent().addClass("active");
 		}
 
-		if(this.graph_type=="stream"){
+		if(this.graph_type == "stream"){
 			$('input[name="graph_type"][value="stream"]').prop('checked', true);
 			$('input[name="graph_type"][value="stream"]').parent().addClass("active");
 			$('input[name="graph_type"][value="heat"]').parent().removeClass("active");
@@ -1151,18 +1164,18 @@ define([
 			$(".heat_option").addClass("hidden");
 		}
 		else 
-		if(this.graph_type=="heat"){
+		if(this.graph_type == "heat"){
 			$('input[name="graph_type"][value="heat"]').prop('checked', true);
 			$('input[name="graph_type"][value="heat"]').parent().addClass("active");
 			$('input[name="graph_type"][value="stream"]').parent().removeClass("active");
 			$(".heat_option").removeClass("hidden");
 			$(".stream_option").addClass("hidden");
 		}
-		if(this.ip_version.indexOf(4)!=-1){
+		if(this.ip_version.indexOf(4) != -1){
 			$('input[name="ip_version"][value="4"]').prop('checked', true);
 			$('input[name="ip_version"][value="4"]').parent().addClass("active");
 		}
-		if(this.ip_version.indexOf(6)!=-1){
+		if(this.ip_version.indexOf(6) != -1){
 			$('input[name="ip_version"][value="6"]').prop('checked', true);
 			$('input[name="ip_version"][value="6"]').parent().addClass("active");
 		}
@@ -1171,10 +1184,10 @@ define([
 	};
 
 	GuiManager.prototype.graph_type_radio_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		$("input[name='graph_type']").on("change",function(e){
-			gui_manager.graph_type=$("input[name='graph_type']:checked").val();
-		if(gui_manager.graph_type=="stream"){
+			GuiManager.graph_type = $("input[name='graph_type']:checked").val();
+		if(GuiManager.graph_type == "stream"){
 			$(".title").html("Global View");
 			$("div.main_svg").css("height","70vh");
 			$("div.main_svg").css("width","auto");
@@ -1184,10 +1197,10 @@ define([
 			$(".stream_option").removeClass("hidden");
 			$(".heat_option").addClass("hidden");
 		}
-		if(gui_manager.graph_type=="heat"){
+		if(GuiManager.graph_type == "heat"){
 			$(".title").html("Local View");
 			$(".canvas_container").css("width","100%");
-			if(gui_manager.use_scrollbars){
+			if(GuiManager.use_scrollbars){
 				$("svg").parent().css("overflow","scroll");
 			}
 			else 
@@ -1196,90 +1209,90 @@ define([
 			$(".stream_option").addClass("hidden");
 			$(".heat_option").removeClass("hidden");
 		}
-		gui_manager.ripe_data_broker.heuristics_manager.setDefaultHeuristic(gui_manager.graph_type);
-		if(gui_manager.isGraphPresent)
-			gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
+		GuiManager.RipeDataBroker.heuristics_manager.setDefaultHeuristic(GuiManager.graph_type);
+		if(GuiManager.isGraphPresent)
+			GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 		});
 	};
 
 	GuiManager.prototype.ip_version_checkbox_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		$("input[name='ip_version']").on("change",function(e){
-			gui_manager.ip_version=[];
+			GuiManager.ip_version = [];
 			$("input[name='ip_version']:checked").each(function() {
-				gui_manager.ip_version.push(parseInt($(this).val()));
+				GuiManager.ip_version.push(parseInt($(this).val()));
 			});
-			if(gui_manager.isGraphPresent){
-				if(gui_manager.graph_type=="heat")
-					gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
+			if(GuiManager.isGraphPresent){
+				if(GuiManager.graph_type == "heat")
+					GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 				else 
-				if(gui_manager.graph_type=="stream")
-					gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
+				if(GuiManager.graph_type == "stream")
+					GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 			}
 		});
 	};
 
 	GuiManager.prototype.ip_version_checkbox_enabler = function(){
-		gui_manager=this;
+		GuiManager = this;
 		if(!this.streaming){
-			if(this.ripe_data_broker.current_parsed.targets.every(function(e){return gui_manager.validator.check_ipv4(e);})){
+			if(this.RipeDataBroker.current_parsed.targets.every(function(e){return GuiManager.validator.check_ipv4(e);})){
 				$("input[name='ip_version'][value='4']").parent().removeClass("disabled");
 				$("input[name='ip_version'][value='4']").parent().removeClass("not-active");
 				$("input[name='ip_version'][value='4']").parent().attr("disabled",false);
-				this.ip_version=[4];
+				this.ip_version = [4];
 			}
 			else {
 				$("input[name='ip_version'][value='4']").parent().addClass("disabled");
 				$("input[name='ip_version'][value='4']").parent().addClass("not-active");
 				$("input[name='ip_version'][value='4']").parent().attr("disabled",true);
 			}
-			if(this.ripe_data_broker.current_parsed.targets.every(function(e){return gui_manager.validator.check_ipv6(e);})){
+			if(this.RipeDataBroker.current_parsed.targets.every(function(e){return GuiManager.validator.check_ipv6(e);})){
 				$("input[name='ip_version'][value='6']").parent().removeClass("disabled");
 				$("input[name='ip_version'][value='6']").parent().removeClass("not-active");
 				$("input[name='ip_version'][value='6']").parent().attr("disabled",false);
-				this.ip_version=[6];
+				this.ip_version = [6];
 			}
 			else{
 				$("input[name='ip_version'][value='6']").parent().addClass("disabled");
 				$("input[name='ip_version'][value='6']").parent().addClass("not-active");
 				$("input[name='ip_version'][value='6']").parent().attr("disabled",true);
 			}
-			if(this.ripe_data_broker.current_parsed.targets.some(function(e){return gui_manager.validator.check_ipv4(e);}) && this.ripe_data_broker.current_parsed.targets.some(function(e){return gui_manager.validator.check_ipv6(e);})){
+			if(this.RipeDataBroker.current_parsed.targets.some(function(e){return GuiManager.validator.check_ipv4(e);}) && this.RipeDataBroker.current_parsed.targets.some(function(e){return GuiManager.validator.check_ipv6(e);})){
 				$("input[name='ip_version'][value='4']").parent().removeClass("disabled");
 				$("input[name='ip_version'][value='4']").parent().removeClass("not-active");
 				$("input[name='ip_version'][value='4']").parent().attr("disabled",false);
 				$("input[name='ip_version'][value='6']").parent().removeClass("disabled");
 				$("input[name='ip_version'][value='6']").parent().removeClass("not-active");
 				$("input[name='ip_version'][value='6']").parent().attr("disabled",false);
-				if(this.ip_version.length==0)
-					this.ip_version=[4];
+				if(this.ip_version.length == 0)
+					this.ip_version = [4];
 			}
 		}
 	};
 
 	GuiManager.prototype.asn_level_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		$("input[name='asn_lvl']:input").on("change", function( e, ui ) {
-			gui_manager.asn_level=$("input[name='asn_lvl']").spinner("value");
-			if(gui_manager.isGraphPresent)
-				gui_manager.ripe_data_broker.loadCurrentState(false,null,true);
+			GuiManager.asn_level = $("input[name='asn_lvl']").spinner("value");
+			if(GuiManager.isGraphPresent)
+				GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 		});
 	};
 
 	GuiManager.prototype.streaming_btn_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		var interval;
 		$(".streaming_btn").on("click", function( e, ui ) {
-			gui_manager.streaming=!gui_manager.streaming;
-			gui_manager.streaming_icon_swap();
-			if(gui_manager.streaming){
-				gui_manager.lock_all();
-				interval = gui_manager.ripe_data_broker.streamgraph_streaming(gui_manager.streaming_speed);
+			GuiManager.streaming = !GuiManager.streaming;
+			GuiManager.streaming_icon_swap();
+			if(GuiManager.streaming){
+				GuiManager.lock_all();
+				interval = GuiManager.RipeDataBroker.streamgraph_streaming(GuiManager.streaming_speed);
 			}
 			else{
 				clearInterval(interval);
 				console.log("== GuiManager Streaming stopped");
-				gui_manager.draw_functions_btn_enabler();
+				GuiManager.draw_functions_btn_enabler();
 			}
 		});
 	};
@@ -1297,20 +1310,20 @@ define([
 	};
 
 	GuiManager.prototype.steps_btn_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".steps_btn").on("click", function( e, ui ) {
-			gui_manager.steps=!gui_manager.steps;
-			if(gui_manager.steps){
-				gui_manager.lock_all();
-				gui_manager.ripe_data_broker.streamgraph_stepped_view(50);
+			GuiManager.steps = !GuiManager.steps;
+			if(GuiManager.steps){
+				GuiManager.lock_all();
+				GuiManager.RipeDataBroker.streamgraph_stepped_view(50);
 			}
 		});
 	};
 
 	GuiManager.prototype.list_btn_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".list_btn").on("click", function(e) {
-			if(gui_manager.asn_info_done){
+			if(GuiManager.asn_info_done){
 				$(".asn_list_btn").parent().removeClass("not-active");
 				$(".asn_list_btn").parent().removeClass("disabled");
 			}
@@ -1318,7 +1331,7 @@ define([
 				$(".asn_list_btn").parent().addClass("not-active");
 				$(".asn_list_btn").parent().addClass("disabled");
 			}
-			if(gui_manager.rrc_info_done){
+			if(GuiManager.rrc_info_done){
 				$(".rrc_list_btn").parent().removeClass("not-active");
 				$(".rrc_list_btn").parent().removeClass("disabled");
 			}
@@ -1330,27 +1343,27 @@ define([
 	};
 
 	GuiManager.prototype.asn_list_btn_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".asn_list_btn").hover(function(event){
-			var html="";
+			var html = "";
 			var set;
-			if(gui_manager.graph_type=="stream")
-				set = gui_manager.drawer.keys.slice(0).reverse();
+			if(GuiManager.graph_type == "stream")
+				set = GuiManager.drawer.keys.slice(0).reverse();
 			else
-			if(gui_manager.graph_type=="heat")
-				set = gui_manager.drawer.asn_set.slice(0);
+			if(GuiManager.graph_type == "heat")
+				set = GuiManager.drawer.asn_set.slice(0);
 			for(var i in set) {
 				var asn = set[i];
-				var color_background = gui_manager.drawer.z(asn);
-				var color_text = gui_manager.drawer.color_manager.furthestLabelColor(color_background);
+				var color_background = GuiManager.drawer.z(asn);
+				var color_text = GuiManager.drawer.ColorManager.furthestLabelColor(color_background);
 				html+='<li class="list-group-item as'+asn+'" style="color:'+color_text+'; background-color:'+color_background+';"'
-				if(gui_manager.graph_type=="stream")
+				if(GuiManager.graph_type == "stream")
 					html+='onmouseover="d3.selectAll(\'.area\').filter(function(d){return d.key!='+asn+';}).style(\'fill-opacity\',\'0.35\');" onmouseout="d3.selectAll(\'.area\').style(\'fill-opacity\',1);">';
 				else 
-				if(gui_manager.graph_type=='heat')
+				if(GuiManager.graph_type == 'heat')
 					html+='onmouseover="d3.selectAll(\'.area\').filter(function(d){return d.asn!='+asn+';}).style(\'fill-opacity\',\'0.35\');" onmouseout="d3.selectAll(\'.area\').style(\'fill-opacity\',1);">';
 				html+="<div> ASN: "+asn+"</div>";
-				var info = gui_manager.ripe_data_broker.current_parsed.known_asn[asn];
+				var info = GuiManager.RipeDataBroker.current_parsed.known_asn[asn];
 				if(info){
 					var tokens = info.split(",");
 					html+="<div>"+tokens[0].trim()+"</div>";
@@ -1372,20 +1385,20 @@ define([
 	};
 
 	GuiManager.prototype.rrc_list_btn_setup = function() {
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".rrc_list_btn").hover(function(event){
-			var html="";
+			var html = "";
 			var set;
-			if(gui_manager.graph_type=="stream")
-				set = gui_manager.ripe_data_broker.current_parsed.rrc_set;
+			if(GuiManager.graph_type == "stream")
+				set = GuiManager.RipeDataBroker.current_parsed.rrc_set;
 			else
-			if(gui_manager.graph_type=="heat")
-				set = gui_manager.drawer.keys;
+			if(GuiManager.graph_type == "heat")
+				set = GuiManager.drawer.keys;
 			for(var i in set) {
 				var rrc = set[i];
 				html+="<li>";
 				html+="<div> ID: "+rrc+"</div>";
-				var info = gui_manager.ripe_data_broker.current_parsed.known_rrc[rrc];
+				var info = GuiManager.RipeDataBroker.current_parsed.known_rrc[rrc];
 				if(info){
 					html+="<div> IP: "+info["ip"]+"</div>";
 					html+="<div> Peering with RRC: "+info["rrc"]+"</div>";
@@ -1413,9 +1426,9 @@ define([
 		var manager = this;
 		$(".lev_dist_randwalk_cum_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="lev_rnd_cum";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true); 
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "lev_rnd_cum";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
 	};
@@ -1424,9 +1437,9 @@ define([
 		var manager = this;
 		$(".lev_dist_randwalk_max_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="lev_rnd_max";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true); 
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "lev_rnd_max";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
 	};
@@ -1436,9 +1449,9 @@ define([
 		var manager = this;
 		$(".point_dist_by_randwalk_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="st_rnd_cum";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true); 
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "st_rnd_cum";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
 	};
@@ -1447,9 +1460,9 @@ define([
 		var manager = this;
 		$(".point_dist_by_inference_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="st_inf_cum";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true); 
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "st_inf_cum";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
 	};
@@ -1459,9 +1472,9 @@ define([
 		var manager = this;
 		$(".point_dist_greedy_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="st_grdy_cum";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true); 
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "st_grdy_cum";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true); 
 			manager.toggleLoader();
 		});
 	};
@@ -1471,9 +1484,9 @@ define([
 	var manager = this;
 		$(".exchange_greedy_sort_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="n_f";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "n_f";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1483,9 +1496,9 @@ define([
 	var manager = this;
 		$(".wiggle_sum_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="w_cum";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "w_cum";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1494,9 +1507,9 @@ define([
 	var manager = this;
 		$(".wiggle_max_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="w_max";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "w_max";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1506,9 +1519,9 @@ define([
 		var manager = this;
 		$(".sort_asn_ascstdev_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="s_st";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type="asc";
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_st";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = "asc";
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1517,9 +1530,9 @@ define([
 		var manager = this;
 		$(".sort_asn_dscstdev_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="s_st";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type="dsc";
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_st";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = "dsc";
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1528,9 +1541,9 @@ define([
 		var manager = this;
 		$(".sort_asn_ascvar_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="s_var";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type="asc";
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_var";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = "asc";
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1539,9 +1552,9 @@ define([
 		var manager = this;
 		$(".sort_asn_dscvar_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="s_var";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type="dsc";
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_var";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = "dsc";
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1550,9 +1563,9 @@ define([
 		var manager = this;
 		$(".sort_asn_ascavg_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="s_avg";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type="asc";
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_avg";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = "asc";
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1561,9 +1574,9 @@ define([
 		var manager = this;
 		$(".sort_asn_dscavg_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="s_avg";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type="dsc";
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_avg";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = "dsc";
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1572,9 +1585,9 @@ define([
 		var manager = this;
 		$(".sort_asn_ascsum_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="s_cum";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type="asc";
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_cum";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = "asc";
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1583,9 +1596,9 @@ define([
 		var manager = this;
 		$(".sort_asn_dscsum_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="s_cum";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type="dsc";
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "s_cum";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = "dsc";
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1595,9 +1608,9 @@ define([
 		var manager = this;
 		$(".heat_greedy_sort_1_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="nf_1";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "nf_1";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1606,9 +1619,9 @@ define([
 		var manager = this;
 		$(".heat_greedy_sort_2_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="nf_2";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "nf_2";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1617,9 +1630,9 @@ define([
 		var manager = this;
 		$(".heat_stdev_sort_btn").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="st_grdy_cum";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "st_grdy_cum";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1628,9 +1641,9 @@ define([
 		var manager = this;
 		$(".heat_country_sort").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="geo";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "geo";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
@@ -1639,15 +1652,15 @@ define([
 		var manager = this;
 		$(".heat_as_sort").on("click", function(e){
 			manager.changeLoaderText("Applying Changes");manager.toggleLoader();
-			manager.ripe_data_broker.heuristics_manager.current_heuristic="asn";
-			manager.ripe_data_broker.heuristics_manager.current_sort_type=null;
-			manager.ripe_data_broker.loadCurrentState(false,null,true);
+			manager.RipeDataBroker.heuristics_manager.current_heuristic = "asn";
+			manager.RipeDataBroker.heuristics_manager.current_sort_type = null;
+			manager.RipeDataBroker.loadCurrentState(false,null,true);
 			manager.toggleLoader();
 		});
 	};
 
 	GuiManager.prototype.set_ordering = function(order){
-		this.ripe_data_broker.loadCurrentState(order,false,null,true);
+		this.RipeDataBroker.loadCurrentState(order,false,null,true);
 	};
 
 	GuiManager.prototype.get_ordering = function(){
@@ -1658,11 +1671,11 @@ define([
 		// var s = moment.unix(q_start).format("YYYY-MM-DDThh:mm:ss");
 		// var e = moment.unix(q_end).format("YYYY-MM-DDThh:mm:ss");
 		var start = q_start.split('T');
-		var q_start_date = this.date_converter.formatInterfaceDate(this.date_converter.parseRipeDate(start[0]));
-		var q_start_time =  this.date_converter.formatInterfaceTime(this.date_converter.parseRipeTime(start[1]));
+		var q_start_date = this.DateConverter.formatInterfaceDate(this.DateConverter.parseRipeDate(start[0]));
+		var q_start_time =  this.DateConverter.formatInterfaceTime(this.DateConverter.parseRipeTime(start[1]));
 		var end = q_end.split('T');
-		var q_end_date = this.date_converter.formatInterfaceDate(this.date_converter.parseRipeDate(end[0]));
-		var q_end_time = this.date_converter.formatInterfaceTime(this.date_converter.parseRipeTime(end[1]));
+		var q_end_date = this.DateConverter.formatInterfaceDate(this.DateConverter.parseRipeDate(end[0]));
+		var q_end_time = this.DateConverter.formatInterfaceTime(this.DateConverter.parseRipeTime(end[1]));
 		$('.datetimepicker.date_only.start').data("DateTimePicker").date(q_start_date);
 		$('.datetimepicker.time_only.start').data("DateTimePicker").date(q_start_time);
 		$('.datetimepicker.date_only.end').data("DateTimePicker").date(q_end_date);
@@ -1679,7 +1692,7 @@ define([
 
 	/*******************************************************************************/
 	GuiManager.prototype.docs_btn_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".docs_btn").on("click", function(e) {
 			var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/','_blank');
 			thewindow.blur();
@@ -1687,7 +1700,7 @@ define([
 	};
 
 	GuiManager.prototype.about_btn_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".about_btn").on("click", function(e) {
 			var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/','_blank');
 			thewindow.blur();
@@ -1695,7 +1708,7 @@ define([
 	};
 
 	GuiManager.prototype.embed_btn_setup = function(){
-		var gui_manager = this;
+		var GuiManager = this;
 		$(".embed_btn").on("click", function(e) {
 			var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/#embed','_blank');
 			thewindow.blur();

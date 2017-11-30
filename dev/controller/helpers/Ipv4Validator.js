@@ -1,4 +1,6 @@
-define([], function(d3){
+define([
+	], 
+function(){
 
 	var IPv4Validator = function(){
 

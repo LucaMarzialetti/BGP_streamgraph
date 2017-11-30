@@ -45,15 +45,15 @@
 		<link rel="shortcut icon" type="image/png" href="favicon.png"/>
 		<link rel="stylesheet" type="text/css" href="css/spinner.css">
 		<link rel="stylesheet" type="text/css" href="css/custom_style.css">
-		<script type="text/javascript" src="scripts/interface/gui_manager.js"></script>
+		<script type="text/javascript" src="scripts/interface/GuiManager.js"></script>
 		<script type="text/javascript" src="scripts/interface/context_manager.js"></script>
 		<script type="text/javascript" src="scripts/interface/scroller.js"></script>
 <!-- ripe rest api wrap -->
 		<script type="text/javascript" src="scripts/interface/ripe_data_parser.js"></script>
-		<script type="text/javascript" src="scripts/interface/ripe_data_broker.js"></script>
+		<script type="text/javascript" src="scripts/interface/RipeDataBroker.js"></script>
 <!-- svg drawer -->
 		<script type="text/javascript" src="scripts/interface/graph_drawer.js"></script>
-		<script type="text/javascript" src="scripts/interface/color_manager.js"></script>
+		<script type="text/javascript" src="scripts/interface/ColorManager.js"></script>
 		<script type="text/javascript" src="scripts/interface/metrics_manager.js"></script>
 		<script type="text/javascript" src="scripts/interface/heuristics_manager.js"></script>
 <!-- pqtrees -->
@@ -67,7 +67,7 @@
 		<script type="text/javascript" src="scripts/helpers/ipv4_validator.js"></script>
 		<script type="text/javascript" src="scripts/helpers/date_validator.js"></script>
 		<script type="text/javascript" src="scripts/helpers/asn_validator.js"></script>
-		<script type="text/javascript" src="scripts/helpers/date_converter.js"></script>
+		<script type="text/javascript" src="scripts/helpers/DateConverter.js"></script>
 		<script type="text/javascript" src="scripts/helpers/validator.js"></script>
 		<script type="text/javascript" src="scripts/helpers/logger.js"></script>
 	</head>
@@ -414,59 +414,59 @@
 				//draw in the svg
 				context_manager.drawer.drawer_init();
 				//setup the gui
-				context_manager.gui_manager.gui_setup();
+				context_manager.GuiManager.gui_setup();
 
 				//resize listener
 				$(window).resize(function(){
 					context_manager.drawer.drawer_init();
-					if(context_manager.gui_manager.isGraphPresent){
-						if(context_manager.gui_manager.graph_type=="stream")
+					if(context_manager.GuiManager.isGraphPresent){
+						if(context_manager.GuiManager.graph_type=="stream")
 							context_manager.drawer.draw_streamgraph(
-								context_manager.ripe_data_broker.current_parsed,
-								context_manager.gui_manager.graph_type,
-								context_manager.gui_manager.ripe_data_broker.current_asn_tsv, 
-								context_manager.gui_manager.drawer.keys, 
-								context_manager.gui_manager.preserve_map, 
-								context_manager.gui_manager.ripe_data_broker.current_visibility, 
-								context_manager.gui_manager.ripe_data_broker.current_parsed.targets, 
-								context_manager.gui_manager.ripe_data_broker.current_parsed.query_id, 
-								function(pos){return context_manager.gui_manager.ripe_data_broker.go_to_bgplay(
-									context_manager.gui_manager.ripe_data_broker.current_starttime,
-									context_manager.gui_manager.ripe_data_broker.current_endtime,
-									context_manager.gui_manager.ripe_data_broker.current_targets,
+								context_manager.RipeDataBroker.current_parsed,
+								context_manager.GuiManager.graph_type,
+								context_manager.GuiManager.RipeDataBroker.current_asn_tsv, 
+								context_manager.GuiManager.drawer.keys, 
+								context_manager.GuiManager.preserve_map, 
+								context_manager.GuiManager.RipeDataBroker.current_visibility, 
+								context_manager.GuiManager.RipeDataBroker.current_parsed.targets, 
+								context_manager.GuiManager.RipeDataBroker.current_parsed.query_id, 
+								function(pos){return context_manager.GuiManager.RipeDataBroker.go_to_bgplay(
+									context_manager.GuiManager.RipeDataBroker.current_starttime,
+									context_manager.GuiManager.RipeDataBroker.current_endtime,
+									context_manager.GuiManager.RipeDataBroker.current_targets,
 									pos)},
 								null,
 								null,
 								true);						
 						else
-						if(context_manager.gui_manager.graph_type=="heat")
-							context_manager.gui_manager.drawer.draw_heatmap(
-								context_manager.gui_manager.ripe_data_broker.current_parsed,
-								context_manager.gui_manager.ripe_data_broker.current_rrc_tsv,
-								context_manager.gui_manager.ripe_data_broker.current_asn_tsv, 
-								context_manager.gui_manager.drawer.keys, 
-								context_manager.gui_manager.preserve_map, 
-								context_manager.gui_manager.ripe_data_broker.current_visibility, 
-								context_manager.gui_manager.ripe_data_broker.current_parsed.targets, 
-								context_manager.gui_manager.ripe_data_broker.current_parsed.query_id, 
-								function(pos){return ripe_data_broker.go_to_bgplay(
-									context_manager.gui_manager.ripe_data_broker.current_starttime,
-									context_manager.gui_manager.ripe_data_broker.current_endtime,
-									context_manager.gui_manager.ripe_data_broker.current_targets,pos)}, 
-								context_manager.gui_manager.asn_level, 
-								context_manager.gui_manager.ip_version, 
-								context_manager.gui_manager.prepending_prevention, 
-								context_manager.gui_manager.merge_rrc, 
-								context_manager.gui_manager.merge_events, 
-								context_manager.gui_manager.events_labels, 
-								context_manager.gui_manager.rrc_labels,
-								context_manager.gui_manager.heatmap_time_map,
+						if(context_manager.GuiManager.graph_type=="heat")
+							context_manager.GuiManager.drawer.draw_heatmap(
+								context_manager.GuiManager.RipeDataBroker.current_parsed,
+								context_manager.GuiManager.RipeDataBroker.current_rrc_tsv,
+								context_manager.GuiManager.RipeDataBroker.current_asn_tsv, 
+								context_manager.GuiManager.drawer.keys, 
+								context_manager.GuiManager.preserve_map, 
+								context_manager.GuiManager.RipeDataBroker.current_visibility, 
+								context_manager.GuiManager.RipeDataBroker.current_parsed.targets, 
+								context_manager.GuiManager.RipeDataBroker.current_parsed.query_id, 
+								function(pos){return RipeDataBroker.go_to_bgplay(
+									context_manager.GuiManager.RipeDataBroker.current_starttime,
+									context_manager.GuiManager.RipeDataBroker.current_endtime,
+									context_manager.GuiManager.RipeDataBroker.current_targets,pos)}, 
+								context_manager.GuiManager.asn_level, 
+								context_manager.GuiManager.ip_version, 
+								context_manager.GuiManager.prepending_prevention, 
+								context_manager.GuiManager.merge_rrc, 
+								context_manager.GuiManager.merge_events, 
+								context_manager.GuiManager.events_labels, 
+								context_manager.GuiManager.rrc_labels,
+								context_manager.GuiManager.heatmap_time_map,
 								null,
 								true);
 					}
 				})
 				if(!context_manager.check_request())
-					context_manager.gui_manager.toggleLoader();			
+					context_manager.GuiManager.toggleLoader();			
 			});
 		</script>
 	</body>

@@ -1,52 +1,58 @@
 define([
-    /*gui manager*/
     /*date converter*/
+    /*gui manager*/
     /*heuristic manager*/
-    /*moment*/
-    /*drawer*/
+    /*graph drawer*/
     /*context*/
-], function(d3){
+    /*moment*/
+    "bgpst.controller.dateconverter",
+    "bgpst.view.gui",
+    "bgpst.view.heuristics"
+    "bgpst.view.graphdrawer",
+    "bgpst.view.context",
+    "bgpst.lib.moment"
+], function(DateConverter, GuiManager, heuristics_manager, graph_drawer, context_manager, moment){
 
-    var RipeDataBroker = function(drawer, context, gui_manager) {
+    var RipeDataBroker = function(drawer, context, GuiManager) {
         console.log("=== RipeBroker Starting");
         this.drawer = drawer;
         this.context = context;
-        this.gui_manager = gui_manager;
+        this.GuiManager = GuiManager;
         this.parser = new RipeDataParser();
-        this.date_converter = new DateConverter();
-        this.heuristics_manager = new HeuristicsManager(this.gui_manager.graph_type);
-        this.ipv6_peerings=0;
-        this.ipv4_peerings=0;
+        this.DateConverter = new DateConverter();
+        this.heuristics_manager = new HeuristicsManager(this.GuiManager.graph_type);
+        this.ipv6_peerings = 0;
+        this.ipv4_peerings = 0;
         console.log("=== RipeBroker Ready");
     };
 
     //format GET url for ripestat query
     RipeDataBroker.prototype.requestBuilder = function(start_d,start_t,end_d,end_t,targets) {
-        this.current_starttime = this.date_converter.formatRipeDateTime(this.date_converter.parseInterfaceDate(start_d), this.date_converter.parseInterfaceTime(start_t));
-        this.current_endtime = this.date_converter.formatRipeDateTime(this.date_converter.parseInterfaceDate(end_d), this.date_converter.parseInterfaceTime(end_t));
+        this.current_starttime = this.DateConverter.formatRipeDateTime(this.DateConverter.parseInterfaceDate(start_d), this.DateConverter.parseInterfaceTime(start_t));
+        this.current_endtime = this.DateConverter.formatRipeDateTime(this.DateConverter.parseInterfaceDate(end_d), this.DateConverter.parseInterfaceTime(end_t));
         this.current_targets = "resource="+targets;
-        var starttime="&starttime="+start_ts;
-        var endtime="&endtime="+end_ts;
+        var starttime = "&starttime="+start_ts;
+        var endtime = "&endtime="+end_ts;
         var get_url = base_url+this.current_targets+starttime+endtime;
         return get_url;
     };
 
     //format GET url for ripestat query
     RipeDataBroker.prototype.requestBuilderData = function(start_d,start_t,end_d,end_t,targets) {
-        this.current_starttime = this.date_converter.formatRipeDateTime(start_d,start_t);
-        this.current_endtime = this.date_converter.formatRipeDateTime(end_d,end_t);
+        this.current_starttime = this.DateConverter.formatRipeDateTime(start_d,start_t);
+        this.current_endtime = this.DateConverter.formatRipeDateTime(end_d,end_t);
         this.current_targets = targets;
     };
 
     //do the ajax get
     RipeDataBroker.prototype.getData = function(start_d,end_d,targets) {
-        var ripe_data_broker = this;
-        if(start_d!=null)
-            this.current_starttime=start_d;
-        if(end_d!=null)
-            this.current_endtime=end_d;
-        if(targets!=null)
-            this.current_targets=targets;
+        var RipeDataBroker = this;
+        if(start_d != null)
+            this.current_starttime = start_d;
+        if(end_d != null)
+            this.current_endtime = end_d;
+        if(targets != null)
+            this.current_targets = targets;
         //https://stat.ripe.net/data/bgplay/data.json?resource=140.78/16&starttime=2012-12-21T07:00&endtime=2012-12-21T12:00
         var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
         $.ajax({
@@ -54,28 +60,28 @@ define([
             dataType: "json",
             //unix_timestamps: true,
             data : {
-                starttime: ripe_data_broker.date_converter.formatRipe(moment(this.current_starttime).subtract(1,"months")),
-                endtime: ripe_data_broker.date_converter.formatRipe(moment(this.current_endtime).add(1,"months"))
+                starttime: RipeDataBroker.DateConverter.formatRipe(moment(this.current_starttime).subtract(1,"months")),
+                endtime: RipeDataBroker.DateConverter.formatRipe(moment(this.current_endtime).add(1,"months"))
             },
             success: function(data){
                 console.log("=== RipeBroker Success! Peer count loaded");
                 console.log(data);
                 try {
-                    ripe_data_broker.ipv4_peerings=max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
-                    ripe_data_broker.ipv6_peerings=max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
-                    if(ripe_data_broker.ipv6_peerings==0 && targets.split(",").some(function(e){return ripe_data_broker.gui_manager.validator.check_ipv6(e)}))
-                        ripe_data_broker.gui_manager.global_visibility=false;
-                    if(ripe_data_broker.ipv4_peerings==0 && targets.split(",").some(function(e){return ripe_data_broker.gui_manager.validator.check_ipv4(e)}))
-                        ripe_data_broker.gui_manager.global_visibility=false;
-                    ripe_data_broker.context.storeContext({4:ripe_data_broker.ipv4_peerings, 6:ripe_data_broker.ipv6_peerings},"last_context_peerings");
+                    RipeDataBroker.ipv4_peerings = max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
+                    RipeDataBroker.ipv6_peerings = max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
+                    if(RipeDataBroker.ipv6_peerings == 0 && targets.split(",").some(function(e){return RipeDataBroker.GuiManager.validator.check_ipv6(e)}))
+                        RipeDataBroker.GuiManager.global_visibility = false;
+                    if(RipeDataBroker.ipv4_peerings == 0 && targets.split(",").some(function(e){return RipeDataBroker.GuiManager.validator.check_ipv4(e)}))
+                        RipeDataBroker.GuiManager.global_visibility = false;
+                    RipeDataBroker.context.storeContext({4:RipeDataBroker.ipv4_peerings, 6:RipeDataBroker.ipv6_peerings},"last_context_peerings");
                 }
                 catch(err) {
                     console.log("=== RipeBroker Warning: empty peerings size");
-                    ripe_data_broker.ipv6_peerings=0;
-                    ripe_data_broker.ipv4_peerings=0;
-                    ripe_data_broker.gui_manager.global_visibility=false;
+                    RipeDataBroker.ipv6_peerings = 0;
+                    RipeDataBroker.ipv4_peerings = 0;
+                    RipeDataBroker.GuiManager.global_visibility = false;
                 }
-                ripe_data_broker.getBGPData();
+                RipeDataBroker.getBGPData();
             },
             fail: function (argument) {
                 alert("Server error");
@@ -85,13 +91,13 @@ define([
 
     RipeDataBroker.prototype.RRCInfoCallBack = function(res) {
         var url_rrc = "https://stat.ripe.net/data/geoloc/data.json?resource="+res.ip;
-        var ripe_data_broker = this;
+        var RipeDataBroker = this;
         $.ajax({
             url: url_rrc,
             dataType: "json",
             success: function(data){
-                res["geo"]=data.data.locations[0].country;
-                ripe_data_broker.current_parsed.known_rrc[res.id]=res;
+                res["geo"] = data.data.locations[0].country;
+                RipeDataBroker.current_parsed.known_rrc[res.id] = res;
             },
             error: function(jqXHR, exception){
                 alert("failed RRC lookup for "+res);
@@ -109,19 +115,19 @@ define([
             this.getRRCInfo(resources, index);
         }
         else{
-            this.gui_manager.rrc_info_done=true;
+            this.GuiManager.rrc_info_done = true;
             console.log("=== RipeBroker RRCinfo Completed");
         }
     };
 
     RipeDataBroker.prototype.ASNInfoCallBack = function(res) {
         var url_asn = "https://stat.ripe.net/data/as-overview/data.json?resource=AS"+res;
-        var ripe_data_broker = this;
+        var RipeDataBroker = this;
         $.ajax({
             url: url_asn,
             dataType: "json",
             success: function(data){
-                ripe_data_broker.current_parsed.known_asn[res]=data.data.holder;
+                RipeDataBroker.current_parsed.known_asn[res] = data.data.holder;
             },
             error: function(jqXHR, exception){
                 alert("failed ASN lookup for "+res);
@@ -138,7 +144,7 @@ define([
             this.getASNInfo(resources, index);
         }
         else{
-            this.gui_manager.asn_info_done=true;
+            this.GuiManager.asn_info_done = true;
             console.log("=== RipeBroker ASNinfo Completed");
         }
     };
@@ -148,97 +154,97 @@ define([
     };
 
     RipeDataBroker.prototype.loadCurrentState = function(store, events_range, redraw_minimap) {
-        ripe_data_broker=this;
-        this.gui_manager.changeLoaderText("Drawing the chart!");
-        this.gui_manager.ip_version_checkbox_enabler();
-        this.gui_manager.restoreQuery(this.current_starttime, this.current_endtime, this.current_targets);
+        RipeDataBroker = this;
+        this.GuiManager.changeLoaderText("Drawing the chart!");
+        this.GuiManager.ip_version_checkbox_enabler();
+        this.GuiManager.restoreQuery(this.current_starttime, this.current_endtime, this.current_targets);
         var ordering;
-        if(this.gui_manager.gather_information){
+        if(this.GuiManager.gather_information){
             console.log("=== RipeBroker Starting gathering RRC Info");
-            ripe_data_broker.gui_manager.rrc_info_done=false;
+            RipeDataBroker.GuiManager.rrc_info_done = false;
             setTimeout(function(){
-                ripe_data_broker.getRRCInfo(ripe_data_broker.current_parsed.resources,0)
+                RipeDataBroker.getRRCInfo(RipeDataBroker.current_parsed.resources,0)
             },0);
             console.log("=== RipeBroker Starting gathering ASN Info");
             setTimeout(function(){
-                ripe_data_broker.gui_manager.asn_info_done=false;
-                if(ripe_data_broker.gui_manager.graph_type=="stream")
-                    ripe_data_broker.getASNInfo(ripe_data_broker.current_parsed.asn_set,0);
+                RipeDataBroker.GuiManager.asn_info_done = false;
+                if(RipeDataBroker.GuiManager.graph_type == "stream")
+                    RipeDataBroker.getASNInfo(RipeDataBroker.current_parsed.asn_set,0);
                 else
-                if(ripe_data_broker.gui_manager.graph_type=="heat")
-                    ripe_data_broker.getASNInfo(ripe_data_broker.gui_manager.drawer.asn_set,0);
+                if(RipeDataBroker.GuiManager.graph_type == "heat")
+                    RipeDataBroker.getASNInfo(RipeDataBroker.GuiManager.drawer.asn_set,0);
             },0);
         }
         /*COMMON*/
-        this.current_asn_tsv = this.parser.convert_to_streamgraph_tsv(this.current_parsed, this.gui_manager.prepending_prevention, this.gui_manager.asn_level, this.gui_manager.ip_version);
-        this.parser.states_rrc(this.current_parsed,this.gui_manager.asn_level,this.gui_manager.prepending_prevention);
+        this.current_asn_tsv = this.parser.convert_to_streamgraph_tsv(this.current_parsed, this.GuiManager.prepending_prevention, this.GuiManager.asn_level, this.GuiManager.ip_version);
+        this.parser.states_rrc(this.current_parsed,this.GuiManager.asn_level,this.GuiManager.prepending_prevention);
         this.parser.rrc_composition(this.current_parsed);
         this.parser.rrc_seqs(this.current_parsed);
         this.parser.asn_exchanges(this.current_parsed);
         this.current_visibility = 0;
-        if(this.gui_manager.global_visibility) {
+        if(this.GuiManager.global_visibility) {
             for(var t in this.current_parsed.targets){
                 var tgs = this.current_parsed.targets[t];
-                if(this.gui_manager.ip_version.indexOf(4)!=-1 && this.gui_manager.validator.check_ipv4(tgs)){
+                if(this.GuiManager.ip_version.indexOf(4) != -1 && this.GuiManager.validator.check_ipv4(tgs)){
                     console.log("== RipeBroker adding ipv4 peerings");
                     this.current_visibility+=this.ipv4_peerings;
                 }
-                if(this.gui_manager.ip_version.indexOf(6)!=-1 && this.gui_manager.validator.check_ipv6(tgs)){
+                if(this.GuiManager.ip_version.indexOf(6) != -1 && this.GuiManager.validator.check_ipv6(tgs)){
                     console.log("== RipeBroker adding ipv6 peerings");
                     this.current_visibility+=this.ipv6_peerings;
                 }
             }
         }
         else
-            this.current_visibility=this.current_parsed.local_visibility;
+            this.current_visibility = this.current_parsed.local_visibility;
         //STREAM
-        if(this.gui_manager.graph_type=="stream") {
+        if(this.GuiManager.graph_type == "stream") {
             //ORDERING
-            ordering=this.heuristics_manager.getCurrentOrdering(this.current_parsed, this.gui_manager.graph_type);
+            ordering = this.heuristics_manager.getCurrentOrdering(this.current_parsed, this.GuiManager.graph_type);
             if(!ordering)
-                ordering=this.current_parsed.asn_set;
-            this.gui_manager.update_counters(".counter_asn",this.current_parsed.asn_set.length);
-            this.gui_manager.update_counters(".counter_events",this.current_parsed.events.length);
-            this.drawer.draw_streamgraph(this.current_parsed, this.gui_manager.graph_type, this.current_asn_tsv, ordering, this.gui_manager.preserve_map, this.current_visibility, this.current_parsed.targets, this.current_parsed.query_id, function(pos){return ripe_data_broker.go_to_bgplay(ripe_data_broker.current_starttime,ripe_data_broker.current_endtime,ripe_data_broker.current_targets,pos)},null,events_range, redraw_minimap);
+                ordering = this.current_parsed.asn_set;
+            this.GuiManager.update_counters(".counter_asn",this.current_parsed.asn_set.length);
+            this.GuiManager.update_counters(".counter_events",this.current_parsed.events.length);
+            this.drawer.draw_streamgraph(this.current_parsed, this.GuiManager.graph_type, this.current_asn_tsv, ordering, this.GuiManager.preserve_map, this.current_visibility, this.current_parsed.targets, this.current_parsed.query_id, function(pos){return RipeDataBroker.go_to_bgplay(RipeDataBroker.current_starttime,RipeDataBroker.current_endtime,RipeDataBroker.current_targets,pos)},null,events_range, redraw_minimap);
             this.heuristics_manager.metrics_manager.metrics(this.current_parsed, this.drawer.keys);
-            this.gui_manager.isGraphPresent=d3.select("svg").select(".chart").node()!=null;
+            this.GuiManager.isGraphPresent = d3.select("svg").select(".chart").node() != null;
         }
         else
         //HEAT
-        if(this.gui_manager.graph_type=="heat") {
-            this.current_rrc_tsv = this.parser.convert_to_heatmap_tsv(this.current_parsed, this.gui_manager.prepending_prevention, this.gui_manager.asn_level, this.gui_manager.ip_version);
+        if(this.GuiManager.graph_type == "heat") {
+            this.current_rrc_tsv = this.parser.convert_to_heatmap_tsv(this.current_parsed, this.GuiManager.prepending_prevention, this.GuiManager.asn_level, this.GuiManager.ip_version);
             //ORDERING
-            ordering=this.heuristics_manager.getCurrentOrdering(this.current_parsed, this.gui_manager.graph_type);
+            ordering = this.heuristics_manager.getCurrentOrdering(this.current_parsed, this.GuiManager.graph_type);
             if(!ordering){
                 console.log("ordering non c'è")
-                ordering=this.current_parsed.rrc_set;
+                ordering = this.current_parsed.rrc_set;
             }
             else
                 console.log("ordering c'è")
-            this.drawer.draw_heatmap(this.current_parsed, this.current_rrc_tsv, this.current_asn_tsv, ordering, this.gui_manager.preserve_map, this.current_visibility, this.current_parsed.targets, this.current_parsed.query_id, function(pos){return ripe_data_broker.go_to_bgplay(ripe_data_broker.current_starttime,ripe_data_broker.current_endtime,ripe_data_broker.current_targets,pos)}, this.gui_manager.asn_level, this.gui_manager.ip_version, this.gui_manager.prepending_prevention, this.gui_manager.merge_rrc, this.gui_manager.merge_events, this.gui_manager.events_labels, this.gui_manager.rrc_labels, this.gui_manager.heatmap_time_map, events_range, redraw_minimap);
-            if(this.gui_manager.merge_events)
-                this.gui_manager.update_counters(".counter_events",this.gui_manager.drawer.event_set.length+"/"+this.current_parsed.events.length);
+            this.drawer.draw_heatmap(this.current_parsed, this.current_rrc_tsv, this.current_asn_tsv, ordering, this.GuiManager.preserve_map, this.current_visibility, this.current_parsed.targets, this.current_parsed.query_id, function(pos){return RipeDataBroker.go_to_bgplay(RipeDataBroker.current_starttime,RipeDataBroker.current_endtime,RipeDataBroker.current_targets,pos)}, this.GuiManager.asn_level, this.GuiManager.ip_version, this.GuiManager.prepending_prevention, this.GuiManager.merge_rrc, this.GuiManager.merge_events, this.GuiManager.events_labels, this.GuiManager.rrc_labels, this.GuiManager.heatmap_time_map, events_range, redraw_minimap);
+            if(this.GuiManager.merge_events)
+                this.GuiManager.update_counters(".counter_events",this.GuiManager.drawer.event_set.length+"/"+this.current_parsed.events.length);
             else
-                this.gui_manager.update_counters(".counter_events",this.current_parsed.events.length);
+                this.GuiManager.update_counters(".counter_events",this.current_parsed.events.length);
 
-            if(this.gui_manager.merge_rrc)
-                this.gui_manager.update_counters(".counter_asn", this.gui_manager.drawer.keys.length+"/"+this.current_parsed.rrc_set.length);
+            if(this.GuiManager.merge_rrc)
+                this.GuiManager.update_counters(".counter_asn", this.GuiManager.drawer.keys.length+"/"+this.current_parsed.rrc_set.length);
             else
-                this.gui_manager.update_counters(".counter_asn", this.gui_manager.drawer.keys.length);
-            this.gui_manager.isGraphPresent=d3.select("svg").select(".chart").node()!=null;
+                this.GuiManager.update_counters(".counter_asn", this.GuiManager.drawer.keys.length);
+            this.GuiManager.isGraphPresent = d3.select("svg").select(".chart").node() != null;
         }
         else {
             alert("nè heat nè stream, problema!");
-            this.gui_manager.drawer.drawer_init();
-            this.gui_manager.isGraphPresent=false;
+            this.GuiManager.drawer.drawer_init();
+            this.GuiManager.isGraphPresent = false;
         }
         if(store)
             this.context.storeContext(this.current_parsed,"last_context_original_data");
         //window.scrollTo(0,document.body.scrollHeight);
-        this.gui_manager.boolean_checker();
-        this.gui_manager.draw_last_data_btn_enabler();
-        this.gui_manager.draw_functions_btn_enabler();
-        this.gui_manager.url_string();
+        this.GuiManager.boolean_checker();
+        this.GuiManager.draw_last_data_btn_enabler();
+        this.GuiManager.draw_functions_btn_enabler();
+        this.GuiManager.url_string();
     };
 
     RipeDataBroker.prototype.go_to_bgplay = function(start,end,targets,pos){
@@ -247,7 +253,7 @@ define([
         url+="w.resource="+targets;
         url+="&w.starttime="+start;
         url+="&w.endtime="+end;
-        url+="&w.instant="+this.date_converter.formatUnix(pos);
+        url+="&w.instant="+this.DateConverter.formatUnix(pos);
         url+="&w.type=bgp";
         console.log("con utc"+moment(pos).utc().unix(pos));
         console.log("senza utc"+moment(pos).unix(pos));
@@ -256,12 +262,12 @@ define([
     };
 
     RipeDataBroker.prototype.streamgraph_streaming = function(every) {
-        ripe_data_broker=this;
+        RipeDataBroker = this;
         var interval_id = setInterval(function (){
-            ripe_data_broker.gui_manager.toggleLoader();
+            RipeDataBroker.GuiManager.toggleLoader();
             var date = moment(new Date());
-            var formatted = ripe_data_broker.date_converter.formatRipe(date);
-            ripe_data_broker.getData(ripe_data_broker.current_starttime, formatted, ripe_data_broker.current_targets);
+            var formatted = RipeDataBroker.DateConverter.formatRipe(date);
+            RipeDataBroker.getData(RipeDataBroker.current_starttime, formatted, RipeDataBroker.current_targets);
             console.log("Streaming got new data!");
         }, every);
         console.log("Streaming started with interval ID: "+interval_id);
@@ -269,15 +275,15 @@ define([
     };
 
     RipeDataBroker.prototype.streamgraph_stepped_view = function(every) {
-        var ripe_data_broker = this;
+        var RipeDataBroker = this;
         var max = this.current_asn_tsv.split("\n").length-1;
-        var i=2;
+        var i = 2;
         var interval_id = setInterval(function (){
             if(i>max){
                 clearInterval(interval_id);
                 console.log("Step view over");
-                ripe_data_broker.gui_manager.steps=false;
-                ripe_data_broker.gui_manager.draw_functions_btn_enabler();
+                RipeDataBroker.GuiManager.steps = false;
+                RipeDataBroker.GuiManager.draw_functions_btn_enabler();
             }
             else {
                 core(i);
@@ -287,9 +293,9 @@ define([
         console.log("Step view started with interval ID: "+interval_id);
 
         function core(i) {
-            ripe_data_broker.drawer.draw_streamgraph(ripe_data_broker.current_parsed, ripe_data_broker.gui_manager.graph_type, ripe_data_broker.current_asn_tsv, ripe_data_broker.drawer.keys, ripe_data_broker.gui_manager.preserve_map, ripe_data_broker.current_visibility, ripe_data_broker.current_parsed.targets, ripe_data_broker.current_parsed.query_id, function(pos){return ripe_data_broker.go_to_bgplay(ripe_data_broker.current_starttime,ripe_data_broker.current_endtime,ripe_data_broker.current_targets,pos)},i,null,false);
-            ripe_data_broker.gui_manager.update_counters(".counter_asn",ripe_data_broker.current_parsed.asn_set.length);
-            ripe_data_broker.gui_manager.update_counters(".counter_events",i+"/"+max);
+            RipeDataBroker.drawer.draw_streamgraph(RipeDataBroker.current_parsed, RipeDataBroker.GuiManager.graph_type, RipeDataBroker.current_asn_tsv, RipeDataBroker.drawer.keys, RipeDataBroker.GuiManager.preserve_map, RipeDataBroker.current_visibility, RipeDataBroker.current_parsed.targets, RipeDataBroker.current_parsed.query_id, function(pos){return RipeDataBroker.go_to_bgplay(RipeDataBroker.current_starttime,RipeDataBroker.current_endtime,RipeDataBroker.current_targets,pos)},i,null,false);
+            RipeDataBroker.GuiManager.update_counters(".counter_asn",RipeDataBroker.current_parsed.asn_set.length);
+            RipeDataBroker.GuiManager.update_counters(".counter_events",i+"/"+max);
         };
     };
 

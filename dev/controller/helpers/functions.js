@@ -1,5 +1,5 @@
 define([
-], function(d3){
+], function(){
 
   /*courtesy of https://gist.github.com/andrei-m/982927 */
   const levenshtein = (a, b) => {

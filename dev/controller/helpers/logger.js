@@ -1,5 +1,5 @@
 define([
-], function(d3){
+], function(){
 	
 	var Logger = function() {
 		var registred_components = {

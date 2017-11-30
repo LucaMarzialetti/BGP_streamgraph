@@ -1,5 +1,5 @@
 define([
-], function(d3){
+], function(){
 	// Javascript to test an IPv6 address for proper format, and to 
 	// present the "best text representation" according to IETF Draft RFC at
 	// http://tools.ietf.org/html/draft-ietf-6man-text-addr-representation-04
