@@ -1,24 +1,20 @@
 
 define([
     /*color manager*
-    /*gui manager ???????? */
     /*moment*/
     /*jquery QUALE ?*/
     /*d3 QUALE ?*/
     /*chiamate sul DOM dalla root DOM*/
     "bgpst.view.color",
-    "bgpst.view.gui",
     "bgpst.lib.moment",
-    
     "bgpst.lib.jquery-amd",
-    "bgpst.lib.jquery-libs",
-    
-    "bgpst.lib.d3-amd",
-    "bgpst.lib.d3.legend"
-], function(ColorManager, GuiManager, moment, jquery, d3) {
+    "bgpst.lib.d3-amd"
+], function(ColorManager, moment, $, d3) {
 
     function GraphDrawer(GuiManager) {
         console.log("== Starting GraphDrawer");
+        console.log("D3")
+        console.log(d3);
         this.main_svg = d3.select("div.main_svg").select("svg");
         this.mini_svg = d3.select("div.mini_svg").select("svg");
         this.background = d3.select("div.main_svg").select(".background");

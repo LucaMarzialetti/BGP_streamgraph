@@ -1,17 +1,12 @@
 define([
     /*date converter*/
-    /*gui manager*/
     /*heuristic manager*/
-    /*graph drawer*/
-    /*context*/
     /*moment*/
+    "bgpst.view.parser",
     "bgpst.controller.dateconverter",
-    "bgpst.view.gui",
-    "bgpst.view.heuristics"
-    "bgpst.view.graphdrawer",
-    "bgpst.view.context",
+    "bgpst.view.heuristics",
     "bgpst.lib.moment"
-], function(DateConverter, GuiManager, HeuristicsManager, graph_drawer, context_manager, moment){
+], function(RipeDataParser, DateConverter, HeuristicsManager, moment){
 
     var RipeDataBroker = function(drawer, context, GuiManager) {
         console.log("=== RipeBroker Starting");

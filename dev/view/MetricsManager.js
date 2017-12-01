@@ -2,7 +2,7 @@
 define([
 	"bgpst.controller.functions",
 	"bgpst.lib.moment"
-], function(function, moment){
+], function(myUtils, moment){
 
 	var MetricsManager = function(env) {
 	};
@@ -240,7 +240,7 @@ define([
 	/************************ OTHER ************************/
 	/**freq difference**/
 	/* compute the difference vector (N-1) length by each sample (column) */
-	RipeDataParser.prototype.computeDifferenceVector = function(current_parsed){
+	MetricsManager.prototype.computeDifferenceVector = function(current_parsed){
 		var counters = [];
 		for(var i = 0; i<current_parsed.events.length-1;i++)
 			counters[i] = 0;
@@ -254,7 +254,7 @@ define([
 
 	/**freq distance**/
 	/* compute the distance vector (N-1) length by each sample (column) */
-	RipeDataParser.prototype.computeDistanceVector = function(current_parsed){
+	MetricsManager.prototype.computeDistanceVector = function(current_parsed){
 		var counters = [];
 		for(var i = 0; i<current_parsed.events.length-1;i++)
 			counters[i] = 0;

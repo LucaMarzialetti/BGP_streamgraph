@@ -2,8 +2,6 @@ define([
 	/*Validator*/
 	/*DateConverter*/
 	/*RipeDataBroker*/
-	/*context*/
-	/*drawer*/
 	/*Scroller*/
 	
 	/*moment*/
@@ -14,25 +12,27 @@ define([
 	"bgpst.controller.validator",
 	"bgpst.controller.dateconverter",
 	"bgpst.view.broker",
-	"bgpst.view.context",
-	"bgpst.view.graphdrawer",
 	"bgpst.view.scroller",
 	"bgpst.lib.moment",
-
 	"bgpst.lib.jquery-amd",
-	"bgpst.lib.jquery-libs"
-
-], function(Validator, DateConverter, RipeDataBroker, ContextManager, GraphDrawer, EPPZScrollTo, moment, jquery){
+	"bgpst.lib.stache!main"
+], function(Validator, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
 	
 	//setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
 	var GuiManager = function(drawer, context) {
 		console.log("== GuiManager Starting");
-		this.max_tokens = 5;
-		this.current_local_ip;
-		/***************************************************************************/
+		
+		/*************************************** DOM elements ************************************/
+		$("body").html(template());
 		this.loader = $(".loading_text");
 		this.mask = $("div.loader_mask");
 		this.container = $("div.body_container");
+
+		this.tokenfield = $(".tokenfield");
+
+		//new to try
+
+		/************************************ settings [status] *********************************/
 		this.isGraphPresent = false;
 		this.preserve_map = true;
 		this.localstorage_enabled = true;
@@ -53,6 +53,9 @@ define([
 		this.gather_information = true;
 		this.heatmap_time_map = true;
 		this.streaming_speed = 10000;
+		this.max_tokens = 5;
+		/***********************/
+		this.current_local_ip; // async, later	
 		this.url = location.protocol + '//' + location.host + location.pathname;
 		/****************************************************************************/
 		this.drawer = drawer;
@@ -62,20 +65,15 @@ define([
 		this.DateConverter = new DateConverter();
 		this.scroller = new EPPZScrollTo();
 		console.log("== GuiManager Ready");
-
-		env.mainView = this;
-
-		//dentro validator puoi fare:
-		env.mainView.changeLoaderText();
 	};
 
 	GuiManager.prototype.gui_setup = function(){
 		console.log("== GuiManager Setup");
 		this.get_local_ip();
-		this.pickers_setup();
-		this.tokenfield_setup();
-		this.input_address_setup();
-		this.ipversion_setup();
+		//this.pickers_setup();
+		//this.tokenfield_setup();
+		//this.input_address_setup();
+		//this.ipversion_setup();
 		this.clear_button_setup();
 		this.my_ip_button_setup();
 		this.go_button_setup();
@@ -177,14 +175,14 @@ define([
 	GuiManager.prototype.tokenfield_setup = function() {
 		var GuiManager = this;
 		//tokenfield
-		$('.tokenfield').tokenfield();//{limit:GuiManager.max_tokens}
+		this.tokenfield.tokenfield();//{limit:GuiManager.max_tokens}
 		//var placeholder=$('.tokenfield').find('input').attr('placeholder');
 		//$('.tokenfield').find('input').attr('placeholder', placeholder+" ("+GuiManager.max_tokens+" max)");
-		$('.tokenfield').on('keydown',function(e){
+		this.tokenfield.on('keydown',function(e){
 			e.preventDefault();
 			e.stopPropagation();
 		});
-		$('.tokenfield').on("change",function(e) {
+		this.tokenfield.on("change",function(e) {
 			GuiManager.UIerror_check($(this).parent().parent());
 		});
 	};

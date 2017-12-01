@@ -22,8 +22,15 @@ requirejs.config({
         "bgpst.lib.stache": window.atlas._widgets.bgpst.urls.libs + "stache",
         "bgpst.lib.colorbrewer": window.atlas._widgets.bgpst.urls.libs + "colorbrewer",
         "bgpst.lib.d3.legend": window.atlas._widgets.bgpst.urls.libs + "d3.legend",
+        "bgpst.lib.moment": window.atlas._widgets.bgpst.urls.libs + "moment/2.18.1/moment.min",
 
-        "bgpst.lib.moment": window.atlas._widgets.bgpst.urls.libs + "moment.min",
+        "bgpst.lib.bootstrap.datetimepicker": window.atlas._widgets.bgpst.urls.libs + "datetimepicker/4.17.47/bootstrap-datetimepicker.min",
+        "bgpst.lib.bootstrap.validator": window.atlas._widgets.bgpst.urls.libs + "form_validator/0.5.3/bootstrapValidator.min",
+        "bgpst.lib.bootstrap.validator-it": window.atlas._widgets.bgpst.urls.libs + "form_validator/0.5.3/it_IT",
+
+        "bgpst.lib.bootstrap.tokenfield": window.atlas._widgets.bgpst.urls.libs + "tokenfield/0.12.0/bootstrap-tokenfield.min",
+
+
 
         /* view */
         "bgpst.view.main": window.atlas._widgets.bgpst.urls.view + "MainView",
@@ -40,18 +47,18 @@ requirejs.config({
         /* controller */
         "bgpst.controller.main": window.atlas._widgets.bgpst.urls.controller + "main",
 
-        "bgpst.controller.asnvalidator": window.atlas._widgets.bgpst.urls.controller.helpers + "AsnValidator",
-        "bgpst.controller.dateconverter": window.atlas._widgets.bgpst.urls.controller.helpers + "DateConverter",
-        "bgpst.controller.datevalidator": window.atlas._widgets.bgpst.urls.controller.helpers + "DateValidator",
-        "bgpst.controller.functions": window.atlas._widgets.bgpst.urls.controller.helpers + "Functions",
-        "bgpst.controller.ipv4validator": window.atlas._widgets.bgpst.urls.controller.helpers + "Ipv4Validator",
-        "bgpst.controller.ipv6validator": window.atlas._widgets.bgpst.urls.controller.helpers + "Ipv6Validator",
-        "bgpst.controller.logger": window.atlas._widgets.bgpst.urls.controller.helpers + "Logger",
-        "bgpst.controller.validator": window.atlas._widgets.bgpst.urls.controller.helpers + "Validator",
+        "bgpst.controller.asnvalidator": window.atlas._widgets.bgpst.urls.controller + "helpers/AsnValidator",
+        "bgpst.controller.dateconverter": window.atlas._widgets.bgpst.urls.controller + "helpers/DateConverter",
+        "bgpst.controller.datevalidator": window.atlas._widgets.bgpst.urls.controller + "helpers/DateValidator",
+        "bgpst.controller.functions": window.atlas._widgets.bgpst.urls.controller + "helpers/Functions",
+        "bgpst.controller.ipv4validator": window.atlas._widgets.bgpst.urls.controller + "helpers/Ipv4Validator",
+        "bgpst.controller.ipv6validator": window.atlas._widgets.bgpst.urls.controller + "helpers/Ipv6Validator",
+        "bgpst.controller.logger": window.atlas._widgets.bgpst.urls.controller + "helpers/Logger",
+        "bgpst.controller.validator": window.atlas._widgets.bgpst.urls.controller + "helpers/Validator",
 
 
         /* model */
-        "bgpst.model.gdbstruct": window.atlas._widgets.bgpst.urls.model + "GDBStruct",
+        "bgpst.model.gdbstruct": window.atlas._widgets.bgpst.urls.model + "gdb_structure/GDBStruct",
 
 
         /* connector */
@@ -61,7 +68,18 @@ requirejs.config({
 
     },
     shim:{
-
+        "bgpst.lib.bootstrap-datetimepicker": {
+            deps: ["bgpst.lib.jquery-amd"]
+        },
+        "bgpst.lib.bootstrap-validator": {
+            deps: ["bgpst.lib.jquery-amd"]
+        },
+        "bgpst.lib.bootstrap-validator-it": {
+            deps: ["bgpst.lib.jquery-amd"]
+        },
+        "bgpst.lib.bootstrap-tokenfield": {
+            deps: ["bgpst.lib.jquery-amd"]
+        }
     },
 
     stache: {

@@ -3,7 +3,7 @@ define([
     /*functions*/
     "bgpst.controller.validator",
     "bgpst.controller.functions"
-], function(validator, functions){
+], function(Validator, myUtils){
 
     var RipeDataParser = function() {
         console.log("==== RipeParser Starting");
@@ -422,7 +422,7 @@ define([
                             //antiprepending-da-spostare
                             path = no_consecutive_repetition(path);
                         }
-                        if(path != = "" && path.length>(level)) {
+                        if(path !== "" && path.length>(level)) {
                             var asn = path[path.length-(level+1)];
                             //update the asn list if wasnt discovered
                             if(this.asn_set.indexOf(asn) == -1)
@@ -599,5 +599,5 @@ define([
         return converted;
     };
 
-    return ;
+    return RipeDataParser;
 });

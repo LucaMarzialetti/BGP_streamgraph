@@ -239,4 +239,26 @@ define([
     return x;
   };
 
+  return {
+    levenshtein: levenshtein,
+    swap: swap,
+    cumulate: cumulate,
+    average: average,
+    variance: variance,
+    std_dev: std_dev,
+    max: max,
+    min: min,
+    occurrences_positions: occurrences_positions,
+    random_sort: random_sort,
+    equal: equal,
+    contains: contains,
+    differences_count: differences_count,
+    sort_by_occurrences: sort_by_occurrences,
+    no_consecutive_repetition: no_consecutive_repetition,
+    unique_set: unique_set,
+    sorted_by_field_key_length: sorted_by_field_key_length,
+    sorted_by_field_max: sorted_by_field_max,
+    sorted_by_field: sorted_by_field,
+    fact: fact,
+  };
 });

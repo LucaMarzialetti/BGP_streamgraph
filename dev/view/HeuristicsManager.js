@@ -7,7 +7,7 @@ define([
 	"bgpst.view.metrics",
 	"bgpst.controller.functions",
 	"bgpst.lib.moment"
-], function(DateConverter, MetricsManager, functions, moment){
+], function(DateConverter, MetricsManager, myUtils, moment){
 
 	var HeuristicsManager = function(type) {
 		this.DateConverter = new DateConverter();

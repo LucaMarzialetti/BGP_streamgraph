@@ -35,69 +35,6 @@ define([
 		return (regex.test(str));
 	};
 
-	IPv6Validator.prototype.formatipv6field = function(str) {
-		var str, str1, theAddress;
-		
-		var pageItem = document.getElementById('ipv6text');			// retrieve the user's input field
-		theAddress = pageItem.value;
-		
-		str = this.formatipv6result(theAddress);							// retrieve the Good/Bad result string
-	//	str = str + "1";				// retrieve the best representation
-		pageItem = document.getElementById('ipv6results');
-		pageItem.innerHTML = str;									// and display it
-
-	//	pageItem = document.getElementById('bestrepresentation');	
-	//	pageItem.innerHTML = str;									// and display it
-	};
-
-	// Print Good/Bad IPv6 Result
-	IPv6Validator.prototype.formatipv6result = function(str) {
-	var resultstr = "";
-	var str1;
-	var font =  'font-family:Arial, Verdana, Sans-serif;font-size:16px;';
-	var styling = '<span style="color:%s;' + font + '">%s</span>';
-	var color = "";
-
-		if (this.checkipv6(str))
-		{	
-			color = '#000000';
-			resultstr = "Valid IPv6 Format. Best representation is ";
-			str1 = this.formatbestipv6(str);
-			resultstr = resultstr + str1;
-		} 
-		else 
-		{
-			resultstr = "Invalid IPv6 format";
-			color = '#FF0000';
-		}
-		resultstr =  this.sprintf(styling ,color, resultstr);
-
-	return resultstr;
-	};
-
-	// Global variables - Danger Will Robinson!
-	//	"segments" holds the segments of the IPv6 address
-	//	"totalsegments" holds number of segments
-	//  "debugstr" holds assorted debugging information, normally ""
-
-	var segments;		// the global array to hold the segments
-	var totalsegments;	// assumed to be 8 unless the last is a IPv4 address, then seven
-	var debugstr = "";	// a place to put debugging information
-
-	// print the "preferred representation" of the IPv6 address
-	IPv6Validator.prototype.formatipv6preferred = function(theaddress) {
-		var resultstr = "";
-		var beststr = "";
-			
-		beststr = this.formatbestipv6(theaddress);		
-
-		resultstr = resultstr + "<br /> Best representation: " + beststr;
-		if (debugstr.length > 0)
-			{ resultstr = resultstr + "<br />" + debugstr; }
-
-		return resultstr;
-	};
-
 	IPv6Validator.prototype.formatbestipv6 = function(theaddress) {
 		var str;
 		var beststr = "Not valid IPv6 Address";
@@ -163,8 +100,8 @@ define([
 	// adjust number of segments - if IPv4 address present, there really are only seven segments
 	IPv6Validator.prototype.adjustsegmentsforipv4 = function() {
 		var numsegments = 8;
-		if (segments[segments.length-1].indexOf(".") != -1)                  // found a "." which means IPv4
-		{
+		// found a "." which means IPv4
+		if (segments[segments.length-1].indexOf(".") != -1){
 			// alert ("only seven segments");
 			numsegments = 7;
 		}
@@ -267,110 +204,6 @@ define([
 			beststr = beststr + ":";
 		return beststr;
 	};
-
-	// This function clears the field when a customer focuses on it
-	//   unless the field doesn't contain the default "Enter acknowedge text"
-	IPv6Validator.prototype.focus_field = function(obj) {
-	obj.style.color='';
-	obj.style.fontStyle='';
-	if (obj.value=="::1")
-		{
-		obj.value='';
-		}
-	};
-
-	// function from http://forums.devshed.com/t39065/s84ded709f924610aa44fff827511aba3.html
-	// author appears to be Robert Pollard
-	// found on: http://www.esqsoft.com/javascript_examples/javascript-sprintf.js
-
-	IPv6Validator.prototype.sprintf = function() {
-	   if (!arguments || arguments.length < 1 || !RegExp)
-	   {
-	      return;
-	   }
-	   var str = arguments[0];
-	   var re = /([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X)(.*)/;
-	   var a = b = [], numSubstitutions = 0, numMatches = 0;
-	   while (a = re.exec(str))
-	   {
-	      var leftpart = a[1], pPad = a[2], pJustify = a[3], pMinLength = a[4];
-	      var pPrecision = a[5], pType = a[6], rightPart = a[7];
-
-	      numMatches++;
-	      if (pType == '%')
-	      {
-	         subst = '%';
-	      }
-	      else
-	      {
-	         numSubstitutions++;
-	         if (numSubstitutions >= arguments.length)
-	         {
-	            alert('Error! Not enough function arguments (' + (arguments.length - 1)
-	               + ', excluding the string)\n'
-	               + 'for the number of substitution parameters in string ('
-	               + numSubstitutions + ' so far).');
-	         }
-	         var param = arguments[numSubstitutions];
-	         var pad = '';
-	                if (pPad && pPad.substr(0,1) == "'") pad = leftpart.substr(1,1);
-	           else if (pPad) pad = pPad;
-	         var justifyRight = true;
-	                if (pJustify && pJustify === "-") justifyRight = false;
-	         var minLength = -1;
-	                if (pMinLength) minLength = parseInt(pMinLength);
-	         var precision = -1;
-	                if (pPrecision && pType == 'f')
-	                   precision = parseInt(pPrecision.substring(1));
-	         var subst = param;
-	         switch (pType)
-	         {
-	         case 'b':
-	            subst = parseInt(param).toString(2);
-	            break;
-	         case 'c':
-	            subst = String.fromCharCode(parseInt(param));
-	            break;
-	         case 'd':
-	            subst = parseInt(param) ? parseInt(param) : 0;
-	            break;
-	         case 'u':
-	            subst = Math.abs(param);
-	            break;
-	         case 'f':
-	            subst = (precision > -1)
-	             ? Math.round(parseFloat(param) * Math.pow(10, precision))
-	              / Math.pow(10, precision)
-	             : parseFloat(param);
-	            break;
-	         case 'o':
-	            subst = parseInt(param).toString(8);
-	            break;
-	         case 's':
-	            subst = param;
-	            break;
-	         case 'x':
-	            subst = ('' + parseInt(param).toString(16)).toLowerCase();
-	            break;
-	         case 'X':
-	            subst = ('' + parseInt(param).toString(16)).toUpperCase();
-	            break;
-	         }
-	         var padLeft = minLength - subst.toString().length;
-	         if (padLeft > 0)
-	         {
-	            var arrTmp = new Array(padLeft+1);
-	            var padding = arrTmp.join(pad?pad:" ");
-	         }
-	         else
-	         {
-	            var padding = "";
-	         }
-	      }
-	      str = leftpart + padding + subst + rightPart;
-	   }
-	   return str;
-	};
 	 
 	IPv6Validator.prototype.XTEST = function(sbok, str, beststr)  {
 	 	var bestrep;
@@ -401,7 +234,6 @@ define([
 	 };
 	 
 	IPv6Validator.prototype.checkall = function() {
-	 	//this.formatipv6field();
 		this.XTEST(false,"","---");
 		this.XTEST(true ,"2001:0000:1234:0000:0000:C1C0:ABCD:0876","2001:0:1234::C1C0:ABCD:876"); 
 		this.XTEST(true ,"3ffe:0b00:0000:0000:0001:0000:0000:000a","3ffe:b00::1:0:0:a"); 

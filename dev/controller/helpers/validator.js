@@ -3,7 +3,7 @@ define([
 	"bgpst.controller.datevalidator",
 	"bgpst.controller.ipv4validator",
 	"bgpst.controller.ipv6validator"
-], function(asn_validator,date_validator,ipv4_validator, ipv6_validator){
+], function(ASNValidator, DateValidator, IPv4Validator, IPv6Validator){
 	var Validator = function(env){
 		this.ipv6_validator = new IPv6Validator();
 		this.ipv4_validator = new IPv4Validator();
