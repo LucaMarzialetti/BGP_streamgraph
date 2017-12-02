@@ -1,12 +1,10 @@
 
 define([
 	"bgpst.controller.functions",
-	"bgpst.lib.moment",
-	"bgpst.controller.functions"
-], function(myUtils, moment, myUtils){
-
-	var MetricsManager = function(env) {
-	};
+	"bgpst.lib.moment"
+], function(myUtils, moment){
+	
+	var MetricsManager = function(env) {};
 
 	MetricsManager.prototype.metrics = function(current_parsed, asn_ordering){
 		var line_std_devs = Object.values(this.lineDistancesStdDev(current_parsed, asn_ordering));
@@ -125,7 +123,7 @@ define([
 		}
 
 		for(var w in as_w){
-			as_w[w] = max(as_w[w]);
+			as_w[w] = myUtils.max(as_w[w]);
 		}
 
 		return as_w;

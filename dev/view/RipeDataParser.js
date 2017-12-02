@@ -8,12 +8,10 @@ define([
     var RipeDataParser = function() {
         console.log("==== RipeParser Starting");
         this.validator = new Validator();
-        this.cp_map;
         this.states = [];
         this.events = [];
         this.resources = [];
         this.asn_distributions = [];
-        this.last_date;
 
         this.asn_set = [];
         this.cp_set = [];

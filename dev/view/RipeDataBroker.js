@@ -1,3 +1,5 @@
+
+
 define([
 	/*date converter*/
 	/*heuristic manager*/
@@ -6,8 +8,10 @@ define([
 	"bgpst.view.parser",
 	"bgpst.controller.dateconverter",
 	"bgpst.view.heuristics",
-	"bgpst.lib.moment"
-], function($, RipeDataParser, DateConverter, HeuristicsManager, moment){
+	"bgpst.lib.moment",
+    "bgpst.controller.functions"
+], function($, RipeDataParser, DateConverter, HeuristicsManager, moment, myUtils){
+
 
 	var RipeDataBroker = function(drawer, context, GuiManager) {
 		console.log("=== RipeBroker Starting");
@@ -63,8 +67,8 @@ define([
 				console.log("=== RipeBroker Success! Peer count loaded");
 				console.log(data);
 				try {
-					$this.ipv4_peerings = max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
-					$this.ipv6_peerings = max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
+					$this.ipv4_peerings = myUtils.max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
+					$this.ipv6_peerings = myUtils.max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
 					if($this.ipv6_peerings == 0 && targets.split(",").some(function(e){return $this.GuiManager.validator.check_ipv6(e)}))
 						$this.GuiManager.global_visibility = false;
 					if($this.ipv4_peerings == 0 && targets.split(",").some(function(e){return $this.GuiManager.validator.check_ipv4(e)}))

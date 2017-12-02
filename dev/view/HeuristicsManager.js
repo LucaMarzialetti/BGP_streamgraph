@@ -211,7 +211,7 @@ define([
 			var try_dist = Object.values(this.MetricsManager.lineDistancesStdDev(current_parsed, try_order));
 			var try_score = myUtils.cumulate(try_dist);
 			if(try_score <= best_score){
-				if(try_score<best_score || (max(try_dist)<max(best_dist)&&try_score == best_score)) {
+				if(try_score<best_score || (myUtils.max(try_dist)<myUtils.max(best_dist)&&try_score == best_score)) {
 					best_score = try_score;
 					best_choose = try_choose;
 					best_dist = try_dist;
@@ -279,10 +279,10 @@ define([
 		var best_lev = this.MetricsManager.computeLevenshteinDistance(current_parsed,best_ordering);
 		var best_cum = myUtils.cumulate(best_lev);
 		var best_avg = Math.floor(myUtils.average(best_lev,best_cum));
-		var best_max = max(best_lev);
+		var best_max = myUtils.max(best_lev);
 		var done_ordering = [];
 		done_ordering.push(best_ordering);
-		var tentatives = Math.floor(fact(Math.floor(Math.sqrt(ordering_length))))*Math.min(best_cum,ordering_length);
+		var tentatives = Math.floor(myUtils.fact(Math.floor(Math.sqrt(ordering_length))))*Math.min(best_cum,ordering_length);
 		var temperature = 1;
 		console.log("LEV_DIST_RND_WLK_CUM, DIST: "+best_cum+", TENTATIVES: "+tentatives);
 		while(tentatives>0){
@@ -295,7 +295,7 @@ define([
 					best_ordering = new_seq;
 					best_cum = new_dist_tot;
 					best_avg = Math.max(Math.floor(myUtils.average(best_lev,best_cum)),1);
-					best_max = max(best_lev);
+					best_max = myUtils.max(best_lev);
 					tentatives+=best_cum*ordering_length;
 					console.log("New best ["+best_cum+"], "+" tentatives left:"+tentatives);
 				}
@@ -320,10 +320,10 @@ define([
 		var best_lev = this.MetricsManager.computeLevenshteinDistance(current_parsed,best_ordering);
 		var best_cum = myUtils.cumulate(best_lev);
 		var best_avg = Math.floor(myUtils.average(best_lev,best_cum));
-		var best_max = max(best_lev);
+		var best_max = myUtils.max(best_lev);
 		var done_ordering = [];
 		done_ordering.push(best_ordering);
-		var tentatives = Math.floor(fact(Math.floor(Math.sqrt(ordering_length))))*Math.max(best_max,ordering_length);
+		var tentatives = Math.floor(myUtils.fact(Math.floor(Math.sqrt(ordering_length))))*Math.max(best_max,ordering_length);
 		var temperature = 1;
 		console.log("LEV_DIST_RND_WLK_MAX, DIST: "+best_max+", TENTATIVES: "+tentatives);
 		while(tentatives>0){
@@ -332,7 +332,7 @@ define([
 				done_ordering.push(new_seq);
 				var new_dist = this.MetricsManager.computeLevenshteinDistance(current_parsed,new_seq);
 				var new_dist_tot = myUtils.cumulate(new_dist);
-				var new_dist_max = max(new_dist);
+				var new_dist_max = myUtils.max(new_dist);
 				if(new_dist_max<best_max) {
 					best_ordering = new_seq;
 					best_cum = new_dist_tot;

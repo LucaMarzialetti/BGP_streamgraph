@@ -259,6 +259,6 @@ define([
     sorted_by_field_key_length: sorted_by_field_key_length,
     sorted_by_field_max: sorted_by_field_max,
     sorted_by_field: sorted_by_field,
-    fact: fact,
+    fact: fact
   };
 });
