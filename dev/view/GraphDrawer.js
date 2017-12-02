@@ -8,8 +8,9 @@ define([
     "bgpst.view.color",
     "bgpst.lib.moment",
     "bgpst.lib.jquery-amd",
-    "bgpst.lib.d3-amd"
-], function(ColorManager, moment, $, d3) {
+    "bgpst.lib.d3-amd",
+    "bgpst.controller.functions"
+], function(ColorManager, moment, $, d3, myUtils) {
 
     // while (!d3) {
 
@@ -536,12 +537,12 @@ define([
         this.diff_ranges = this.diff_ranges.map(function (e) {
             return e / minimum
         });
-        var max_width = cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
+        var max_width = myUtils.cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
         while (max_width < drawer.sizes.width) {
             this.diff_ranges = this.diff_ranges.map(function (e) {
                 return e * 2
             });
-            var max_width = cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
+            var max_width = myUtils.cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
         }
         //axis
         this.width_axis = d3.scaleLinear().range([0, drawer.sizes.width - margin_x / 3 * 2]).domain([0, max_width]);
@@ -942,7 +943,7 @@ define([
                 event_set.push(d.date);
             var asn_path = JSON.parse(d.asn_path);
             if (prepending) {
-                var set = no_consecutive_repetition(asn_path);
+                var set = myUtils.no_consecutive_repetition(asn_path);
                 asn_path = set;
             }
             if (asn_path.length != 0 && asn_path.length > level) {

@@ -6,8 +6,9 @@ define([
 	"bgpst.controller.dateconverter",
 	"bgpst.view.metrics",
 	"bgpst.controller.functions",
-	"bgpst.lib.moment"
-], function(DateConverter, MetricsManager, myUtils, moment){
+	"bgpst.lib.moment",
+	"bgpst.model.gdbstruct"
+], function(DateConverter, MetricsManager, myUtils, moment, GDBS){
 
 	var HeuristicsManager = function(type) {
 		this.DateConverter = new DateConverter();
@@ -143,7 +144,7 @@ define([
 		var temperature = 1;
 		var done_ordering = [];
 		done_ordering.push(best_ordering);
-		console.log("STD_DEV_RND_WLK_CUM, DIST: "+best_cum+", TENTATIVES: "+tentatives);
+		console.log("myUtils.std_dev_RND_WLK_CUM, DIST: "+best_cum+", TENTATIVES: "+tentatives);
 		while(tentatives > 0){
 			var new_seq = random_sort(asn_ordering);
 			if(!contains(done_ordering,new_seq)){
@@ -182,7 +183,7 @@ define([
 			}
 		var d_l = done.length;
 		var a_l = current_parsed.asn_set.length;
-		console.log("STD_DEV_GREEDY "+d_l+" on "+a_l+" are on baseline (0% deviation)");
+		console.log("myUtils.std_dev_GREEDY "+d_l+" on "+a_l+" are on baseline (0% deviation)");
 		while(d_l<a_l){
 			d_l++;
 			var best = this.pickbest(current_parsed,done,current_parsed.asn_set);
@@ -202,13 +203,13 @@ define([
 		var best_order = done.slice(0);
 		best_order.push(best_choose);
 		var best_dist = Object.values(this.MetricsManager.lineDistancesStdDev(current_parsed, best_order));
-		var best_score = cumulate(best_dist);
+		var best_score = myUtils.cumulate(best_dist);
 		for(var i = 1; i<left.length; i++){
 			var try_choose = left[i];
 			var try_order = done.slice(0);
 			try_order.push(try_choose);
 			var try_dist = Object.values(this.MetricsManager.lineDistancesStdDev(current_parsed, try_order));
-			var try_score = cumulate(try_dist);
+			var try_score = myUtils.cumulate(try_dist);
 			if(try_score <= best_score){
 				if(try_score<best_score || (max(try_dist)<max(best_dist)&&try_score == best_score)) {
 					best_score = try_score;
@@ -258,7 +259,7 @@ define([
 			}
 		var d_l = done.length;
 		var a_l = current_parsed.asn_set;
-		console.log("STD_DEV_INF "+d_l+" on "+a_l+" are on baseline (0% deviation)");
+		console.log("myUtils.std_dev_INF "+d_l+" on "+a_l+" are on baseline (0% deviation)");
 		while(d_l<a_l){
 			d_l++;
 			var best = this.pickbest(current_parsed, done, current_parsed.asn_set);
@@ -276,8 +277,8 @@ define([
 		var best_ordering = current_parsed.asn_set.slice(0);
 		var ordering_length = best_ordering.length;
 		var best_lev = this.MetricsManager.computeLevenshteinDistance(current_parsed,best_ordering);
-		var best_cum = cumulate(best_lev);
-		var best_avg = Math.floor(average(best_lev,best_cum));
+		var best_cum = myUtils.cumulate(best_lev);
+		var best_avg = Math.floor(myUtils.average(best_lev,best_cum));
 		var best_max = max(best_lev);
 		var done_ordering = [];
 		done_ordering.push(best_ordering);
@@ -289,11 +290,11 @@ define([
 			if(!contains(done_ordering,new_seq)){
 				done_ordering.push(new_seq);
 				var new_dist = this.MetricsManager.computeLevenshteinDistance(current_parsed,new_seq);
-				var new_dist_tot = cumulate(new_dist);
+				var new_dist_tot = myUtils.cumulate(new_dist);
 				if(new_dist_tot<best_cum) {
 					best_ordering = new_seq;
 					best_cum = new_dist_tot;
-					best_avg = Math.max(Math.floor(average(best_lev,best_cum)),1);
+					best_avg = Math.max(Math.floor(myUtils.average(best_lev,best_cum)),1);
 					best_max = max(best_lev);
 					tentatives+=best_cum*ordering_length;
 					console.log("New best ["+best_cum+"], "+" tentatives left:"+tentatives);
@@ -317,8 +318,8 @@ define([
 		var best_ordering = current_parsed.asn_set.slice(0);
 		var ordering_length = best_ordering.length;
 		var best_lev = this.MetricsManager.computeLevenshteinDistance(current_parsed,best_ordering);
-		var best_cum = cumulate(best_lev);
-		var best_avg = Math.floor(average(best_lev,best_cum));
+		var best_cum = myUtils.cumulate(best_lev);
+		var best_avg = Math.floor(myUtils.average(best_lev,best_cum));
 		var best_max = max(best_lev);
 		var done_ordering = [];
 		done_ordering.push(best_ordering);
@@ -330,12 +331,12 @@ define([
 			if(!contains(done_ordering,new_seq)){
 				done_ordering.push(new_seq);
 				var new_dist = this.MetricsManager.computeLevenshteinDistance(current_parsed,new_seq);
-				var new_dist_tot = cumulate(new_dist);
+				var new_dist_tot = myUtils.cumulate(new_dist);
 				var new_dist_max = max(new_dist);
 				if(new_dist_max<best_max) {
 					best_ordering = new_seq;
 					best_cum = new_dist_tot;
-					best_avg = Math.max(Math.floor(average(best_lev,best_cum)),1);
+					best_avg = Math.max(Math.floor(myUtils.average(best_lev,best_cum)),1);
 					best_max = new_dist_max;
 					tentatives+=best_max*temperature*ordering_length;
 					console.log("New best ["+best_max+"], "+" tentatives left:"+tentatives);
@@ -362,12 +363,12 @@ define([
 		for (var i in current_parsed.asn_stdev)
 			new_order.push([i, current_parsed.asn_stdev[i]])
 		if(sort_type == "asc"){
-			console.log("SORT_STD_DEV_ASC");
+			console.log("SORT_myUtils.std_dev_ASC");
 			new_order.sort(function(a, b) {
 				return a[1] - b[1];
 			});
 		} else {
-			console.log("SORT_STD_DEV_DSC");
+			console.log("SORT_myUtils.std_dev_DSC");
 			new_order.sort(function(a, b) {
 				return b[1] - a[1];
 			});
@@ -380,7 +381,7 @@ define([
 		return values;
 	};
 
-	/* get ASN sorted by VARIANCE VALUE */
+	/* get ASN sorted by myUtils.variance VALUE */
 	HeuristicsManager.prototype.getSortedAsnByFreqVAR = function(current_parsed, sort_type){
 		var start = moment().valueOf();
 		var new_order = [];
@@ -406,7 +407,7 @@ define([
 		return values;
 	};
 
-	/* get ASN sorted by AVERAGE VALUE */
+	/* get ASN sorted by myUtils.average VALUE */
 	HeuristicsManager.prototype.getSortedAsnByFreqAVG = function(current_parsed, sort_type){
 		var start = moment().valueOf();
 		var new_order = [];
@@ -430,7 +431,7 @@ define([
 		return values;
 	};
 
-	/* get ASN sorted by CUMULATE VALUE*/
+	/* get ASN sorted by myUtils.cumulate VALUE*/
 	HeuristicsManager.prototype.getSortedAsnByFreqSUM = function(current_parsed, sort_type){
 		var start = moment().valueOf();
 		var new_order = [];

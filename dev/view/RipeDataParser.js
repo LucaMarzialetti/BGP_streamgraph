@@ -253,7 +253,7 @@ define([
                 for(var r in state){
                     var cp = state[r];
                     if(antiprepending)
-                        cp = no_consecutive_repetition(cp);
+                        cp = myUtils.no_consecutive_repetition(cp);
                     if(cp.length>level)
                         this.states_by_cp[r].push(cp[cp.length-level-1]);
                     else
@@ -271,7 +271,7 @@ define([
         for(var r in parsed.cp_set) {
             var cp = parsed.cp_set[r];
             var asn_seq = parsed.states_by_cp[cp];
-            this.cp_by_composition[cp] = sort_by_occurrences(asn_seq);
+            this.cp_by_composition[cp] = myUtils.sort_by_occurrences(asn_seq);
         }
         parsed.cp_by_composition = this.cp_by_composition;
     }; 
@@ -283,7 +283,7 @@ define([
         for(var r in parsed.cp_set) {
             var cp = parsed.cp_set[r];
             var asn_seq = parsed.states_by_cp[cp];
-            this.cp_by_seqs[cp] = no_consecutive_repetition(asn_seq);
+            this.cp_by_seqs[cp] = myUtils.no_consecutive_repetition(asn_seq);
         }
         parsed.cp_by_seqs = this.cp_by_seqs;
     };
@@ -345,10 +345,10 @@ define([
         }
         //compute cumulate, avg, variance and std_dev
         for(var a in this.asn_freqs){
-            this.asn_sumfreqs[a] = cumulate(this.asn_freqs[a]);
-            this.asn_avgfreqs[a] = average(this.asn_freqs[a],this.asn_sumfreqs[a]);
-            this.asn_varfreqs[a] = variance(this.asn_freqs[a],this.asn_avgfreqs[a]);
-            this.asn_stdev[a] = std_dev(this.asn_freqs[a],this.asn_varfreqs[a]);
+            this.asn_sumfreqs[a] = myUtils.cumulate(this.asn_freqs[a]);
+            this.asn_avgfreqs[a] = myUtils.average(this.asn_freqs[a],this.asn_sumfreqs[a]);
+            this.asn_varfreqs[a] = myUtils.variance(this.asn_freqs[a],this.asn_avgfreqs[a]);
+            this.asn_stdev[a] = myUtils.std_dev(this.asn_freqs[a],this.asn_varfreqs[a]);
         }
     };
 
@@ -420,7 +420,7 @@ define([
                         var path = state[e];
                         if(antiprepending) {
                             //antiprepending-da-spostare
-                            path = no_consecutive_repetition(path);
+                            path = myUtils.no_consecutive_repetition(path);
                         }
                         if(path !== "" && path.length>(level)) {
                             var asn = path[path.length-(level+1)];
@@ -597,6 +597,35 @@ define([
         }
         var converted = converted_data.join("\n");
         return converted;
+    };
+
+    /************************ OTHER ************************/
+    /**freq difference**/
+    /* compute the difference vector (N-1) length by each sample (column) */
+    RipeDataParser.prototype.computeDifferenceVector = function(current_parsed){
+        var counters = [];
+        for(var i = 0; i<current_parsed.events.length-1;i++)
+            counters[i] = 0;
+        for(var i = 0; i<counters.length; i++)
+        for(var k in current_parsed.asn_freqs) {
+            counters[i]+=Math.abs(current_parsed.asn_freqs[k][i]-current_parsed.asn_freqs[k][i+1]);
+        }
+        //counters è un array della differenza tra ogni campione considerando le frequenze
+        return counters;
+    };
+
+    /**freq distance**/
+    /* compute the distance vector (N-1) length by each sample (column) */
+    RipeDataParser.prototype.computeDistanceVector = function(current_parsed){
+        var counters = [];
+        for(var i = 0; i<current_parsed.events.length-1;i++)
+            counters[i] = 0;
+        for(var i = 0; i<counters.length; i++)
+        for(var k in current_parsed.asn_freqs) {
+            counters[i]+=Math.sqrt(Math.abs(Math.pow(current_parsed.asn_freqs[k][i],2)-Math.pow(current_parsed.asn_freqs[k][i+1],2)));
+        }
+        //counters è un array delle distanza tra ogni campione considerando le frequenze
+        return counters;
     };
 
     return RipeDataParser;

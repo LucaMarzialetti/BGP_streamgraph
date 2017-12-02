@@ -221,4 +221,4 @@ define([
 	};
 
 	return GDBS;
-};
+});

@@ -1,8 +1,9 @@
 
 define([
 	"bgpst.controller.functions",
-	"bgpst.lib.moment"
-], function(myUtils, moment){
+	"bgpst.lib.moment",
+	"bgpst.controller.functions"
+], function(myUtils, moment, myUtils){
 
 	var MetricsManager = function(env) {
 	};
@@ -21,7 +22,7 @@ define([
 
 	/************************ DISCONNECTIONS ************************/
 	MetricsManager.prototype.disconnections = function(current_parsed, asn_ordering){
-		//values store the cumulates in every instant for every ASN
+		//values store the myUtils.cumulates in every instant for every ASN
 		var values = [];
 		for(var e in current_parsed.asn_distributions)
 			values.push({});
@@ -101,7 +102,7 @@ define([
 			}
 		}
 		for(var i in std_devs)
-			std_devs[i] = std_dev(std_devs[i]);
+			std_devs[i] = myUtils.std_dev(std_devs[i]);
 		return std_devs;
 	};
 
@@ -141,7 +142,7 @@ define([
 		}
 
 		for(var w in as_w){
-			as_w[w] = cumulate(as_w[w]);
+			as_w[w] = myUtils.cumulate(as_w[w]);
 		}
 
 		return as_w;
@@ -235,35 +236,6 @@ define([
 		for(var i = 0; i<strings.length-1; i++)
 			distances.push(levenshtein(strings[i],strings[i+1]));
 		return distances;
-	};
-
-	/************************ OTHER ************************/
-	/**freq difference**/
-	/* compute the difference vector (N-1) length by each sample (column) */
-	MetricsManager.prototype.computeDifferenceVector = function(current_parsed){
-		var counters = [];
-		for(var i = 0; i<current_parsed.events.length-1;i++)
-			counters[i] = 0;
-		for(var i = 0; i<counters.length; i++)
-		for(var k in current_parsed.asn_freqs) {
-			counters[i]+=Math.abs(current_parsed.asn_freqs[k][i]-current_parsed.asn_freqs[k][i+1]);
-		}
-		//counters è un array della differenza tra ogni campione considerando le frequenze
-		return counters;
-	};
-
-	/**freq distance**/
-	/* compute the distance vector (N-1) length by each sample (column) */
-	MetricsManager.prototype.computeDistanceVector = function(current_parsed){
-		var counters = [];
-		for(var i = 0; i<current_parsed.events.length-1;i++)
-			counters[i] = 0;
-		for(var i = 0; i<counters.length; i++)
-		for(var k in current_parsed.asn_freqs) {
-			counters[i]+=Math.sqrt(Math.abs(Math.pow(current_parsed.asn_freqs[k][i],2)-Math.pow(current_parsed.asn_freqs[k][i+1],2)));
-		}
-		//counters è un array delle distanza tra ogni campione considerando le frequenze
-		return counters;
 	};
 
 	return MetricsManager;
