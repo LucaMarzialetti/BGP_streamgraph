@@ -146,8 +146,8 @@ define([
 		done_ordering.push(best_ordering);
 		console.log("myUtils.std_dev_RND_WLK_CUM, DIST: "+best_cum+", TENTATIVES: "+tentatives);
 		while(tentatives > 0){
-			var new_seq = random_sort(asn_ordering);
-			if(!contains(done_ordering,new_seq)){
+			var new_seq = myUtils.random_sort(asn_ordering);
+			if(!myUtils.contains(done_ordering,new_seq)){
 				var new_devs = this.MetricsManager.lineDistancesStdDev(current_parsed, new_seq);
 				var new_cum = Math.floor(this.MetricsManager.lineDistanceStdDevScore(new_devs));
 				if(new_cum < best_cum){
@@ -234,7 +234,7 @@ define([
 			phase++;
 			console.log("phase "+phase);
 			for(var i = 0; i<asn_ordering.length-1; i++){
-				var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
+				var new_order = myUtils.swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
 				var new_score = this.MetricsManager.lineDistanceStdDevScore(this.MetricsManager.lineDistancesStdDev(current_parsed,new_order));
 				if(new_score<best_score){
 					//changed = true;
@@ -286,8 +286,8 @@ define([
 		var temperature = 1;
 		console.log("LEV_DIST_RND_WLK_CUM, DIST: "+best_cum+", TENTATIVES: "+tentatives);
 		while(tentatives>0){
-			var new_seq = random_sort(current_parsed.asn_set);
-			if(!contains(done_ordering,new_seq)){
+			var new_seq = myUtils.random_sort(current_parsed.asn_set);
+			if(!myUtils.contains(done_ordering,new_seq)){
 				done_ordering.push(new_seq);
 				var new_dist = this.MetricsManager.computeLevenshteinDistance(current_parsed,new_seq);
 				var new_dist_tot = myUtils.cumulate(new_dist);
@@ -327,8 +327,8 @@ define([
 		var temperature = 1;
 		console.log("LEV_DIST_RND_WLK_MAX, DIST: "+best_max+", TENTATIVES: "+tentatives);
 		while(tentatives>0){
-			var new_seq = random_sort(current_parsed.asn_set);
-			if(!contains(done_ordering,new_seq)){
+			var new_seq = myUtils.random_sort(current_parsed.asn_set);
+			if(!myUtils.contains(done_ordering,new_seq)){
 				done_ordering.push(new_seq);
 				var new_dist = this.MetricsManager.computeLevenshteinDistance(current_parsed,new_seq);
 				var new_dist_tot = myUtils.cumulate(new_dist);
@@ -599,7 +599,7 @@ define([
 			phase++;
 			console.log("phase "+phase);
 			for(var i = 0; i<asn_ordering.length-1; i++){
-				var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
+				var new_order = myUtils.swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
 				var new_wiggle = this.MetricsManager.computeWiggle(current_parsed,new_order);
 				var new_score = this.MetricsManager.wiggleScore(calc_type(new_wiggle,new_order));
 				if(new_score<best_score){
@@ -664,7 +664,7 @@ define([
 			phase++;
 			console.log("phase "+phase);
 			for(var i = 0; i<asn_ordering.length-1; i++){
-				var new_order = swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
+				var new_order = myUtils.swap(i,(i+phase)%phase_max,asn_ordering.slice(0));
 				var new_disconnections = this.MetricsManager.disconnections(current_parsed,new_order);
 				var new_score = this.MetricsManager.disconnectionsScore(new_disconnections);
 				if(new_score<best_score){
@@ -794,7 +794,7 @@ define([
 			to_insert.push(cp);
 			geo_counter[geo] = to_insert;
 		}
-		var sorted_geo = sorted_by_field_key_length(geo_counter);
+		var sorted_geo = myUtils.sorted_by_field_key_length(geo_counter);
 		sorted_geo = sorted_geo.map(function(e){return e[0]});
 		/*geo order found*/
 		var order = [];
@@ -827,7 +827,7 @@ define([
 				geo_counter[geo] = to_insert;
 			}
 		}
-		var sorted_geo = sorted_by_field_key_length(geo_counter);
+		var sorted_geo = myUtils.sorted_by_field_key_length(geo_counter);
 		sorted_geo = sorted_geo.map(function(e){return e[0]});
 		/*as order found*/
 		var order = [];

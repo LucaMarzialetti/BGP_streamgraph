@@ -305,7 +305,6 @@ define([
 				this.GuiManager.update_counters(".counter_asn", this.GuiManager.drawer.keys.length+"/"+this.current_parsed.cp_set.length);
 			else
 				this.GuiManager.update_counters(".counter_asn", this.GuiManager.drawer.keys.length);
-			this.GuiManager.isGraphPresent = d3.select("svg").select(".chart").node() != null;
 		}
 		else {
 			alert("nè heat nè stream, problema!");

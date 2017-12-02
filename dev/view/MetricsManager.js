@@ -232,7 +232,7 @@ define([
 		var strings = this.characterization(current_parsed.asn_distributions, asn_ordering);
 		var distances = [];
 		for(var i = 0; i<strings.length-1; i++)
-			distances.push(levenshtein(strings[i],strings[i+1]));
+			distances.push(myUtils.levenshtein(strings[i],strings[i+1]));
 		return distances;
 	};
 

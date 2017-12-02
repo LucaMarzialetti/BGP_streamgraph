@@ -8,7 +8,7 @@ define([
 	/*jquery*/
 
 	/*uso di chiamate DOM su tutto l'albero, dalla root del DOM*/
-
+	"bgpst.view.graphdrawer",
 	"bgpst.controller.validator",
 	"bgpst.controller.dateconverter",
 	"bgpst.view.broker",
@@ -16,15 +16,17 @@ define([
 	"bgpst.lib.moment",
 	"bgpst.lib.jquery-amd",
 	"bgpst.lib.stache!main"
-], function(Validator, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
+], function(GraphDrawer, Validator, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
 	
 
 	//setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
-	var GuiManager = function(drawer, context) {
+	var GuiManager = function(context) {
+
 		console.log("== GuiManager Starting");
 
 		/*************************************** DOM elements ************************************/
 		$("body").html(template());
+		this.drawer = new GraphDrawer(this);
 		this.loader = $(".loading_text");
 		this.mask = $("div.loader_mask");
 		this.container = $("div.body_container");
@@ -57,7 +59,7 @@ define([
 		/***********************/
 		this.url = location.protocol + '//' + location.host + location.pathname;
 		/****************************************************************************/
-		this.drawer = drawer;
+//		this.drawer = drawer;
 		this.context = context;
 		this.RipeDataBroker = new RipeDataBroker(this.drawer, this.context, this);
 		this.validator = new Validator();

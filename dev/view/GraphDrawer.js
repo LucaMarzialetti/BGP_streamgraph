@@ -12,20 +12,20 @@ define([
     "bgpst.controller.functions"
 ], function(ColorManager, moment, $, d3, myUtils) {
 
-     while (!d3) {
-
-     }
 
     var GraphDrawer = function(GuiManager) {
         console.log("== Starting GraphDrawer");
         console.log("d3", d3);
         this.main_svg = d3.select("div.main_svg").select("svg");
+        console.log("main svg", this.main_svg)
         this.mini_svg = d3.select("div.mini_svg").select("svg");
         this.background = d3.select("div.main_svg").select(".background");
         this.brush = d3.select(".brush");
         this.tooltip = $(".svg_tooltip");
         this.colors = [];
         this.keys = [];
+        this.GuiManager = GuiManager;
+        console.log("gui cons", this.GuiManager)
         this.ColorManager = new ColorManager();
         console.log("== GraphDrawer Ready");
     };
@@ -78,8 +78,8 @@ define([
     };
 
     GraphDrawer.prototype.draw_minimap = function (svg, sizes, data, stack) {
-        this.erase_minimap();
         var GuiManager = this.GuiManager;
+        this.erase_minimap();
         var drawer = this;
         var x_width = sizes.width - (sizes.margin.left + sizes.margin.right);
         var y_width = sizes.height_mini - (sizes.margin.top + sizes.margin.bottom);
@@ -90,14 +90,14 @@ define([
                 .extent([[0, 0], [x_width, y_width]]);
         }
 
-        if (GuiManager.graph_type == "stream") {
+        if (this.GuiManager.graph_type == "stream") {
             var x_width = sizes.width - (sizes.margin.left + sizes.margin.right);
             var y_width = sizes.height_mini - (sizes.margin.top + sizes.margin.bottom);
             var margin_left = sizes.margin.left + sizes.margin.right * 2;
             var margin_top = sizes.margin.top;
             var axis_margin = sizes.height_mini - sizes.margin.top;
         }
-        else if (GuiManager.graph_type == "heat") {
+        else if (this.GuiManager.graph_type == "heat") {
             var x_width = sizes.width - (sizes.margin.left + sizes.margin.right);
             var y_width = sizes.height_mini - (sizes.margin.top + sizes.margin.bottom);
             var margin_left = sizes.margin.left + sizes.margin.right * 2;
@@ -108,7 +108,7 @@ define([
         this.mini_x = d3.scaleTime().range([0, x_width]);
         this.mini_y = d3.scaleLinear().range([y_width, 0]);
 
-        if (GuiManager.graph_type == "stream" && data && stack) {
+        if (this.GuiManager.graph_type == "stream" && data && stack) {
             if (!(data && stack))
                 draw_background(svg, sizes);
             else {
@@ -116,7 +116,7 @@ define([
                 draw_stream(data, stack);
             }
         }
-        else if (GuiManager.graph_type == "heat") {
+        else if (this.GuiManager.graph_type == "heat") {
             if (!(data && stack))
                 draw_background(svg, sizes);
             else {
@@ -535,7 +535,7 @@ define([
             this.diff_ranges.push(diff);
         }
         //last event last as the minimum
-        var minimum = min(this.diff_ranges);
+        var minimum = myUtils.min(this.diff_ranges);
         this.diff_ranges.push(0);
         //normalize ranges
         this.diff_ranges = this.diff_ranges.map(function (e) {
@@ -1129,7 +1129,7 @@ define([
             var shifter = set[moments[pos]];
             for (var i = 1; i < moments.length; i++) {
                 var tmp = set[moments[i]];
-                if (differences_count(shifter, tmp) >= tollerance) {
+                if (myUtils.differences_count(shifter, tmp) >= tollerance) {
                     flat.push(moments[pos]);
                     pos = i;
                     shifter = tmp;
@@ -1150,7 +1150,7 @@ define([
     GraphDrawer.prototype.shuffle_color_map = function (graph_type) {
         var drawer = this;
         if (graph_type == "stream") {
-            this.colors = random_sort(this.ColorManager.d_sorteds.map(function (c) {
+            this.colors = myUtils.random_sort(this.ColorManager.d_sorteds.map(function (c) {
                 return c.lab.rgb()
             }), this.keys.length);
             this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
@@ -1160,7 +1160,7 @@ define([
             });
         }
         else if (graph_type == "heat") {
-            this.colors = random_sort(this.ColorManager.d_sorteds.map(function (c) {
+            this.colors = myUtils.random_sort(this.ColorManager.d_sorteds.map(function (c) {
                 return c.lab.rgb()
             }), this.asn_set.length);
             this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());

@@ -182,16 +182,16 @@ define([
             $("button").button();
             context_manager = new ContextManager();
             //draw in the svg
-            context_manager.drawer.drawer_init();
+            context_manager.GuiManager.drawer.drawer_init();
             //setup the gui
             context_manager.GuiManager.gui_setup();
 
             //resize listener
             $(window).resize(function(){
-                context_manager.drawer.drawer_init();
+                context_manager.GuiManager.drawer.drawer_init();
                 if(context_manager.GuiManager.isGraphPresent){
                     if(context_manager.GuiManager.graph_type=="stream")
-                        context_manager.drawer.draw_streamgraph(
+                        context_manager.GuiManager.drawer.draw_streamgraph(
                             context_manager.RipeDataBroker.current_parsed,
                             context_manager.GuiManager.graph_type,
                             context_manager.GuiManager.RipeDataBroker.current_asn_tsv, 
