@@ -14,7 +14,7 @@ requirejs.config({
         /* libs */
         "bgpst.lib.require": window.atlas._widgets.bgpst.urls.libs + "require.min",
         "bgpst.lib.jquery-amd": window.atlas._widgets.bgpst.urls.libs + "jquery-libs-amd",
-        "bgpst.lib.jquery-libs": window.atlas._widgets.bgpst.urls.libs + "jquery-libs",
+        "bgpst.lib.jquery-libs": window.atlas._widgets.bgpst.urls.libs + "jquery-libs.2",
         "bgpst.lib.date-format": window.atlas._widgets.bgpst.urls.libs + "dateFormat",
         "bgpst.lib.d3-amd": window.atlas._widgets.bgpst.urls.libs + "d3/js/d3.v4.amd",
         "bgpst.lib.mustache": window.atlas._widgets.bgpst.urls.libs + "mustache",
@@ -146,7 +146,7 @@ define([
                 window.atlas._widgets.bgpst.urls.libs + "jquery/jquery-ui.min.css",
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap.min.css",
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap-theme.min.css",
-                window.atlas._widgets.bgpst.urls.libs + "bootstrap-slider/css/bootstrap-slider.css",
+                window.atlas._widgets.bgpst.urls.libs + "bootstrap-slider/css/bootstrap-slider.css"
             ];
 
         }

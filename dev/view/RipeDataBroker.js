@@ -2,11 +2,12 @@ define([
     /*date converter*/
     /*heuristic manager*/
     /*moment*/
+    "bgpst.lib.jquery-amd",
     "bgpst.view.parser",
     "bgpst.controller.dateconverter",
     "bgpst.view.heuristics",
     "bgpst.lib.moment"
-], function(RipeDataParser, DateConverter, HeuristicsManager, moment){
+], function($, RipeDataParser, DateConverter, HeuristicsManager, moment){
 
     var RipeDataBroker = function(drawer, context, GuiManager) {
         console.log("=== RipeBroker Starting");
@@ -41,7 +42,7 @@ define([
 
     //do the ajax get
     RipeDataBroker.prototype.getData = function(start_d,end_d,targets) {
-        var RipeDataBroker = this;
+        var $this = this;
         if(start_d != null)
             this.current_starttime = start_d;
         if(end_d != null)
@@ -55,28 +56,28 @@ define([
             dataType: "json",
             //unix_timestamps: true,
             data : {
-                starttime: RipeDataBroker.DateConverter.formatRipe(moment(this.current_starttime).subtract(1,"months")),
-                endtime: RipeDataBroker.DateConverter.formatRipe(moment(this.current_endtime).add(1,"months"))
+                starttime: $this.DateConverter.formatRipe(moment(this.current_starttime).subtract(1,"months")),
+                endtime: $this.DateConverter.formatRipe(moment(this.current_endtime).add(1,"months"))
             },
             success: function(data){
                 console.log("=== RipeBroker Success! Peer count loaded");
                 console.log(data);
                 try {
-                    RipeDataBroker.ipv4_peerings = max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
-                    RipeDataBroker.ipv6_peerings = max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
-                    if(RipeDataBroker.ipv6_peerings == 0 && targets.split(",").some(function(e){return RipeDataBroker.GuiManager.validator.check_ipv6(e)}))
-                        RipeDataBroker.GuiManager.global_visibility = false;
-                    if(RipeDataBroker.ipv4_peerings == 0 && targets.split(",").some(function(e){return RipeDataBroker.GuiManager.validator.check_ipv4(e)}))
-                        RipeDataBroker.GuiManager.global_visibility = false;
-                    RipeDataBroker.context.storeContext({4:RipeDataBroker.ipv4_peerings, 6:RipeDataBroker.ipv6_peerings},"last_context_peerings");
+                    $this.ipv4_peerings = max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
+                    $this.ipv6_peerings = max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
+                    if($this.ipv6_peerings == 0 && targets.split(",").some(function(e){return $this.GuiManager.validator.check_ipv6(e)}))
+                        $this.GuiManager.global_visibility = false;
+                    if($this.ipv4_peerings == 0 && targets.split(",").some(function(e){return $this.GuiManager.validator.check_ipv4(e)}))
+                        $this.GuiManager.global_visibility = false;
+                    $this.context.storeContext({4:$this.ipv4_peerings, 6:$this.ipv6_peerings},"last_context_peerings");
                 }
                 catch(err) {
                     console.log("=== RipeBroker Warning: empty peerings size");
-                    RipeDataBroker.ipv6_peerings = 0;
-                    RipeDataBroker.ipv4_peerings = 0;
-                    RipeDataBroker.GuiManager.global_visibility = false;
+                    $this.ipv6_peerings = 0;
+                    $this.ipv4_peerings = 0;
+                    $this.GuiManager.global_visibility = false;
                 }
-                RipeDataBroker.getBGPData();
+                $this.getBGPData();
             },
             fail: function (argument) {
                 alert("Server error");
@@ -149,25 +150,25 @@ define([
     };
 
     RipeDataBroker.prototype.loadCurrentState = function(store, events_range, redraw_minimap) {
-        RipeDataBroker = this;
+        var $this = this;
         this.GuiManager.changeLoaderText("Drawing the chart!");
         this.GuiManager.ip_version_checkbox_enabler();
         this.GuiManager.restoreQuery(this.current_starttime, this.current_endtime, this.current_targets);
         var ordering;
         if(this.GuiManager.gather_information){
             console.log("=== RipeBroker Starting gathering CP Info");
-            RipeDataBroker.GuiManager.cp_info_done = false;
+            $this.GuiManager.cp_info_done = false;
             setTimeout(function(){
-                RipeDataBroker.getCPInfo(RipeDataBroker.current_parsed.resources,0)
+                $this.getCPInfo($this.current_parsed.resources,0)
             },0);
             console.log("=== RipeBroker Starting gathering ASN Info");
             setTimeout(function(){
-                RipeDataBroker.GuiManager.asn_info_done = false;
-                if(RipeDataBroker.GuiManager.graph_type == "stream")
-                    RipeDataBroker.getASNInfo(RipeDataBroker.current_parsed.asn_set,0);
+                $this.GuiManager.asn_info_done = false;
+                if($this.GuiManager.graph_type == "stream")
+                    $this.getASNInfo($this.current_parsed.asn_set,0);
                 else
-                if(RipeDataBroker.GuiManager.graph_type == "heat")
-                    RipeDataBroker.getASNInfo(RipeDataBroker.GuiManager.drawer.asn_set,0);
+                if($this.GuiManager.graph_type == "heat")
+                    $this.getASNInfo($this.GuiManager.drawer.asn_set,0);
             },0);
         }
         /*COMMON*/

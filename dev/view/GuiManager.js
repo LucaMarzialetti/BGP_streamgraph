@@ -21,7 +21,7 @@ define([
 	//setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
 	var GuiManager = function(drawer, context) {
 		console.log("== GuiManager Starting");
-		
+
 		/*************************************** DOM elements ************************************/
 		$("body").html(template());
 		this.loader = $(".loading_text");
@@ -55,7 +55,6 @@ define([
 		this.streaming_speed = 10000;
 		this.max_tokens = 5;
 		/***********************/
-		this.current_local_ip; // async, later	
 		this.url = location.protocol + '//' + location.host + location.pathname;
 		/****************************************************************************/
 		this.drawer = drawer;
@@ -70,10 +69,10 @@ define([
 	GuiManager.prototype.gui_setup = function(){
 		console.log("== GuiManager Setup");
 		this.get_local_ip();
-		//this.pickers_setup();
-		//this.tokenfield_setup();
-		//this.input_address_setup();
-		//this.ipversion_setup();
+		this.pickers_setup();
+		this.tokenfield_setup();
+		this.input_address_setup();
+		this.ipversion_setup();
 		this.clear_button_setup();
 		this.my_ip_button_setup();
 		this.go_button_setup();
@@ -1177,7 +1176,10 @@ define([
 			$('input[name="ip_version"][value="6"]').prop('checked', true);
 			$('input[name="ip_version"][value="6"]').parent().addClass("active");
 		}
+		
+		$(".asn_lvl").spinner();
 		$(".asn_lvl").spinner("value", this.asn_level);
+		$(".merge_events").spinner();
 		$(".merge_events").spinner("value", this.merge_events);
 	};
 

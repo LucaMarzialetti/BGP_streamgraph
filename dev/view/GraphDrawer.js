@@ -1,7 +1,7 @@
 
 define([
     /*color manager*
-    /*moment*/
+     /*moment*/
     /*jquery QUALE ?*/
     /*d3 QUALE ?*/
     /*chiamate sul DOM dalla root DOM*/
@@ -11,23 +11,21 @@ define([
     "bgpst.lib.d3-amd"
 ], function(ColorManager, moment, $, d3) {
 
-    function GraphDrawer(GuiManager) {
+    // while (!d3) {
+
+    // }
+
+    var GraphDrawer = function(GuiManager) {
         console.log("== Starting GraphDrawer");
-        console.log("D3")
-        console.log(d3);
+        console.log("d3", d3);
         this.main_svg = d3.select("div.main_svg").select("svg");
         this.mini_svg = d3.select("div.mini_svg").select("svg");
         this.background = d3.select("div.main_svg").select(".background");
         this.brush = d3.select(".brush");
         this.tooltip = $(".svg_tooltip");
-        this.x, this.y, this.z, this.colors = [], this.keys = [];
-        this.mini_x, this.mini_y;
-        this.events_range;
+        this.colors = [];
+        this.keys = [];
         this.ColorManager = new ColorManager();
-        this.GuiManager; //post-set
-        this.current_query_id;
-        this.last_hover;
-        this.ordering;
         console.log("== GraphDrawer Ready");
     };
 
