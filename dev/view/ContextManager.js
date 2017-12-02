@@ -75,7 +75,7 @@ define([
 				//dates
 				start = DateConverter.formatRipe(DateConverter.parseRipe(start));
 				end = DateConverter.formatRipe(DateConverter.parseRipe(end));
-				if(GuiManager.validator.check_date_with_format(start,GuiManager.DateConverter.ripestat_data_format)&&GuiManager.validator.check_date_with_format(end,GuiManager.DateConverter.ripestat_data_format)){
+				if(this.GuiManager.validator.check_date_with_format(start, this.GuiManager.DateConverter.ripestat_data_format) && this.GuiManager.validator.check_date_with_format(end, this.GuiManager.DateConverter.ripestat_data_format)){
 					this.GuiManager.RipeDataBroker.current_starttime = start;
 					this.GuiManager.RipeDataBroker.current_endtime = end;
 				}
@@ -134,7 +134,7 @@ define([
 				//brusher
 				brush_s = DateConverter.formatRipe(DateConverter.parseRipe(brush_s));
 				brush_e = DateConverter.formatRipe(DateConverter.parseRipe(brush_e));
-				if(GuiManager.validator.check_date_with_format(brush_s,GuiManager.DateConverter.ripestat_data_format)&&GuiManager.validator.check_date_with_format(brush_e,GuiManager.DateConverter.ripestat_data_format)){
+				if(this.GuiManager.validator.check_date_with_format(brush_s,this.GuiManager.DateConverter.ripestat_data_format) && this.GuiManager.validator.check_date_with_format(brush_e, this.GuiManager.DateConverter.ripestat_data_format)){
 					this.GuiManager.drawer.events_range = [];
 					this.GuiManager.drawer.events_range[0] = moment(brush_s);
 					this.GuiManager.drawer.events_range[1] = moment(brush_e);
