@@ -281,7 +281,7 @@ define([
 			this.GuiManager.update_counters(".counter_events",this.current_parsed.events.length);
 			this.drawer.draw_streamgraph(this.current_parsed, this.GuiManager.graph_type, this.current_asn_tsv, ordering, this.GuiManager.preserve_map, this.current_visibility, this.current_parsed.targets, this.current_parsed.query_id, function(pos){return RipeDataBroker.go_to_bgplay(RipeDataBroker.current_starttime,RipeDataBroker.current_endtime,RipeDataBroker.current_targets,pos)},null,events_range, redraw_minimap);
 			this.HeuristicsManager.MetricsManager.metrics(this.current_parsed, this.drawer.keys);
-			this.GuiManager.isGraphPresent = d3.select("svg").select(".chart").node() != null;
+			this.GuiManager.isGraphPresent();
 		}
 		else
 		//HEAT

@@ -12,9 +12,9 @@ define([
     "bgpst.controller.functions"
 ], function(ColorManager, moment, $, d3, myUtils) {
 
-    // while (!d3) {
+     while (!d3) {
 
-    // }
+     }
 
     var GraphDrawer = function(GuiManager) {
         console.log("== Starting GraphDrawer");
@@ -28,6 +28,10 @@ define([
         this.keys = [];
         this.ColorManager = new ColorManager();
         console.log("== GraphDrawer Ready");
+    };
+
+    GraphDrawer.prototype.isGraphPresent = function(text) {
+        return d3.select("svg").select(".chart").node() != null;
     };
 
     //setup the drawing in the svg  <-- TO CALL AT DOM READY

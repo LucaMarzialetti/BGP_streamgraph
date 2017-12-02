@@ -18,6 +18,7 @@ define([
 	"bgpst.lib.stache!main"
 ], function(Validator, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
 	
+
 	//setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
 	var GuiManager = function(drawer, context) {
 		console.log("== GuiManager Starting");
@@ -33,7 +34,6 @@ define([
 		//new to try
 
 		/************************************ settings [status] *********************************/
-		this.isGraphPresent = false;
 		this.preserve_map = true;
 		this.localstorage_enabled = true;
 		this.global_visibility = true;
@@ -79,6 +79,12 @@ define([
 		this.other_command_button_setup();
 		this.tooltip_setup();
 		console.log("== GuiManager Setup Done");
+	};
+
+
+	GuiManager.prototype.isGraphPresent = function(text) {
+		//return d3.select("svg").select(".chart").node() != null;
+		return this.drawer.isGraphPresent();
 	};
 
 	//Loader splashscreen managing
@@ -692,7 +698,7 @@ define([
 	GuiManager.prototype.shuffle_color_map_btn_setup = function() {
 		var GuiManager = this;
 		$(".shuffle_color_map_btn").on("click", function(e){
-			if(GuiManager.isGraphPresent)
+			if(GuiManager.isGraphPresent())
 				GuiManager.drawer.shuffle_color_map(GuiManager.graph_type);
 		});
 	};
@@ -747,7 +753,7 @@ define([
 			$("input[name='graph_type']").parent().removeClass("not-active");
 			$("input[name='graph_type']").parent().attr("disabled",false);
 
-			if(this.isGraphPresent){
+			if(this.isGraphPresent()){
 				$(".path_btn").removeClass("disabled");
 				$(".list_btn").removeClass("disabled");
 				$(".sort_btn").removeClass("disabled");
@@ -909,7 +915,6 @@ define([
 		var GuiManager = this;
 		$(".erase_graph_btn").on("click", function(e){
 			GuiManager.drawer.drawer_init();
-			GuiManager.isGraphPresent = false;
 			GuiManager.draw_functions_btn_enabler();
 		});
 	};
@@ -953,7 +958,7 @@ define([
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
 			GuiManager.prepending_prevention = !GuiManager.prepending_prevention;
-			if(GuiManager.isGraphPresent)
+			if(GuiManager.isGraphPresent())
 				if(GuiManager.graph_type == "stream")
 					GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 				else
@@ -969,7 +974,7 @@ define([
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
 			GuiManager.merge_cp = !GuiManager.merge_cp;
-			if(GuiManager.isGraphPresent) {
+			if(GuiManager.isGraphPresent()) {
 				GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 				if(GuiManager.merge_cp)
 					GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length+"/"+GuiManager.RipeDataBroker.current_parsed.cp_set.length);
@@ -983,7 +988,7 @@ define([
 		var GuiManager = this;
 		$("input[name='merge_events']:input").on("change", function( e, ui ) {
 			GuiManager.merge_events = $("input[name='merge_events']").spinner("value");
-			if(GuiManager.isGraphPresent) {
+			if(GuiManager.isGraphPresent()) {
 				GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 				if(GuiManager.merge_events)
 					GuiManager.update_counters(".counter_events",GuiManager.drawer.event_set.length+"/"+GuiManager.RipeDataBroker.current_parsed.events.length);
@@ -1000,7 +1005,7 @@ define([
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
 			GuiManager.events_labels = !GuiManager.events_labels;
-			if(GuiManager.isGraphPresent)
+			if(GuiManager.isGraphPresent())
 				GuiManager.RipeDataBroker.loadCurrentState(false,null,false);
 		});
 	};
@@ -1012,7 +1017,7 @@ define([
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
 			GuiManager.cp_labels = !GuiManager.cp_labels;
-			if(GuiManager.isGraphPresent)
+			if(GuiManager.isGraphPresent())
 				GuiManager.RipeDataBroker.loadCurrentState(false,null,false);
 		});
 	};
@@ -1024,7 +1029,7 @@ define([
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
 			GuiManager.heatmap_time_map = !GuiManager.heatmap_time_map;
-			if(GuiManager.isGraphPresent)
+			if(GuiManager.isGraphPresent())
 				GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 		});
 	};
@@ -1053,7 +1058,7 @@ define([
 			$(target).find("span").toggleClass("hidden");
 			$(target).parent().toggleClass("active");
 			GuiManager.global_visibility = !GuiManager.global_visibility;
-			if(GuiManager.isGraphPresent)
+			if(GuiManager.isGraphPresent())
 				if(GuiManager.graph_type == "stream")
 					GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 				else
@@ -1210,7 +1215,7 @@ define([
 			$(".heat_option").removeClass("hidden");
 		}
 		GuiManager.RipeDataBroker.HeuristicsManager.setDefaultHeuristic(GuiManager.graph_type);
-		if(GuiManager.isGraphPresent)
+		if(GuiManager.isGraphPresent())
 			GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 		});
 	};
@@ -1222,7 +1227,7 @@ define([
 			$("input[name='ip_version']:checked").each(function() {
 				GuiManager.ip_version.push(parseInt($(this).val()));
 			});
-			if(GuiManager.isGraphPresent){
+			if(GuiManager.isGraphPresent()){
 				if(GuiManager.graph_type == "heat")
 					GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 				else 
@@ -1274,7 +1279,7 @@ define([
 		var GuiManager = this;
 		$("input[name='asn_lvl']:input").on("change", function( e, ui ) {
 			GuiManager.asn_level = $("input[name='asn_lvl']").spinner("value");
-			if(GuiManager.isGraphPresent)
+			if(GuiManager.isGraphPresent())
 				GuiManager.RipeDataBroker.loadCurrentState(false,null,true);
 		});
 	};
