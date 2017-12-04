@@ -11,12 +11,12 @@ define([
 
 
     //setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
-    var GuiManager = function(context) {
+    var GuiManager = function(env) {
 
         console.log("== GuiManager Starting");
 
         /*************************************** DOM elements ************************************/
-        $("body").html(template());
+        env.parentDom.append(template());
         this.drawer = new GraphDrawer(this);
         this.loader = $(".loading_text");
         this.mask = $("div.loader_mask");
@@ -26,7 +26,6 @@ define([
 
         //new to try
 
-        /************************************ settings [status] *********************************/
         this.preserve_map = true;
         this.localstorage_enabled = true;
         this.global_visibility = true;
@@ -47,20 +46,19 @@ define([
         this.heatmap_time_map = true;
         this.streaming_speed = 10000;
         this.max_tokens = 5;
-        /***********************/
+
         this.url = location.protocol + '//' + location.host + location.pathname;
-        /****************************************************************************/
-//		this.drawer = drawer;
-        this.context = context;
+        this.context = env.main;
         this.RipeDataBroker = new RipeDataBroker(this.drawer, this.context, this);
         this.validator = new Validator();
         this.DateConverter = new DateConverter();
         this.scroller = new EPPZScrollTo();
-        console.log("== GuiManager Ready");
+
+        this.drawer.drawer_init();
+        this.gui_setup();
     };
 
     GuiManager.prototype.gui_setup = function(){
-        console.log("== GuiManager Setup");
         this.get_local_ip();
         this.pickers_setup();
         this.tokenfield_setup();
@@ -71,7 +69,6 @@ define([
         this.go_button_setup();
         this.other_command_button_setup();
         this.tooltip_setup();
-        console.log("== GuiManager Setup Done");
     };
 
 

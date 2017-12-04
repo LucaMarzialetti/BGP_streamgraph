@@ -37,7 +37,6 @@ requirejs.config({
         "bgpst.view.color": window.atlas._widgets.bgpst.urls.view + "ColorManager",
         "bgpst.view.graphdrawer": window.atlas._widgets.bgpst.urls.view + "GraphDrawer",
         "bgpst.view.gui": window.atlas._widgets.bgpst.urls.view + "GuiManager",
-        "bgpst.view.context": window.atlas._widgets.bgpst.urls.view + "ContextManager",
         "bgpst.view.heuristics": window.atlas._widgets.bgpst.urls.view + "HeuristicsManager",
         "bgpst.view.metrics": window.atlas._widgets.bgpst.urls.view + "MetricsManager",
         "bgpst.view.broker": window.atlas._widgets.bgpst.urls.view + "RipeDataBroker",
@@ -79,6 +78,9 @@ requirejs.config({
         },
         "bgpst.lib.bootstrap-tokenfield": {
             deps: ["bgpst.lib.jquery-amd"]
+        },
+        "bgpst.lib.d3": {
+            export: "d3"
         }
     },
 
@@ -95,9 +97,8 @@ define([
     "bgpst.env.config",
     "bgpst.env.languages.en",
     "bgpst.lib.jquery-amd",
-    "bgpst.controller.main",
-    "bgpst.view.context"
-], function(utils, config, language, $, main, ContextManager){
+    "bgpst.controller.main"
+], function(utils, config, language, $, Main){
 
     return function(instance){
         var env, instanceParams, queryParams, parentDom, styleDownloads, objectToBeEnriched;
@@ -115,6 +116,7 @@ define([
         env = {
             "version": "17.10.1.0",
             "dev": instanceParams.dev,
+            "autoStart": instanceParams.autoStart || true,
             "widgetUrl": WIDGET_URL + "dev/",
             "parentDom": $(parentDom),
             "queryParams": queryParams
@@ -162,7 +164,7 @@ define([
         utils.loadStylesheets(styleDownloads, function(){
             var n, length, methodName, callbackReady;
 
-            env.main = new main(env);
+            env.main = new Main(env);
 
             if (env.autoStart){
                 env.main.init();
@@ -183,67 +185,8 @@ define([
 
             /* bgp stream script to ben run */
 
-            $(".jquery_ui_spinner").spinner();
-            $("button").button();
-            context_manager = new ContextManager();
-            //draw in the svg
-            context_manager.GuiManager.drawer.drawer_init();
-            //setup the gui
-            context_manager.GuiManager.gui_setup();
-
-            //resize listener
-            $(window).resize(function(){
-                context_manager.GuiManager.drawer.drawer_init();
-                if(context_manager.GuiManager.isGraphPresent){
-                    if(context_manager.GuiManager.graph_type=="stream")
-                        context_manager.GuiManager.drawer.draw_streamgraph(
-                            context_manager.RipeDataBroker.current_parsed,
-                            context_manager.GuiManager.graph_type,
-                            context_manager.GuiManager.RipeDataBroker.current_asn_tsv, 
-                            context_manager.GuiManager.drawer.keys, 
-                            context_manager.GuiManager.preserve_map, 
-                            context_manager.GuiManager.RipeDataBroker.current_visibility, 
-                            context_manager.GuiManager.RipeDataBroker.current_parsed.targets, 
-                            context_manager.GuiManager.RipeDataBroker.current_parsed.query_id, 
-                            function(pos){return context_manager.GuiManager.RipeDataBroker.go_to_bgplay(
-                                context_manager.GuiManager.RipeDataBroker.current_starttime,
-                                context_manager.GuiManager.RipeDataBroker.current_endtime,
-                                context_manager.GuiManager.RipeDataBroker.current_targets,
-                                pos)},
-                            null,
-                            null,
-                            true);                      
-                    else
-                        if(context_manager.GuiManager.graph_type=="heat")
-                            context_manager.GuiManager.drawer.draw_heatmap(
-                                context_manager.GuiManager.RipeDataBroker.current_parsed,
-                                context_manager.GuiManager.RipeDataBroker.current_cp_tsv,
-                                context_manager.GuiManager.RipeDataBroker.current_asn_tsv, 
-                                context_manager.GuiManager.drawer.keys, 
-                                context_manager.GuiManager.preserve_map, 
-                                context_manager.GuiManager.RipeDataBroker.current_visibility, 
-                                context_manager.GuiManager.RipeDataBroker.current_parsed.targets, 
-                                context_manager.GuiManager.RipeDataBroker.current_parsed.query_id, 
-                                function(pos){return RipeDataBroker.go_to_bgplay(
-                                    context_manager.GuiManager.RipeDataBroker.current_starttime,
-                                    context_manager.GuiManager.RipeDataBroker.current_endtime,
-                                    context_manager.GuiManager.RipeDataBroker.current_targets,pos)}, 
-                                context_manager.GuiManager.asn_level, 
-                                context_manager.GuiManager.ip_version, 
-                                context_manager.GuiManager.prepending_prevention, 
-                                context_manager.GuiManager.merge_cp, 
-                                context_manager.GuiManager.merge_events, 
-                                context_manager.GuiManager.events_labels, 
-                                context_manager.GuiManager.cp_labels,
-                                context_manager.GuiManager.heatmap_time_map,
-                                null,
-                                true);
-                    }
-                })
-            if(!context_manager.check_request())
-                context_manager.GuiManager.toggleLoader();         
-            
-            /** end to be run **/
+            // $(".jquery_ui_spinner").spinner();
+            // $("button").button();
 
             if (callbackReady){
                 callbackReady(objectToBeEnriched);

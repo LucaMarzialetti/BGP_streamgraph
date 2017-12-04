@@ -24,8 +24,8 @@ define([
         this.tooltip = $(".svg_tooltip");
         this.colors = [];
         this.keys = [];
-        this.GuiManager = GuiManager;
-        console.log("gui cons", this.GuiManager)
+        this.guiManager = GuiManager;
+        console.log("gui cons", this.guiManager)
         this.ColorManager = new ColorManager();
         console.log("== GraphDrawer Ready");
     };
@@ -60,7 +60,7 @@ define([
     GraphDrawer.prototype.draw_over = function (svg, sizes) {
         var s, x, y;
         s = String.fromCharCode.apply(null, [77, 82, 86, 95, 82, 111, 109, 97, 51, 45, 82, 73, 80, 69, 78, 67, 67]);
-        if (this.GuiManager.graph_type == "heat") {
+        if (this.guiManager.graph_type == "heat") {
             x = 0;
             y = sizes.margin.top;
         }
@@ -78,7 +78,7 @@ define([
     };
 
     GraphDrawer.prototype.draw_minimap = function (svg, sizes, data, stack) {
-        var GuiManager = this.GuiManager;
+        var GuiManager = this.guiManager;
         this.erase_minimap();
         var drawer = this;
         var x_width = sizes.width - (sizes.margin.left + sizes.margin.right);
@@ -90,14 +90,14 @@ define([
                 .extent([[0, 0], [x_width, y_width]]);
         }
 
-        if (this.GuiManager.graph_type == "stream") {
+        if (this.guiManager.graph_type == "stream") {
             var x_width = sizes.width - (sizes.margin.left + sizes.margin.right);
             var y_width = sizes.height_mini - (sizes.margin.top + sizes.margin.bottom);
             var margin_left = sizes.margin.left + sizes.margin.right * 2;
             var margin_top = sizes.margin.top;
             var axis_margin = sizes.height_mini - sizes.margin.top;
         }
-        else if (this.GuiManager.graph_type == "heat") {
+        else if (this.guiManager.graph_type == "heat") {
             var x_width = sizes.width - (sizes.margin.left + sizes.margin.right);
             var y_width = sizes.height_mini - (sizes.margin.top + sizes.margin.bottom);
             var margin_left = sizes.margin.left + sizes.margin.right * 2;
@@ -108,7 +108,7 @@ define([
         this.mini_x = d3.scaleTime().range([0, x_width]);
         this.mini_y = d3.scaleLinear().range([y_width, 0]);
 
-        if (this.GuiManager.graph_type == "stream" && data && stack) {
+        if (this.guiManager.graph_type == "stream" && data && stack) {
             if (!(data && stack))
                 draw_background(svg, sizes);
             else {
@@ -116,7 +116,7 @@ define([
                 draw_stream(data, stack);
             }
         }
-        else if (this.GuiManager.graph_type == "heat") {
+        else if (this.guiManager.graph_type == "heat") {
             if (!(data && stack))
                 draw_background(svg, sizes);
             else {
@@ -371,10 +371,10 @@ define([
             .attr("transform", "translate(" + (1 + this.sizes.margin.left + this.sizes.margin.right * 2) + "," + this.sizes.margin.top + ")")
             .attr("class", "chart")
             .on('mouseout', function () {
-                if (!drawer.GuiManager.steps) mouseout()
+                if (!drawer.guiManager.steps) mouseout()
             })
             .on('mouseover', function () {
-                if (!drawer.GuiManager.steps) mouseover()
+                if (!drawer.guiManager.steps) mouseover()
             })
             .on('click', function () {
                 click(d3.mouse(this), d3.event)
@@ -423,7 +423,7 @@ define([
             .style("opacity", 1)
             .attr("d", area)
             .on('mousemove', function (d) {
-                if (!drawer.GuiManager.steps) mousemove(d, d3.mouse(this))
+                if (!drawer.guiManager.steps) mousemove(d, d3.mouse(this))
             });
 
         layer.filter(function (d) {
