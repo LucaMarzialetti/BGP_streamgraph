@@ -14,7 +14,7 @@ requirejs.config({
         /* libs */
         "bgpst.lib.require": window.atlas._widgets.bgpst.urls.libs + "require.min",
         "bgpst.lib.jquery-amd": window.atlas._widgets.bgpst.urls.libs + "jquery-libs-amd",
-        "bgpst.lib.jquery-libs": window.atlas._widgets.bgpst.urls.libs + "jquery-libs.2",
+        "bgpst.lib.jquery-libs": window.atlas._widgets.bgpst.urls.libs + "jquery-libs",
         "bgpst.lib.date-format": window.atlas._widgets.bgpst.urls.libs + "dateFormat",
         "bgpst.lib.d3-amd": window.atlas._widgets.bgpst.urls.libs + "d3/js/d3.v4.amd",
         "bgpst.lib.mustache": window.atlas._widgets.bgpst.urls.libs + "mustache",
@@ -22,7 +22,7 @@ requirejs.config({
         "bgpst.lib.stache": window.atlas._widgets.bgpst.urls.libs + "stache",
         "bgpst.lib.colorbrewer": window.atlas._widgets.bgpst.urls.libs + "colorbrewer",
         "bgpst.lib.d3.legend": window.atlas._widgets.bgpst.urls.libs + "d3.legend",
-        "bgpst.lib.moment": window.atlas._widgets.bgpst.urls.libs + "moment/2.18.1/moment.min",
+        "bgpst.lib.moment": window.atlas._widgets.bgpst.urls.libs + "moment-libs",
 
         "bgpst.lib.bootstrap.datetimepicker": window.atlas._widgets.bgpst.urls.libs + "datetimepicker/4.17.47/bootstrap-datetimepicker.min",
         "bgpst.lib.bootstrap.validator": window.atlas._widgets.bgpst.urls.libs + "form_validator/0.5.3/bootstrapValidator.min",
@@ -64,7 +64,7 @@ requirejs.config({
         /* connector */
         "bgpst.connector.facade": window.atlas._widgets.bgpst.urls.connector + "ConnectorFacade",
         "bgpst.connector.translation": window.atlas._widgets.bgpst.urls.connector + "TranslationConnector",
-        "bgpst.connector.rest": window.atlas._widgets.bgpst.urls.connector + "RestConnector",
+        "bgpst.connector.rest": window.atlas._widgets.bgpst.urls.connector + "RestConnector"
 
     },
     shim:{
@@ -138,7 +138,12 @@ define([
 
         if (!instanceParams.dev){
             styleDownloads = [
-                window.atlas._widgets.bgpst.urls.view + "css/style-lib-dist.min.css"
+                // window.atlas._widgets.bgpst.urls.view + "css/style-lib-dist.min.css"
+                window.atlas._widgets.bgpst.urls.view + "css/style.css",
+                window.atlas._widgets.bgpst.urls.libs + "jquery/jquery-ui.min.css",
+                window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap.min.css",
+                window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap-theme.min.css",
+                window.atlas._widgets.bgpst.urls.libs + "bootstrap-slider/css/bootstrap-slider.css"
             ];
         } else {
             styleDownloads = [

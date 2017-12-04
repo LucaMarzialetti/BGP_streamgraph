@@ -12,9 +12,6 @@ define([
     "bgpst.controller.functions"
 ], function(ColorManager, moment, $, d3, myUtils) {
 
-     while (!d3) {
-
-     }
 
     var GraphDrawer = function(GuiManager) {
         console.log("== Starting GraphDrawer");
