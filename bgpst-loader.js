@@ -114,12 +114,12 @@ define([
          * Init Dependency Injection Vector
          */
         env = {
-            "version": "17.10.1.0",
+            "version": "17.12.4.0",
             "dev": instanceParams.dev,
             "autoStart": instanceParams.autoStart || true,
             "widgetUrl": WIDGET_URL + "dev/",
             "parentDom": $(parentDom),
-            "queryParams": queryParams // { resource: è l'ip }
+            "queryParams": queryParams // { resource: is the ip }
         };
 
         //window.env = env; // TEMP: just for debugging
