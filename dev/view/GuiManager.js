@@ -13,8 +13,6 @@ define([
     //setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
     var GuiManager = function(env) {
 
-        console.log("== GuiManager Starting");
-
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
         this.drawer = new GraphDrawer(this);

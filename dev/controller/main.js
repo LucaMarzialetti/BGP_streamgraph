@@ -15,14 +15,14 @@ define([
         };
 
         this.init = function(){
-            this.guiManager = new GuiManager(env);
+            env.guiManager = new GuiManager(env);
             if(!this.checkRequest()) {
-                this.guiManager.toggleLoader();
+                env.guiManager.toggleLoader();
             }
         };
 
         this.storeContext = function(data,name) {
-            if(this.guiManager.localstorage_enabled)
+            if(env.guiManager.localstorage_enabled)
                 try {
                     localStorage[name] = JSON.stringify(data);
                 }
@@ -38,13 +38,13 @@ define([
             var endtime = localStorage['last_context_endtime'].replace(/"/g,'');
             var targets = localStorage['last_context_targets'].replace(/"/g,'');
 
-            this.guiManager.RipeDataBroker.current_starttime = starttime;
-            this.guiManager.RipeDataBroker.current_endtime = endtime;
-            this.guiManager.RipeDataBroker.current_targets = targets;
-            this.guiManager.RipeDataBroker.ipv4_peerings = peerings[4];
-            this.guiManager.RipeDataBroker.ipv6_peerings = peerings[6];
-            this.guiManager.RipeDataBroker.current_parsed = original_data;
-            this.guiManager.RipeDataBroker.loadCurrentState(null,false,null,true);
+            env.guiManager.RipeDataBroker.current_starttime = starttime;
+            env.guiManager.RipeDataBroker.current_endtime = endtime;
+            env.guiManager.RipeDataBroker.current_targets = targets;
+            env.guiManager.RipeDataBroker.ipv4_peerings = peerings[4];
+            env.guiManager.RipeDataBroker.ipv6_peerings = peerings[6];
+            env.guiManager.RipeDataBroker.current_parsed = original_data;
+            env.guiManager.RipeDataBroker.loadCurrentState(null,false,null,true);
         };
 
         this.getLocalParameters = function() {
@@ -59,8 +59,8 @@ define([
         };
 
         this.checkRequest = function(){
-            var DateConverter = this.guiManager.DateConverter;
-            var validator = this.guiManager.validator;
+            var DateConverter = env.guiManager.DateConverter;
+            var validator = env.guiManager.validator;
             var params = this.getLocalParameters();
             var start = params["w.starttime"];
             var end = params["w.endtime"];
@@ -79,90 +79,97 @@ define([
             var heuristic = params["w.heu"];
             var heuristic_sort_type = params["w.sort_type"];
             var request_done = false;
-            if(start&&end&&tgt){
+
+            if(start && end && tgt){
                 tgt = tgt.replace(/#$/,"");
                 try{
                     //dates
                     start = DateConverter.formatRipe(DateConverter.parseRipe(start));
                     end = DateConverter.formatRipe(DateConverter.parseRipe(end));
-                    if(this.guiManager.validator.check_date_with_format(start, this.guiManager.DateConverter.ripestat_data_format) && this.guiManager.validator.check_date_with_format(end, this.guiManager.DateConverter.ripestat_data_format)){
-                        this.guiManager.RipeDataBroker.current_starttime = start;
-                        this.guiManager.RipeDataBroker.current_endtime = end;
-                    }
-                    else{
+                    if(env.guiManager.validator.check_date_with_format(start, env.guiManager.DateConverter.ripestat_data_format) && env.guiManager.validator.check_date_with_format(end, env.guiManager.DateConverter.ripestat_data_format)){
+                        env.guiManager.RipeDataBroker.current_starttime = start;
+                        env.guiManager.RipeDataBroker.current_endtime = end;
+                    } else {
                         throw "wrong dates";
-                        request_done = false;
                     }
                     //targets
                     var tgt_list = tgt.split(',');
-                    if(tgt_list.every(function(e){return validator.check_ipv4(e)||validator.check_ipv6(e)||validator.check_asn(e);}))
-                        this.guiManager.RipeDataBroker.current_targets = tgt;
-                    else{
+                    var validateIps = function(ip){
+                        return validator.check_ipv4(ip) || validator.check_ipv6(ip) || validator.check_asn(ip);
+                    };
+                    
+                    if(tgt_list.every(validateIps)) {
+                        env.guiManager.RipeDataBroker.current_targets = tgt;
+                    } else {
                         throw "wrong target";
-                        request_done = false;
                     }
                     //type
-                    if(type)
-                        if(type == "stream"||type == "heat")
-                            this.guiManager.graph_type = type;
+                    if(type && (type == "stream"|| type == "heat")) {
+                        env.guiManager.graph_type = type;
+                    }
                     //level
                     if(level){
                         level = parseInt(level);
-                        if(!isNaN(level))
-                            this.guiManager.asn_level = level;
+                        if(!isNaN(level)) {
+                            env.guiManager.asn_level = level;
+                        }
                     }
                     //merge cp
-                    if(merge_cp)
-                        if(merge_cp == 'true'|| merge_cp == 'false')
-                            this.guiManager.merge_cp = merge_cp == 'true';
+                    if(merge_cp && (merge_cp == 'true'|| merge_cp == 'false')) {
+                        env.guiManager.merge_cp = merge_cp == 'true';
+                    }
                     //merge events
                     if(merge_events){
                         merge_events = parseInt(merge_events);
-                        if(!isNaN(merge_events))
-                            this.guiManager.merge_events = merge_events;
+                        if(!isNaN(merge_events)) {
+                            env.guiManager.merge_events = merge_events;
+                        }
                     }
                     //timemap
-                    if(timemap)
-                        if(timemap == 'true'|| timemap == 'false')
-                            this.guiManager.heatmap_time_map = timemap == 'true';
+                    if(timemap && (timemap == 'true'|| timemap == 'false')) {
+                        env.guiManager.heatmap_time_map = timemap == 'true';
+                    }
                     //global visibility
-                    if(global_vis)
-                        if(global_vis == 'true'|| global_vis == 'false')
-                            this.guiManager.global_visibility = global_vis == 'true';
+                    if(global_vis && (global_vis == 'true'|| global_vis == 'false')) {
+                        env.guiManager.global_visibility = global_vis == 'true';
+                    }
                     //gather info
-                    if(info)
-                        if(info == 'true'|| info == 'false')
-                            this.guiManager.gather_information = info == 'true';
+                    if(info && (info == 'true'|| info == 'false')) {
+                        env.guiManager.gather_information = info == 'true';
+                    }
                     //preserve colors
-                    if(colors)
-                        if(colors == 'true'|| colors == 'false')
-                            this.guiManager.gather_information = colors == 'true';
+                    if(colors && (colors == 'true'|| colors == 'false')) {
+                        env.guiManager.gather_information = colors == 'true';
+                    }
                     //gather info
-                    if(info)
-                        if(info == 'true'|| info == 'false')
-                            this.guiManager.gather_information = info == 'true';
+                    if(info && (info == 'true'|| info == 'false')) {
+                        env.guiManager.gather_information = info == 'true';
+                    }
+
                     //brusher
                     brush_s = DateConverter.formatRipe(DateConverter.parseRipe(brush_s));
                     brush_e = DateConverter.formatRipe(DateConverter.parseRipe(brush_e));
-                    if(this.guiManager.validator.check_date_with_format(brush_s,this.guiManager.DateConverter.ripestat_data_format) && this.guiManager.validator.check_date_with_format(brush_e, this.guiManager.DateConverter.ripestat_data_format)){
-                        this.guiManager.drawer.events_range = [];
-                        this.guiManager.drawer.events_range[0] = moment(brush_s);
-                        this.guiManager.drawer.events_range[1] = moment(brush_e);
+                    if(env.guiManager.validator.check_date_with_format(brush_s,env.guiManager.DateConverter.ripestat_data_format) && env.guiManager.validator.check_date_with_format(brush_e, env.guiManager.DateConverter.ripestat_data_format)){
+                        env.guiManager.drawer.events_range = [];
+                        env.guiManager.drawer.events_range[0] = moment(brush_s);
+                        env.guiManager.drawer.events_range[1] = moment(brush_e);
                     }
                     //heuristic
-                    if(heuristic)
-                        this.guiManager.RipeDataBroker.HeuristicsManager.current_heuristic = heuristic;
+                    if(heuristic) {
+                        env.guiManager.RipeDataBroker.HeuristicsManager.current_heuristic = heuristic;
+                    }
                     //sort_type
-                    if(heuristic_sort_type)
-                        this.guiManager.RipeDataBroker.HeuristicsManager.current_sort_type = heuristic_sort_type;
-                    this.guiManager.RipeDataBroker.getData();
+                    if(heuristic_sort_type) {
+                        env.guiManager.RipeDataBroker.HeuristicsManager.current_sort_type = heuristic_sort_type;
+                    }
+                    env.guiManager.RipeDataBroker.getData();
                     request_done = true;
                 }
                 catch(e){
-                    alert(e);
-                    this.guiManager.RipeDataBroker.current_starttime = null;
-                    this.guiManager.RipeDataBroker.current_endtime = null;
-                    this.guiManager.RipeDataBroker.current_targets = null;
+                    console.log(e);
+                    env.guiManager.RipeDataBroker.current_starttime = null;
+                    env.guiManager.RipeDataBroker.current_endtime = null;
+                    env.guiManager.RipeDataBroker.current_targets = null;
                 }
             }
             return request_done;
