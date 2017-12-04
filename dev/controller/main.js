@@ -4,7 +4,7 @@ define([
 ], function(GraphDrawer, GuiManager){
 
     var Main = function(env) {
-        this.exposedMethods = ["getVersion", "on", "init", "applyConfiguration", "setTimeRange"];
+        this.exposedMethods = ["getVersion", "on", "init"];
 
         this.getVersion = function(){
             return env.version;
@@ -16,6 +16,7 @@ define([
 
         this.init = function(){
             env.guiManager = new GuiManager(env);
+            env.guiManager.init();
             if(!this.checkRequest()) {
                 env.guiManager.toggleLoader();
             }

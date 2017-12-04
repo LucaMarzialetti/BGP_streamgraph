@@ -15,7 +15,7 @@ define([
 
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
-        this.drawer = new GraphDrawer(this);
+        this.drawer = new GraphDrawer(env);
         this.loader = $(".loading_text");
         this.mask = $("div.loader_mask");
         this.container = $("div.body_container");
@@ -52,11 +52,11 @@ define([
         this.DateConverter = new DateConverter();
         this.scroller = new EPPZScrollTo();
 
-        this.drawer.drawer_init();
-        this.gui_setup();
+
     };
 
-    GuiManager.prototype.gui_setup = function(){
+    GuiManager.prototype.init = function(){
+        this.drawer.drawer_init();
         this.get_local_ip();
         this.pickers_setup();
         this.tokenfield_setup();
@@ -68,7 +68,6 @@ define([
         this.other_command_button_setup();
         this.tooltip_setup();
     };
-
 
     GuiManager.prototype.isGraphPresent = function(text) {
         //return d3.select("svg").select(".chart").node() != null;
@@ -1348,7 +1347,7 @@ define([
             for(var i in set) {
                 var asn = set[i];
                 var color_background = GuiManager.drawer.z(asn);
-                var color_text = GuiManager.drawer.ColorManager.furthestLabelColor(color_background);
+                var color_text = GuiManager.drawer.colorManager.furthestLabelColor(color_background);
                 html+='<li class="list-group-item as'+asn+'" style="color:'+color_text+'; background-color:'+color_background+';"'
                 if(GuiManager.graph_type == "stream")
                     html+='onmouseover="d3.selectAll(\'.area\').filter(function(d){return d.key!='+asn+';}).style(\'fill-opacity\',\'0.35\');" onmouseout="d3.selectAll(\'.area\').style(\'fill-opacity\',1);">';

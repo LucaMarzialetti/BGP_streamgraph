@@ -2160,7 +2160,7 @@ define('bgpst.view.graphdrawer',[
         this.tooltip = $(".svg_tooltip");
         this.colors = [];
         this.keys = [];
-        this.ColorManager = new ColorManager();
+        this.colorManager = new ColorManager();
         console.log("== GraphDrawer Ready");
     };
 
@@ -2573,7 +2573,7 @@ define('bgpst.view.graphdrawer',[
             .style("text-anchor", "end")
             .style("z-index", "999")
             .style("fill", function (d) {
-                return drawer.ColorManager.furthestLabelColor(drawer.z(d.key))
+                return drawer.colorManager.furthestLabelColor(drawer.z(d.key))
             })
             .text(function (d) {
                 return d.key;
@@ -2715,10 +2715,10 @@ define('bgpst.view.graphdrawer',[
 
         this.keys = data.columns.slice(2);
         //if colors are not enought in the pallette
-        if (this.ColorManager.d_sorteds.length < this.keys.length)
-            this.ColorManager.sortcolors(this.keys.length - this.ColorManager.d_sorteds.length);
+        if (this.colorManager.d_sorteds.length < this.keys.length)
+            this.colorManager.sortcolors(this.keys.length - this.colorManager.d_sorteds.length);
         if (!preserve_color_map || this.current_query_id != query_id || this.colors.length != this.keys.length) {
-            this.colors = this.ColorManager.d_sorteds.map(function (c) {
+            this.colors = this.colorManager.d_sorteds.map(function (c) {
                 return c.lab.rgb()
             }).slice(0, this.keys.length);
             this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
@@ -3284,7 +3284,7 @@ define('bgpst.view.graphdrawer',[
     GraphDrawer.prototype.shuffle_color_map = function (graph_type) {
         var drawer = this;
         if (graph_type == "stream") {
-            this.colors = random_sort(this.ColorManager.d_sorteds.map(function (c) {
+            this.colors = random_sort(this.colorManager.d_sorteds.map(function (c) {
                 return c.lab.rgb()
             }), this.keys.length);
             this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
@@ -3294,7 +3294,7 @@ define('bgpst.view.graphdrawer',[
             });
         }
         else if (graph_type == "heat") {
-            this.colors = random_sort(this.ColorManager.d_sorteds.map(function (c) {
+            this.colors = random_sort(this.colorManager.d_sorteds.map(function (c) {
                 return c.lab.rgb()
             }), this.asn_set.length);
             this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
@@ -8486,7 +8486,7 @@ define('bgpst.view.gui',[
             for(var i in set) {
                 var asn = set[i];
                 var color_background = GuiManager.drawer.z(asn);
-                var color_text = GuiManager.drawer.ColorManager.furthestLabelColor(color_background);
+                var color_text = GuiManager.drawer.colorManager.furthestLabelColor(color_background);
                 html+='<li class="list-group-item as'+asn+'" style="color:'+color_text+'; background-color:'+color_background+';"'
                 if(GuiManager.graph_type == "stream")
                     html+='onmouseover="d3.selectAll(\'.area\').filter(function(d){return d.key!='+asn+';}).style(\'fill-opacity\',\'0.35\');" onmouseout="d3.selectAll(\'.area\').style(\'fill-opacity\',1);">';
