@@ -1,14 +1,5 @@
 define([
-    /*Validator*/
-    /*DateConverter*/
-    /*RipeDataBroker*/
-    /*Scroller*/
-
-    /*moment*/
-    /*jquery*/
-
-    /*uso di chiamate DOM su tutto l'albero, dalla root del DOM*/
-
+    "bgpst.view.graphdrawer",
     "bgpst.controller.validator",
     "bgpst.controller.dateconverter",
     "bgpst.view.broker",
@@ -16,15 +7,17 @@ define([
     "bgpst.lib.moment",
     "bgpst.lib.jquery-amd",
     "bgpst.lib.stache!main"
-], function(Validator, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
+], function(GraphDrawer, Validator, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
 
-    console.log(moment);
+
     //setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
-    var GuiManager = function(drawer, context) {
+    var GuiManager = function(context) {
+
         console.log("== GuiManager Starting");
 
         /*************************************** DOM elements ************************************/
         $("body").html(template());
+        this.drawer = new GraphDrawer(this);
         this.loader = $(".loading_text");
         this.mask = $("div.loader_mask");
         this.container = $("div.body_container");
@@ -57,7 +50,7 @@ define([
         /***********************/
         this.url = location.protocol + '//' + location.host + location.pathname;
         /****************************************************************************/
-        this.drawer = drawer;
+//		this.drawer = drawer;
         this.context = context;
         this.RipeDataBroker = new RipeDataBroker(this.drawer, this.context, this);
         this.validator = new Validator();
@@ -113,17 +106,17 @@ define([
         /*formats & date linking*/
         $('.datetimepicker.date_only.start').datetimepicker({
             format:'l',
-            useCurrent: true //Important! See issue #1075
+            useCurrent: true, //Important! See issue #1075
         });
         $('.datetimepicker.time_only.start').datetimepicker({
             format:'LTS'
         });
         $('.datetimepicker.date_only.end').datetimepicker({
             format:'l',
-            useCurrent: true //Important! See issue #1075
+            useCurrent: true, //Important! See issue #1075
         });
         $('.datetimepicker.time_only.end').datetimepicker({
-            format:'LTS'
+            format:'LTS',
             //useCurrent: true //Important! See issue #1075
         });
         $('.datetimepicker.date_only.start').data("DateTimePicker").maxDate(moment());
@@ -132,9 +125,8 @@ define([
         $(".datetimepicker.date_only.start").on("dp.change", function (e) {
             var date_start = $('.datetimepicker.date_only.start').data("DateTimePicker").date();
             var date_end = $('.datetimepicker.date_only.end').data("DateTimePicker").date();
-            if(date_end == null || date_end == undefined) {
+            if(date_end == null || date_end == undefined)
                 $('.datetimepicker.date_only.end').data("DateTimePicker").date(date_start);
-            }
             $('.datetimepicker.date_only.end').data("DateTimePicker").minDate(e.date);
         });
         $(".datetimepicker.time_only.start").on("dp.change", function (e) {
@@ -145,6 +137,7 @@ define([
         });
         $('.datetimepicker').on("dp.change", function (e) {
             GuiManager.UIerror_check(this);
+
         });
 
         $('.datetimepicker').on("dp.change", function (e) {

@@ -5,9 +5,7 @@ define([
 
 	var ContextManager = function() {
 		console.log("= Context Manager Starting");
-		this.drawer = new GraphDrawer();
-		this.GuiManager = new GuiManager(this.drawer, this);
-		this.drawer.GuiManager = this.GuiManager;
+		this.GuiManager = new GuiManager(this);
 		console.log("= ContextManager Ready");
 	};
 
