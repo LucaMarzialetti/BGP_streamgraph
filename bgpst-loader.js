@@ -119,7 +119,7 @@ define([
             "autoStart": instanceParams.autoStart || true,
             "widgetUrl": WIDGET_URL + "dev/",
             "parentDom": $(parentDom),
-            "queryParams": queryParams
+            "queryParams": queryParams // { resource: è l'ip }
         };
 
         //window.env = env; // TEMP: just for debugging

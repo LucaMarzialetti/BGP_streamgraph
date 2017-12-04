@@ -29,8 +29,7 @@ if (!window.atlas._widgets.widgetInjectorRequested) { // Only one injector
     window.atlas._widgets.widgetInjectorLoaded = false;
     window.atlas._widgets.widgetInjectorRequested = true;
     window.atlas._widgets.bgpst.tmp_scripts = document.getElementsByTagName('script');
-    window.atlas._widgets.bgpst.tmp_scrip = window.atlas._widgets.bgpst.
-        tmp_scripts[window.atlas._widgets.bgpst.tmp_scripts.length - 1];
+    window.atlas._widgets.bgpst.tmp_scrip = window.atlas._widgets.bgpst.tmp_scripts[window.atlas._widgets.bgpst.tmp_scripts.length - 1];
     window.atlas._widgets.injectorScript = document.createElement('script');
     window.atlas._widgets.injectorScript.async = false;
     window.atlas._widgets.injectorScript.src = window.atlas._widgets.bgpst.urls.libs + 'require.min.js';
@@ -40,7 +39,7 @@ if (!window.atlas._widgets.widgetInjectorRequested) { // Only one injector
 /**
  * Widget injector
  */
-function initWidget(domElement, instanceParams, queryParams){
+function initBGPst(domElement, instanceParams, queryParams){
     var run;
 
     run = function(){
@@ -115,5 +114,49 @@ function initWidget(domElement, instanceParams, queryParams){
                 throw "Widget not loaded yet. Try again in a few seconds."
             }
         }
+    };
+}
+
+if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
+
+    jQuery.fn.bgpst = function (data, widget_width, mark_loaded) {
+        var thisWidget, widgetParams, domElement, oldReadyFunction, instance;
+
+        thisWidget = this.statWidget();
+        widgetParams = thisWidget.get_params();
+        domElement = jQuery(this)[0];
+        oldReadyFunction = widgetParams.ready;
+
+        widgetParams.ready = function () {
+            mark_loaded();
+            if (oldReadyFunction) {
+                oldReadyFunction();
+            }
+        };
+
+        instance = initBGPst(domElement, {
+            dev: false,
+            sendErrors: false,
+            onError: function (error) {
+                $(domElement).addMsg("error", error, true);
+            }
+        }, {
+            resource: widgetParams.resource
+        });
+
+        instance.ready(function(){
+
+            instance.shell().on("updated", function(params){
+                var out = {
+                    resource: params.resource
+                };
+
+                // DO SOMETHING HERE TO UPDATE RIPESTAT
+                thisWidget.set_params(out);
+                thisWidget.update_permalinks();
+
+                $(domElement).find(".messages").remove();
+            });
+        });
     };
 }
