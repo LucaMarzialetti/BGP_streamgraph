@@ -350,10 +350,10 @@ define([
                 .attr("transform", "translate(" + (1 + this.sizes.margin.left + this.sizes.margin.right * 2) + "," + this.sizes.margin.top + ")")
                 .attr("class", "chart")
                 .on('mouseout', function () {
-                    if (!$this.guiManager.steps) mouseout()
+                    if (!env.guiManager.steps) mouseout()
                 })
                 .on('mouseover', function () {
-                    if (!$this.guiManager.steps) mouseover()
+                    if (!env.guiManager.steps) mouseover()
                 })
                 .on('click', function () {
                     click(d3.mouse(this), d3.event)
@@ -402,7 +402,7 @@ define([
                 .style("opacity", 1)
                 .attr("d", area)
                 .on('mousemove', function (d) {
-                    if (!$this.guiManager.steps) mousemove(d, d3.mouse(this))
+                    if (!env.guiManager.steps) mousemove(d, d3.mouse(this))
                 });
 
             layer.filter(function (d) {
