@@ -18,10 +18,52 @@ define([
         env.parentDom.append(template());
 
         this.dom = {
-            heatmapTimeButton: env.parentDom.find(".heatmap_time_btn")
-        };
-        this.container = $("div.body_container");
+            container: env.parentDom.find("div.body_container"), //unsed?
+            heatmapTimeButton: env.parentDom.find(".heatmap_time_btn"),
+            pathButton: env.parentDom.find(".path_btn"),
+            listButton: env.parentDom.find(".list_btn"),
+            sortButton: env.parentDom.find(".sort_btn"),
+            optionCommandButton: env.parentDom.find(".option_command_btn"),
+            clearTargetsButton: env.parentDom.find(".clear_targets_button"),
+            myIpButton: env.parentDom.find(".my_ip_button"),
+            goButton: env.parentDom.find(".go_button"),
+            date: env.parentDom.find(".date"),
+            graphType : env.parentDom.find("input[name='graph_type']"),
+            ipVersion6Button : env.parentDom.find("input[name='ip_version'][value='6']").parent(),
+            ipVersion4Button : env.parentDom.find("input[name='ip_version'][value='4']").parent(),
+            stepsButton : env.parentDom.find("input[name='steps'][value='steps']").parent(),
+            streamingButton : env.parentDom.find("input[name='streaming'][value='streaming']").parent(),
+            streaming_Button : env.parentDom.find(".streaming_btn"),
+            gatherInformationButton : env.parentDom.find(".gather_information_btn"),
+            preserveColorButton : env.parentDom.find(".preserve_color_btn"),
+            globalVisibilityButton : env.parentDom.find(".global_visibility_btn"),
+            prependingPreventionButton : env.parentDom.find(".prepending_prevention_btn"),
+            mergeCPButton : env.parentDom.find(".merge_cp_btn"),
+            eventsLabelsButton : env.parentDom.find(".events_labels_btn"),
+            cpLabelsButton : env.parentDom.find(".cp_labels_btn"),
+            scrollbarsButton : env.parentDom.find(".scrollbars_btn"),
 
+            heatOptionButton : env.parentDom.find(".scrollbars_btn"),
+            streamOptionButton : env.parentDom.find(".scrollbars_btn"),
+            asnLvlButton : env.parentDom.find(".scrollbars_btn"),
+            mergeEventsButton : env.parentDom.find(".scrollbars_btn"),
+            graphTypeStream : env.parentDom.find(".scrollbars_btn"),
+            graphTypeHeat : env.parentDom.find(".scrollbars_btn"),
+            Ipve : env.parentDom.find(".scrollbars_btn"),
+            scrollbarsButton : env.parentDom.find(".scrollbars_btn"),
+
+
+
+// .heat_option
+// .stream_option
+// .asn_lvl
+// .merge_events
+// input[name="graph_type"][value="stream"]
+// input[name="graph_type"][value="heat"]
+// input[name="ip_version"][value="4"]
+// input[name="ip_version"][value="6"]
+
+        };
         this.drawer = new GraphDrawer(env);
 
         this.preserve_map = true;
@@ -120,111 +162,111 @@ define([
         };
 
         this.lock_all = function () {
-            $(".path_btn").addClass("disabled");
-            $(".list_btn").addClass("disabled");
-            $(".sort_btn").addClass("disabled");
-            $(".option_command_btn").addClass("disabled");
-            $(".clear_targets_button").addClass("disabled");
-            $(".my_ip_button").addClass("disabled");
-            $(".go_button").addClass("disabled");
-            $(".date").addClass("disabled");
+            this.dom.pathButton.addClass("disabled");
+            this.dom.listButton.addClass("disabled");
+            this.dom.sortButton.addClass("disabled");
+            this.dom.optionCommandButton.addClass("disabled");
+            this.dom.clearTargetsButton.addClass("disabled");
+            this.dom.myIpButton.addClass("disabled");
+            this.dom.goButton.addClass("disabled");
+            this.dom.date.addClass("disabled");
 
-            $(".path_btn").addClass("not-active");
-            $(".list_btn").addClass("not-active");
-            $(".sort_btn").addClass("not-active");
-            $(".option_command_btn").addClass("not-active");
-            $(".clear_targets_button").addClass("not-active");
-            $(".my_ip_button").addClass("not-active");
-            $(".go_button").addClass("not-active");
-            $(".date").addClass("not-active");
+            this.dom.pathButton.addClass("not-active");
+            this.dom.listButton.addClass("not-active");
+            this.dom.sortButton.addClass("not-active");
+            this.dom.optionCommandButton.addClass("not-active");
+            this.dom.clearTargetsButton.addClass("not-active");
+            this.dom.myIpButton.addClass("not-active");
+            this.dom.goButton.addClass("not-active");
+            this.dom.date.addClass("not-active");
 
-            $("input[name='graph_type']").parent().addClass("disabled");
-            $("input[name='graph_type']").parent().addClass("not-active");
-            $("input[name='graph_type']").parent().attr("disabled", true);
+            this.dom.graphType.parent().addClass("disabled");
+            this.dom.graphType.parent().addClass("not-active");
+            this.dom.graphType.parent().attr("disabled", true);
 
-            $("input[name='ip_version'][value='6']").parent().addClass("disabled");
-            $("input[name='ip_version'][value='6']").parent().addClass("not-active");
-            $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
+            this.dom.ipVersion6Button.addClass("disabled");
+            this.dom.ipVersion6Button.addClass("not-active");
+            this.dom.ipVersion6Button.attr("disabled", true);
 
-            $("input[name='ip_version'][value='4']").parent().addClass("disabled");
-            $("input[name='ip_version'][value='4']").parent().addClass("not-active");
-            $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
+            this.dom.ipVersion4Button.addClass("disabled");
+            this.dom.ipVersion4Button.addClass("not-active");
+            this.dom.ipVersion4Button.attr("disabled", true);
 
-            $("input[name='steps'][value='steps']").parent().addClass("disabled");
-            $("input[name='steps'][value='steps']").parent().addClass("not-active");
-            $("input[name='steps'][value='steps']").parent().attr("disabled", true);
+            this.dom.stepsButton.addClass("disabled");
+            this.dom.stepsButton.addClass("not-active");
+            this.dom.stepsButton.attr("disabled", true);
             $(".steps_btn").addClass("not-active");
 
             if (!this.streaming) {
-                $("input[name='streaming'][value='streaming']").parent().addClass("disabled");
-                $("input[name='streaming'][value='streaming']").parent().addClass("not-active");
-                $("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
-                $(".streaming_btn").addClass("not-active");
+                this.dom.streamingButton.addClass("disabled");
+                this.dom.streamingButton.addClass("not-active");
+                this.dom.streamingButton.attr("disabled", true);
+                this.dom.streaming_Button.addClass("not-active");
             }
         };
     
         this.boolean_checker = function () {
             if (!this.gather_information) {
-                $(".gather_information_btn").find("span").addClass("hidden");
-                $(".gather_information_btn").parent().removeClass("active");
+                this.dom.gatherInformationButton.find("span").addClass("hidden");
+                this.dom.gatherInformationButton.parent().removeClass("active");
             }
             else {
-                $(".gather_information_btn").find("span").removeClass("hidden");
-                $(".gather_information_btn").parent().addClass("active");
+                this.dom.gatherInformationButton.find("span").removeClass("hidden");
+                this.dom.gatherInformationButton.parent().addClass("active");
             }
 
             if (!this.preserve_map) {
-                $(".preserve_color_btn").find("span").addClass("hidden");
-                $(".preserve_color_btn").parent().removeClass("active");
+                this.dom.preserveColorButton.find("span").addClass("hidden");
+                this.dom.preserveColorButton.parent().removeClass("active");
             }
             else {
-                $(".preserve_color_btn").find("span").removeClass("hidden");
-                $(".preserve_color_btn").parent().addClass("active");
+                this.dom.preserveColorButton.find("span").removeClass("hidden");
+                this.dom.preserveColorButton.parent().addClass("active");
             }
 
             if (!this.global_visibility) {
-                $(".global_visibility_btn").find("span").addClass("hidden");
-                $(".global_visibility_btn").parent().removeClass("active");
+                this.dom.globalVisibilityButton.find("span").addClass("hidden");
+                this.dom.globalVisibilityButton.parent().removeClass("active");
             }
             else {
-                $(".global_visibility_btn").find("span").removeClass("hidden");
-                $(".global_visibility_btn").parent().addClass("active");
+                this.dom.globalVisibilityButton.find("span").removeClass("hidden");
+                this.dom.globalVisibilityButton.parent().addClass("active");
             }
 
             if (!this.prepending_prevention) {
-                $(".prepending_prevention_btn").find("span").addClass("hidden");
-                $(".prepending_prevention_btn").parent().removeClass("active");
+                this.dom.prependingPreventionButton.find("span").addClass("hidden");
+                this.dom.prependingPreventionButton.parent().removeClass("active");
             }
             else {
-                $(".prepending_prevention_btn").find("span").removeClass("hidden");
-                $(".prepending_prevention_btn").parent().addClass("active");
+                this.dom.prependingPreventionButton.find("span").removeClass("hidden");
+                this.dom.prependingPreventionButton.parent().addClass("active");
             }
 
             if (!this.merge_cp) {
-                $(".merge_cp_btn").find("span").addClass("hidden");
-                $(".merge_cp_btn").parent().removeClass("active");
+                this.dom.mergeCPButton.find("span").addClass("hidden");
+                this.dom.mergeCPButton.parent().removeClass("active");
             }
             else {
-                $(".merge_cp_btn").find("span").removeClass("hidden");
-                $(".merge_cp_btn").parent().addClass("active");
+                this.dom.mergeCPButton.find("span").removeClass("hidden");
+                this.dom.mergeCPButton.parent().addClass("active");
             }
 
             if (!this.events_labels) {
-                $(".events_labels_btn").find("span").addClass("hidden");
-                $(".events_labels_btn").parent().removeClass("active");
+                this.dom.eventsLabelsButton.find("span").addClass("hidden");
+                this.dom.eventsLabelsButton.parent().removeClass("active");
             }
             else {
-                $(".events_labels_btn").find("span").removeClass("hidden");
-                $(".events_labels_btn").parent().addClass("active");
+                this.dom.eventsLabelsButton.find("span").removeClass("hidden");
+                this.dom.eventsLabelsButton.parent().addClass("active");
             }
 
             if (!this.cp_labels) {
-                $(".cp_labels_btn").find("span").addClass("hidden");
-                $(".cp_labels_btn").parent().removeClass("active");
+                this.dom.cpLabelsButton.find("span").addClass("hidden");
+                this.dom.cpLabelsButton.parent().removeClass("active");
             }
             else {
-                $(".cp_labels_btn").find("span").removeClass("hidden");
-                $(".cp_labels_btn").parent().addClass("active");
+                this.dom.cpLabelsButton.find("span").removeClass("hidden");
+                this.dom.cpLabelsButton.parent().addClass("active");
             }
 
             if (!this.heatmap_time_map) {
@@ -232,19 +274,18 @@ define([
                 this.dom.heatmapTimeButton.parent().removeClass("active");
             }
             else {
-                $(".heatmap_time_btn").find("span").removeClass("hidden");
-                $(".heatmap_time_btn").parent().addClass("active");
+                this.dom.heatmapTimeButton.find("span").removeClass("hidden");
+                this.dom.heatmapTimeButton.parent().addClass("active");
             }
 
             if (!this.use_scrollbars) {
-                $(".scrollbars_btn").find("span").addClass("hidden");
-                $(".scrollbars_btn").parent().removeClass("active");
+                this.dom.scrollbarsButton.find("span").addClass("hidden");
+                this.dom.scrollbarsButton.parent().removeClass("active");
             }
             else {
-                $(".scrollbars_btn").find("span").removeClass("hidden");
-                $(".scrollbars_btn").parent().addClass("active");
+                this.dom.scrollbarsButton.find("span").removeClass("hidden");
+                this.dom.scrollbarsButton.parent().addClass("active");
             }
-
             if (this.graph_type == "stream") {
                 $('input[name="graph_type"][value="stream"]').prop('checked', true);
                 $('input[name="graph_type"][value="stream"]').parent().addClass("active");
@@ -276,50 +317,50 @@ define([
 
         this.draw_functions_btn_enabler = function () {
             if (!this.streaming) {
-                $(".option_command_btn").removeClass("disabled");
-                $(".my_ip_button").removeClass("disabled");
-                $(".go_button").removeClass("disabled");
-                $(".date").removeClass("disabled");
+                this.dom.optionCommandButton.removeClass("disabled");
+                this.dom.myIpButton.removeClass("disabled");
+                this.dom.goButton.removeClass("disabled");
+                this.dom.date.removeClass("disabled");
 
-                $(".option_command_btn").removeClass("not-active");
-                $(".my_ip_button").removeClass("not-active");
-                $(".go_button").removeClass("not-active");
-                $(".date").removeClass("not-active");
+                this.dom.optionCommandButton.removeClass("not-active");
+                this.dom.myIpButton.removeClass("not-active");
+                this.dom.goButton.removeClass("not-active");
+                this.dom.date.removeClass("not-active");
 
-                $("input[name='graph_type']").parent().removeClass("disabled");
-                $("input[name='graph_type']").parent().removeClass("not-active");
-                $("input[name='graph_type']").parent().attr("disabled", false);
+                this.dom.graphType.parent().removeClass("disabled");
+                this.dom.graphType.parent().removeClass("not-active");
+                this.dom.graphType.parent().attr("disabled", false);
 
                 if (this.isGraphPresent()) {
-                    $(".path_btn").removeClass("disabled");
-                    $(".list_btn").removeClass("disabled");
-                    $(".sort_btn").removeClass("disabled");
-                    $(".path_btn").removeClass("not-active");
-                    $(".list_btn").removeClass("not-active");
-                    $(".sort_btn").removeClass("not-active");
+                    this.dom.pathButton.removeClass("disabled");
+                    this.dom.listButton.removeClass("disabled");
+                    this.dom.sortButton.removeClass("disabled");
+                    this.dom.pathButton.removeClass("not-active");
+                    this.dom.listButton.removeClass("not-active");
+                    this.dom.sortButton.removeClass("not-active");
                     if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
                             return $this.validator.check_ipv4(e);
                         })) {
-                        $("input[name='ip_version'][value='4']").parent().addClass("disabled");
-                        $("input[name='ip_version'][value='4']").parent().addClass("not-active");
-                        $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
+                        this.dom.ipVersion4Button.addClass("disabled");
+                        this.dom.ipVersion4Button.addClass("not-active");
+                        this.dom.ipVersion4Button.attr("disabled", true);
                     }
                     else {
-                        $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
-                        $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
-                        $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
+                        this.dom.ipVersion4Button.removeClass("disabled");
+                        this.dom.ipVersion4Button.removeClass("not-active");
+                        this.dom.ipVersion4Button.attr("disabled", false);
                     }
                     if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
                             return $this.validator.check_ipv6(e);
                         })) {
-                        $("input[name='ip_version'][value='6']").parent().addClass("disabled");
-                        $("input[name='ip_version'][value='6']").parent().addClass("not-active");
-                        $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
+                        this.dom.ipVersion6Button.addClass("disabled");
+                        this.dom.ipVersion6Button.addClass("not-active");
+                        this.dom.ipVersion6Button.attr("disabled", true);
                     }
                     else {
-                        $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
-                        $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
-                        $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
+                        this.dom.ipVersion6Button.removeClass("disabled");
+                        this.dom.ipVersion6Button.removeClass("not-active");
+                        this.dom.ipVersion6Button.attr("disabled", false);
                     }
                     if (this.ip_version.indexOf(4) != -1) {
                         $('input[name="ip_version"]').filter('[value="4"]').prop('checked', true);
@@ -339,26 +380,26 @@ define([
                     }
                     $(".counter").removeClass("hidden");
                     if (this.graph_type == "stream") {
-                        $("input[name='steps'][value='steps']").parent().removeClass("disabled");
-                        $("input[name='steps'][value='steps']").parent().removeClass("not-active");
-                        $("input[name='steps'][value='steps']").parent().attr("disabled", false);
+                        this.dom.stepsButton.removeClass("disabled");
+                        this.dom.stepsButton.removeClass("not-active");
+                        this.dom.stepsButton.attr("disabled", false);
                         $(".steps_btn").removeClass("not-active");
 
-                        $("input[name='streaming'][value='streaming']").parent().removeClass("disabled");
-                        $("input[name='streaming'][value='streaming']").parent().removeClass("not-active");
-                        $("input[name='streaming'][value='streaming']").parent().attr("disabled", false);
-                        $(".streaming_btn").removeClass("not-active");
+                        this.dom.streamingButton.removeClass("disabled");
+                        this.dom.streamingButton.removeClass("not-active");
+                        this.dom.streamingButton.attr("disabled", false);
+                        this.dom.streaming_Button.removeClass("not-active");
                     }
                     if (this.graph_type == "heat") {
-                        $("input[name='steps'][value='steps']").parent().addClass("disabled");
-                        $("input[name='steps'][value='steps']").parent().addClass("not-active");
-                        $("input[name='steps'][value='steps']").parent().attr("disabled", true);
+                        this.dom.stepsButton.addClass("disabled");
+                        this.dom.stepsButton.addClass("not-active");
+                        this.dom.stepsButton.attr("disabled", true);
                         $(".steps_btn").addClass("not-active");
 
-                        $("input[name='streaming'][value='streaming']").parent().addClass("disabled");
-                        $("input[name='streaming'][value='streaming']").parent().addClass("not-active");
-                        $("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
-                        $(".streaming_btn").addClass("not-active");
+                        this.dom.streamingButton.addClass("disabled");
+                        this.dom.streamingButton.addClass("not-active");
+                        this.dom.streamingButton.attr("disabled", true);
+                        this.dom.streaming_Button.addClass("not-active");
                     }
                     if (!this.steps) {
                         $('input[name="steps"][value="steps"]').prop('checked', false);
@@ -366,32 +407,32 @@ define([
                     }
                 }
                 else {
-                    $(".path_btn").addClass("disabled");
-                    $(".list_btn").addClass("disabled");
-                    $(".sort_btn").addClass("disabled");
-                    $(".path_btn").addClass("not-active");
-                    $(".list_btn").addClass("not-active");
-                    $(".sort_btn").addClass("not-active");
+                    this.dom.pathButton.addClass("disabled");
+                    this.dom.listButton.addClass("disabled");
+                    this.dom.sortButton.addClass("disabled");
+                    this.dom.pathButton.addClass("not-active");
+                    this.dom.listButton.addClass("not-active");
+                    this.dom.sortButton.addClass("not-active");
 
-                    $("input[name='ip_version'][value='6']").parent().addClass("disabled");
-                    $("input[name='ip_version'][value='6']").parent().addClass("not-active");
-                    $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
+                    this.dom.ipVersion6Button.addClass("disabled");
+                    this.dom.ipVersion6Button.addClass("not-active");
+                    this.dom.ipVersion6Button.attr("disabled", true);
 
-                    $("input[name='ip_version'][value='4']").parent().addClass("disabled");
-                    $("input[name='ip_version'][value='4']").parent().addClass("not-active");
-                    $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
+                    this.dom.ipVersion4Button.addClass("disabled");
+                    this.dom.ipVersion4Button.addClass("not-active");
+                    this.dom.ipVersion4Button.attr("disabled", true);
 
                     $(".counter").addClass("hidden");
 
-                    $("input[name='steps'][value='steps']").parent().addClass("disabled");
-                    $("input[name='steps'][value='steps']").parent().addClass("not-active");
-                    $("input[name='steps'][value='steps']").parent().attr("disabled", true);
+                    this.dom.stepsButton.addClass("disabled");
+                    this.dom.stepsButton.addClass("not-active");
+                    this.dom.stepsButton.attr("disabled", true);
                     $(".steps_btn").addClass("not-active");
 
-                    $("input[name='streaming'][value='streaming']").parent().addClass("disabled");
-                    $("input[name='streaming'][value='streaming']").parent().addClass("not-active");
-                    $("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
-                    $(".streaming_btn").addClass("not-active");
+                    this.dom.streamingButton.addClass("disabled");
+                    this.dom.streamingButton.addClass("not-active");
+                    this.dom.streamingButton.attr("disabled", true);
+                    this.dom.streaming_Button.addClass("not-active");
                 }
             }
         };
@@ -402,40 +443,40 @@ define([
                 if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
                         return GuiManager.validator.check_ipv4(e);
                     })) {
-                    $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
-                    $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
-                    $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
+                    this.dom.ipVersion4Button.removeClass("disabled");
+                    this.dom.ipVersion4Button.removeClass("not-active");
+                    this.dom.ipVersion4Button.attr("disabled", false);
                     this.ip_version = [4];
                 }
                 else {
-                    $("input[name='ip_version'][value='4']").parent().addClass("disabled");
-                    $("input[name='ip_version'][value='4']").parent().addClass("not-active");
-                    $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
+                    this.dom.ipVersion4Button.addClass("disabled");
+                    this.dom.ipVersion4Button.addClass("not-active");
+                    this.dom.ipVersion4Button.attr("disabled", true);
                 }
                 if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
                         return GuiManager.validator.check_ipv6(e);
                     })) {
-                    $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
-                    $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
-                    $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
+                    this.dom.ipVersion6Button.removeClass("disabled");
+                    this.dom.ipVersion6Button.removeClass("not-active");
+                    this.dom.ipVersion6Button.attr("disabled", false);
                     this.ip_version = [6];
                 }
                 else {
-                    $("input[name='ip_version'][value='6']").parent().addClass("disabled");
-                    $("input[name='ip_version'][value='6']").parent().addClass("not-active");
-                    $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
+                    this.dom.ipVersion6Button.addClass("disabled");
+                    this.dom.ipVersion6Button.addClass("not-active");
+                    this.dom.ipVersion6Button.attr("disabled", true);
                 }
                 if (this.ripeDataBroker.current_parsed.targets.some(function (e) {
                         return GuiManager.validator.check_ipv4(e);
                     }) && this.ripeDataBroker.current_parsed.targets.some(function (e) {
                         return GuiManager.validator.check_ipv6(e);
                     })) {
-                    $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
-                    $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
-                    $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
-                    $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
-                    $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
-                    $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
+                    this.dom.ipVersion4Button.removeClass("disabled");
+                    this.dom.ipVersion4Button.removeClass("not-active");
+                    this.dom.ipVersion4Button.attr("disabled", false);
+                    this.dom.ipVersion6Button.removeClass("disabled");
+                    this.dom.ipVersion6Button.removeClass("not-active");
+                    this.dom.ipVersion6Button.attr("disabled", false);
                     if (this.ip_version.length == 0)
                         this.ip_version = [4];
                 }
@@ -467,7 +508,7 @@ define([
         };
 
         this.gather_information_btn_setup = function () {
-            $(".gather_information_btn").on("click", function (e) {
+            this.dom.gatherInformationButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -477,7 +518,7 @@ define([
 
         this.preserve_color_map_btn_setup = function () {
             var GuiManager = this;
-            $(".preserve_color_btn").on("click", function (e) {
+            this.dom.preserveColorButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -487,7 +528,7 @@ define([
         };
 
         this.prepending_prevention_btn_setup = function () {
-            $(".prepending_prevention_btn").on("click", function (e) {
+            this.dom.prependingPreventionButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -502,7 +543,7 @@ define([
 
         this.merge_cp_btn_setup = function () {
             var GuiManager = this;
-            $(".merge_cp_btn").on("click", function (e) {
+            this.dom.mergeCPButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -533,7 +574,7 @@ define([
 
         this.events_labels_btn_setup = function () {
             var GuiManager = this;
-            $(".events_labels_btn").on("click", function (e) {
+            this.dom.eventsLabelsButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -545,7 +586,7 @@ define([
 
         this.cp_labels_btn_setup = function () {
             var GuiManager = this;
-            $(".cp_labels_btn").on("click", function (e) {
+            this.dom.cpLabelsButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -557,7 +598,7 @@ define([
 
         this.heatmap_time_btn_setup = function () {
             var GuiManager = this;
-            $(".heatmap_time_btn").on("click", function (e) {
+            this.dom.heatmapTimeButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -569,7 +610,7 @@ define([
 
         this.scrollbars_btn_setup = function () {
             var GuiManager = this;
-            $(".scrollbars_btn").on("click", function (e) {
+            this.dom.scrollbarsButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -586,7 +627,7 @@ define([
 
         this.global_visiblity_btn_setup = function () {
             var GuiManager = this;
-            $(".global_visibility_btn").on("click", function (e) {
+            this.dom.globalVisibilityButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -601,7 +642,7 @@ define([
 
         this.graph_type_radio_setup = function () {
             var GuiManager = this;
-            $("input[name='graph_type']").on("change", function (e) {
+            this.dom.graphType.on("change", function (e) {
                 GuiManager.graph_type = $("input[name='graph_type']:checked").val();
                 if (GuiManager.graph_type == "stream") {
                     $(".title").html("Global View");
@@ -659,7 +700,7 @@ define([
         this.streaming_btn_setup = function () {
             var GuiManager = this;
             var interval;
-            $(".streaming_btn").on("click", function (e, ui) {
+            this.dom.streaming_Button.on("click", function (e, ui) {
                 GuiManager.streaming = !GuiManager.streaming;
                 streaming_icon_swap();
                 if (GuiManager.streaming) {
@@ -674,7 +715,7 @@ define([
             });
 
             streaming_icon_swap = function () {
-                var icon = $(".streaming_btn").find("span");
+                var icon = this.dom.streaming_Button.find("span");
                 if (this.streaming) {
                     icon.removeClass("glyphicon-record");
                     icon.addClass("glyphicon-stop");
@@ -699,7 +740,7 @@ define([
 
         this.list_btn_setup = function () {
             var GuiManager = this;
-            $(".list_btn").on("click", function (e) {
+            this.dom.listButton.on("click", function (e) {
                 if (GuiManager.asn_info_done) {
                     $(".asn_list_btn").parent().removeClass("not-active");
                     $(".asn_list_btn").parent().removeClass("disabled");
