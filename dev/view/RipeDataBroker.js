@@ -64,7 +64,6 @@ define([
                 url: url_bgplay,
                 dataType: "json",
                 data : {
-                    unix_timestamps: true,
                     resource: env.queryParams.targets.join(","),
                     starttime: env.queryParams.startDate.unix(),
                     endtime: env.queryParams.stopDate.unix()
@@ -233,8 +232,8 @@ define([
                 if(!ordering) {
                     ordering = this.current_parsed.asn_set;
                 }
-                env.guiManager.update_counters(".counter_asn",this.current_parsed.asn_set.length);
-                env.guiManager.update_counters(".counter_events",this.current_parsed.events.length);
+                env.guiManager.update_counters(".counter_asn", this.current_parsed.asn_set.length);
+                env.guiManager.update_counters(".counter_events", this.current_parsed.events.length);
 
                 env.guiManager.drawer.draw_streamgraph(
                     this.current_parsed,
@@ -251,10 +250,9 @@ define([
                     redraw_minimap);
                 this.heuristicsManager.MetricsManager.metrics(this.current_parsed, env.guiManager.drawer.keys);
                 env.guiManager.isGraphPresent();
-            }
-            else
-            //HEAT
-            if(env.guiManager.graph_type == "heat") {
+
+            } else if(env.guiManager.graph_type == "heat") { // HEAT
+
                 this.current_cp_tsv = this.parser.convert_to_heatmap_tsv(this.current_parsed, env.guiManager.prepending_prevention, env.guiManager.asn_level, env.guiManager.ip_version);
                 //ORDERING
                 ordering = this.heuristicsManager.getCurrentOrdering(this.current_parsed, env.guiManager.graph_type);
@@ -334,7 +332,6 @@ define([
             var interval_id = setInterval(function (){
                 if(i>max){
                     clearInterval(interval_id);
-                    console.log("Step view over");
                     $this.guiManager.steps = false;
                     $this.guiManager.draw_functions_btn_enabler();
                 }

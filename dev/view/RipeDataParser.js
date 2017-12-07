@@ -43,6 +43,7 @@ define([
         //ripe_response_parse();
         //main function to call for parsing
         this.ripe_response_parse = function (json, start, end) {
+            console.log(start, end);
             //on local load from data.json
             //json = require('./data.json');
             //global variables init
