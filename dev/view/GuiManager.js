@@ -54,6 +54,10 @@ define([
             this.ripeDataBroker.getData();
         };
 
+        this.pickers_setup = function () {
+            // nothing for now
+        };
+
         //other_command_menu
         this.other_command_button_setup = function () {
             this.shuffle_color_map_btn_setup();
