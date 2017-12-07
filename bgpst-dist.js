@@ -6973,6 +6973,10 @@ define('bgpst.view.gui',[
             this.ripeDataBroker.getData();
         };
 
+        this.pickers_setup = function () {
+            // nothing for now
+        };
+
         //other_command_menu
         this.other_command_button_setup = function () {
             this.shuffle_color_map_btn_setup();
@@ -7252,7 +7256,6 @@ define('bgpst.view.gui',[
                         $('input[name="ip_version"]').filter('[value="6"]').parent().removeClass("active");
                     }
                     $(".counter").removeClass("hidden");
-                    this.draggable_setup();
                     if (this.graph_type == "stream") {
                         $("input[name='steps'][value='steps']").parent().removeClass("disabled");
                         $("input[name='steps'][value='steps']").parent().removeClass("not-active");

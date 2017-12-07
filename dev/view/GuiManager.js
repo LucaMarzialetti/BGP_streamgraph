@@ -16,13 +16,15 @@ define([
         var $this = this;
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
-        this.loader = $(".loading_text");
+
+        this.dom = {
+            heatmapTimeButton: env.parentDom.find(".heatmap_time_btn")
+        };
         this.container = $("div.body_container");
 
         this.drawer = new GraphDrawer(env);
 
         this.preserve_map = true;
-        this.localstorage_enabled = true;
         this.global_visibility = true;
         this.prepending_prevention = true;
         this.asn_level = 1;
@@ -226,8 +228,8 @@ define([
             }
 
             if (!this.heatmap_time_map) {
-                $(".heatmap_time_btn").find("span").addClass("hidden");
-                $(".heatmap_time_btn").parent().removeClass("active");
+                this.dom.heatmapTimeButton.find("span").addClass("hidden");
+                this.dom.heatmapTimeButton.parent().removeClass("active");
             }
             else {
                 $(".heatmap_time_btn").find("span").removeClass("hidden");
@@ -273,7 +275,6 @@ define([
         };
 
         this.draw_functions_btn_enabler = function () {
-            GuiManager = this;
             if (!this.streaming) {
                 $(".option_command_btn").removeClass("disabled");
                 $(".my_ip_button").removeClass("disabled");
@@ -297,7 +298,7 @@ define([
                     $(".list_btn").removeClass("not-active");
                     $(".sort_btn").removeClass("not-active");
                     if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                            return GuiManager.validator.check_ipv4(e);
+                            return $this.validator.check_ipv4(e);
                         })) {
                         $("input[name='ip_version'][value='4']").parent().addClass("disabled");
                         $("input[name='ip_version'][value='4']").parent().addClass("not-active");
@@ -309,7 +310,7 @@ define([
                         $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
                     }
                     if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                            return GuiManager.validator.check_ipv6(e);
+                            return $this.validator.check_ipv6(e);
                         })) {
                         $("input[name='ip_version'][value='6']").parent().addClass("disabled");
                         $("input[name='ip_version'][value='6']").parent().addClass("not-active");
@@ -466,13 +467,11 @@ define([
         };
 
         this.gather_information_btn_setup = function () {
-            var GuiManager = this;
             $(".gather_information_btn").on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
-                GuiManager.gather_information = !GuiManager.gather_information;
-                // GuiManager.url_string();
+                $this.gather_information = !$this.gather_information;
             });
         };
 

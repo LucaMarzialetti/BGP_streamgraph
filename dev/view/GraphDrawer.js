@@ -1131,7 +1131,7 @@ define([
                 }), this.keys.length);
                 this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
                 this.z.domain(this.keys);
-                d3.selectAll(".area").each(function (d, i) {
+                d3.select(env.parentDom[0]).selectAll(".area").each(function (d, i) {
                     d3.select(this).style("fill", $this.z(d.key));
                 });
             }
