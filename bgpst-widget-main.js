@@ -141,14 +141,16 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
                 $(domElement).addMsg("error", error, true);
             }
         }, {
-            resource: widgetParams.resource
+            resource: widgetParams.resource,
+            startDate: widgetParams.startTime,
+            endDate: widgetParams.stopTime
         });
 
         instance.ready(function(){
 
             instance.shell().on("updated", function(params){
                 var out = {
-                    resource: params.resource
+                    resource: [params.resource]
                 };
 
                 // DO SOMETHING HERE TO UPDATE RIPESTAT

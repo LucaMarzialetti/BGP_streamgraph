@@ -61,9 +61,9 @@ requirejs.config({
 
 
         /* connector */
-        "bgpst.connector.facade": window.atlas._widgets.bgpst.urls.connector + "ConnectorFacade",
-        "bgpst.connector.translation": window.atlas._widgets.bgpst.urls.connector + "TranslationConnector",
-        "bgpst.connector.rest": window.atlas._widgets.bgpst.urls.connector + "RestConnector"
+        // "bgpst.connector.facade": window.atlas._widgets.bgpst.urls.connector + "ConnectorFacade",
+        // "bgpst.connector.translation": window.atlas._widgets.bgpst.urls.connector + "TranslationConnector",
+        // "bgpst.connector.rest": window.atlas._widgets.bgpst.urls.connector + "RestConnector"
 
     },
     shim:{

@@ -10,7 +10,7 @@ define([
 	"bgpst.model.gdbstruct"
 ], function(DateConverter, MetricsManager, myUtils, moment, GDBS){
 
-	var HeuristicsManager = function(type) {
+	var HeuristicsManager = function(env) {
 		this.DateConverter = new DateConverter();
 		this.MetricsManager = new MetricsManager();
 
@@ -45,15 +45,15 @@ define([
 		/*defaults*/
 		this.default_heuristic_s = "n_f";
 		this.default_heuristic_h = "nf_1";
-		this.setDefaultHeuristic(type);
+		this.setDefaultHeuristic(env.guiManager.graph_type);
 	};
 
 	HeuristicsManager.prototype.setDefaultHeuristic = function(type){
-		if(type == "stream")
+		if(type == "stream") {
 			this.current_heuristic = this.default_heuristic_s;
-		else
-		if(type == "heat")
+		} else if(type == "heat") {
 			this.current_heuristic = this.default_heuristic_h;
+		}
 	};
 
 	HeuristicsManager.prototype.getCurrentOrdering = function(current_parsed, type){

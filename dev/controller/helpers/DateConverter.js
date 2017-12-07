@@ -35,7 +35,7 @@ define([
 		return moment(date,this.ripestat_data_format_time).format(this.ripestat_data_format_time);
 	};
 
-	DateConverter.prototype.formatRipeDateTime = function(date,time){
+	DateConverter.prototype.formatRipeDateTime = function(date, time){
 		return this.formatRipeDate(date)+"T"+this.formatRipeTime(time);
 	};
 

@@ -22,31 +22,7 @@ define([
             }
         };
 
-        this.storeContext = function(data,name) {
-            if(env.guiManager.localstorage_enabled)
-                try {
-                    localStorage[name] = JSON.stringify(data);
-                }
-                catch(err){
-                    alert("Local storage exhausted.\nThe data will not be cached (" + name + ")	");
-                }
-        };
 
-        this.restoreContext = function() {
-            var original_data = JSON.parse(localStorage['last_context_original_data']);
-            var peerings = JSON.parse(localStorage['last_context_peerings']);
-            var starttime = localStorage['last_context_starttime'].replace(/"/g,'');
-            var endtime = localStorage['last_context_endtime'].replace(/"/g,'');
-            var targets = localStorage['last_context_targets'].replace(/"/g,'');
-
-            env.guiManager.RipeDataBroker.current_starttime = starttime;
-            env.guiManager.RipeDataBroker.current_endtime = endtime;
-            env.guiManager.RipeDataBroker.current_targets = targets;
-            env.guiManager.RipeDataBroker.ipv4_peerings = peerings[4];
-            env.guiManager.RipeDataBroker.ipv6_peerings = peerings[6];
-            env.guiManager.RipeDataBroker.current_parsed = original_data;
-            env.guiManager.RipeDataBroker.loadCurrentState(null,false,null,true);
-        };
 
         this.getLocalParameters = function() {
             var vars = [], hash;

@@ -30,6 +30,7 @@ define([
 
         //setup the drawing in the svg  <-- TO CALL AT DOM READY
         this.drawer_init = function () {
+            console.log("DRAW INIT");
             this.erase_all();
             var margin = {top: 15, right: 15, bottom: 15, left: 15};
             var width = $("div.main_svg").outerWidth() - margin.left - margin.right;
