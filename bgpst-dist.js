@@ -6912,7 +6912,7 @@ define.amd = true;
 }));
 define('bgpst.lib.stache',{load: function(id){throw new Error("Dynamic load not allowed: " + id);}});
 
-define('bgpst.lib.stache!main', ['bgpst.lib.mustache'], function (Mustache) { var template = '<div class="body_container">\n    <div class="row first_row left_margin container">\n        <div class="col-sm-3" style="padding-right: 0;padding-left: 0; text-anchor: left">\n            <h2 class="title">Global View</h2>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#Events</label>\n                <div class="counter_events" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#ASN</label>\n                <div class="counter_asn" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-7 text-right" style="padding-right: 0;padding-left: 0; text-anchor: right">\n            <div class="btn-group other_command_btn steps_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="steps" value="steps" autocomplete="off">\n                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>\n                    Steps\n                </label>\n            </div>\n            <div class="btn-group other_command_btn streaming_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="streaming" value="streaming" autocomplete="off">\n                    <span class="glyphicon glyphicon-record" aria-hidden="true"></span>\n                    <!--glyphicon glyphicon-stop-->\n                    Streaming\n                </label>\n            </div>\n            <div class="btn-group other_command_btn ip_version" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="4" autocomplete="off">\n                    IPv4\n                </label>\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="6" autocomplete="off"> \n                    IPv6\n                </label>\n            </div>\n            <div class="btn-group other_command_btn graph_type" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="stream" autocomplete="off">\n                    Global\n                </label>\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="heat" autocomplete="off"> \n                    Local\n                </label>\n            </div>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn option_command_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>\n                    <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>\n                    <li>\n                        <a href="#" class="preserve_color_btn">\n                            Preserve Color Map\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="gather_information_btn">\n                            Gather Information (CP Geo, ASN Detail)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="localstorage_enabled_btn">\n                            Enable Local Storage\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="prepending_prevention_btn">\n                            AS-Path Anti-Prepending\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="merge_cp_btn">\n                            Merge CPs with same paths\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option" style="display: inline-flex;">\n                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Merge events with same routing\n\n                        </a>\n                        <input type="number" name="merge_events" min="0" max="500" \n                        style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">\n                    </li>   \n                    <li class="stream_option">\n                        <a href="#" class="global_visibility_btn">\n                            Global visibility (All CPs)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li style="display: inline-flex;">\n                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Upstream Level (AS-path hop)\n\n                        </a>\n                        <input type="number" name="asn_lvl" min="0" max="50" \n                        style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">\n                    </li>\n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn path_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li>\n                        <a href="#" class="draw_path_btn">Draw Path</a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="events_labels_btn">\n                            Events labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="cp_labels_btn">\n                            CP labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="heatmap_time_btn">\n                            Use time mapping\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>       \n                    <li class="heat_option">\n                        <a href="#" class="scrollbars_btn">\n                            Use scrollbars\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>                       \n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn list_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">\n                   <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>\n                </li>\n                <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>\n                </li>\n            </ul>\n        </span>\n        <span class="dropdown">\n            <button type="button" class="dropdown-toggle other_command_btn sort_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>\n                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li>\n\n                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>\n                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>\n                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>\n            </ul>\n        </span>\n    </div>\n</div>\n<div class="container controls_container left_margin">\n    <form class="registrationForm">\n        <div class="row">\n            <div class="col-sm-4">\n                <h4>From</h4>\n            </div>\n            <div class="col-sm-4">\n                <h4>To</h4>\n            </div>\n            <div class="col-sm-3">\n                <h4>Target</h4>\n            </div>\n\n            <div class="col-sm-1">\n                <div class="row left_margin">\n                    <div class="col-sm-1">\n                        <div class="radio">\n                          <label><input type="radio" name="ipversion" value="4" checked/>IPv4</label>\n                      </div>  \n                  </div>\n              </div>\n              <div class="row left_margin">\n                <div class="col-sm-1">          \n                    <div class="radio">\n                      <label><input type="radio" name="ipversion" value="6"/>IPv6</label>\n                  </div>\n              </div>\n          </div>\n      </div>\n\n      <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker date_only start form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter date" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker time_only start form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter time" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-time"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker date_only end form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter date"/>\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker time_only end form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter time" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-time"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-3">\n        <div class="form-group input_add">\n            <input type="text" class="form-control add_address fullsized" data-toggle="tooltip" trigger="focus" data-placement="top" title="Press \'Enter\' to add" name="add_address" />\n        </div>\n    </div>\n\n    <div class="col-sm-1">\n        <div class="row left_margin">\n            <div class="col-sm-1">\n                <div class="radio">\n                  <label><input type="radio" name="ipversion" value="asn"/>ASN</label>\n              </div>              \n          </div>\n      </div>\n      <div class="row left_margin">\n        <div class="col-sm-1">\n            <div class="radio">\n              <label><input type="radio" name="ipversion" value="free"/>Free</label>\n          </div>\n      </div>\n  </div>\n</div>\n</div>\n\n<div class="row">\n    <div class="col-sm-8">\n        <div class="form-group">\n            <input type="text" class="tokenfield form-control" placeholder="Targets">\n        </div>\n    </div>\n    <div class="col-sm-2">  \n        <button type="button" class="btn btn-default clear_targets_button fullsized text_centerd">Clear Targets</button>                    \n    </div>\n    <div class="col-sm-1">  \n        <button type="button" class="btn btn-default my_ip_button fullsized text_centerd">My IP</button>                    \n    </div>\n    <div class="col-sm-1">  \n        <button type="button" class="btn btn-default go_button fullsized text_centerd">Go</button>                  \n    </div>\n</div>\n</form>\n</div>\n<div class="svg_tooltip hidden"></div>\n<div class="container canvas_container left_margin main_svg">\n    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">\n    </svg>\n</div>\n<div class="container canvas_container left_margin mini_svg" style="height: 35vh">\n    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">\n    </svg>\n</div>\n<div class="last_row footer">\n    <nav class="navbar">\n        <div class="container-fluid">\n            <div class="navbar-header">\n                <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>\n                <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>\n                <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>\n            </div>\n        </div>\n    </nav>\n</div>\n</div>'; Mustache.parse( template ); return function( view, partials) { return Mustache.render( template, view, partials); } });
+define('bgpst.lib.stache!main', ['bgpst.lib.mustache'], function (Mustache) { var template = '<div class="body_container">\n    <div class="row first_row left_margin container">\n        <div class="col-sm-3" style="padding-right: 0;padding-left: 0; text-anchor: left">\n            <h2 class="title">Global View</h2>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#Events</label>\n                <div class="counter_events" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#ASN</label>\n                <div class="counter_asn" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-7 text-right" style="padding-right: 0;padding-left: 0; text-anchor: right">\n            <div class="btn-group other_command_btn steps_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="steps" value="steps" autocomplete="off">\n                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>\n                    Steps\n                </label>\n            </div>\n            <div class="btn-group other_command_btn streaming_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="streaming" value="streaming" autocomplete="off">\n                    <span class="glyphicon glyphicon-record" aria-hidden="true"></span>\n                    <!--glyphicon glyphicon-stop-->\n                    Streaming\n                </label>\n            </div>\n            <div class="btn-group other_command_btn ip_version" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="4" autocomplete="off">\n                    IPv4\n                </label>\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="6" autocomplete="off">\n                    IPv6\n                </label>\n            </div>\n            <div class="btn-group other_command_btn graph_type" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="stream" autocomplete="off">\n                    Global\n                </label>\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="heat" autocomplete="off">\n                    Local\n                </label>\n            </div>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn option_command_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>\n                    <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>\n                    <li>\n                        <a href="#" class="preserve_color_btn">\n                            Preserve Color Map\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="gather_information_btn">\n                            Gather Information (CP Geo, ASN Detail)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="localstorage_enabled_btn">\n                            Enable Local Storage\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="prepending_prevention_btn">\n                            AS-Path Anti-Prepending\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="merge_cp_btn">\n                            Merge CPs with same paths\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option" style="display: inline-flex;">\n                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Merge events with same routing\n\n                        </a>\n                        <input type="number" name="merge_events" min="0" max="500"\n                               style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">\n                    </li>   \n                    <li class="stream_option">\n                        <a href="#" class="global_visibility_btn">\n                            Global visibility (All CPs)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li style="display: inline-flex;">\n                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Upstream Level (AS-path hop)\n\n                        </a>\n                        <input type="number" name="asn_lvl" min="0" max="50"\n                               style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">\n                    </li>\n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn path_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li>\n                        <a href="#" class="draw_path_btn">Draw Path</a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="events_labels_btn">\n                            Events labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="cp_labels_btn">\n                            CP labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="heatmap_time_btn">\n                            Use time mapping\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>       \n                    <li class="heat_option">\n                        <a href="#" class="scrollbars_btn">\n                            Use scrollbars\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>                       \n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn list_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">\n                   <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>\n                </li>\n                <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>\n                </li>\n            </ul>\n        </span>\n        <span class="dropdown">\n            <button type="button" class="dropdown-toggle other_command_btn sort_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>\n                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li>\n\n                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>\n                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>\n                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>\n            </ul>\n        </span>\n        </div>\n    </div>\n    <div class="container controls_container left_margin">\n        <form class="registrationForm">\n            <div class="row">\n                <div class="col-sm-2">\n                    <div class=\'input-group date datetimepicker date_only start form-group\'>\n                        <input type=\'text\' class="form-control" placeholder="Enter date" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n                    </div>\n                </div>\n\n\n                <div class="col-sm-2">\n                    <div class=\'input-group date datetimepicker date_only end form-group\'>\n                        <input type=\'text\' class="form-control" placeholder="Enter date"/>\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n                    </div>\n                </div>\n\n\n\n            </div>\n\n        </form>\n    </div>\n    <div class="svg_tooltip hidden"></div>\n    <div class="container canvas_container left_margin main_svg">\n        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">\n        </svg>\n    </div>\n    <div class="container canvas_container left_margin mini_svg" style="height: 35vh">\n        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">\n        </svg>\n    </div>\n    <div class="last_row footer">\n        <nav class="navbar">\n            <div class="container-fluid">\n                <div class="navbar-header">\n                    <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>\n                    <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>\n                    <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>\n                </div>\n            </div>\n        </nav>\n    </div>\n</div>'; Mustache.parse( template ); return function( view, partials) { return Mustache.render( template, view, partials); } });
 
 define('bgpst.view.gui',[
     "bgpst.view.graphdrawer",
@@ -6929,10 +6929,10 @@ define('bgpst.view.gui',[
     //setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
     var GuiManager = function(env) {
 
+        var $this = this;
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
         this.loader = $(".loading_text");
-        this.mask = $("div.loader_mask");
         this.container = $("div.body_container");
 
         this.tokenfield = $(".tokenfield");
@@ -6969,11 +6969,6 @@ define('bgpst.view.gui',[
 
             this.drawer.drawer_init();
             this.pickers_setup();
-            this.tokenfield_setup();
-            this.input_address_setup();
-            this.ipversion_setup();
-            this.clear_button_setup();
-            // this.go_button_setup();
             this.other_command_button_setup();
             this.tooltip_setup();
 
@@ -6991,11 +6986,6 @@ define('bgpst.view.gui',[
             $(this.loader).html(text);
         };
 
-        // this.toggleLoader = function () {
-        //     $(this.mask).toggleClass("hidden");
-        //     $(this.container).toggleClass("blur");
-        // };
-
         //add tooltip  <-- TO CALL AT SETUP
         this.tooltip_setup = function () {
             $('[data-toggle="tooltip"]').tooltip();
@@ -7005,470 +6995,10 @@ define('bgpst.view.gui',[
             $(".drag_sort_list").sortable();
         };
 
-        //setup the pickers <-- TO CALL AT SETUP
         this.pickers_setup = function () {
-            var GuiManager = this;
-            /*formats & date linking*/
-            $('.datetimepicker.date_only.start').datetimepicker({
-                format: 'l',
-                useCurrent: true, //Important! See issue #1075
-            });
-            $('.datetimepicker.time_only.start').datetimepicker({
-                format: 'LTS'
-            });
-            $('.datetimepicker.date_only.end').datetimepicker({
-                format: 'l',
-                useCurrent: true, //Important! See issue #1075
-            });
-            $('.datetimepicker.time_only.end').datetimepicker({
-                format: 'LTS',
-                //useCurrent: true //Important! See issue #1075
-            });
-            $('.datetimepicker.date_only.start').data("DateTimePicker").maxDate(moment());
-            $('.datetimepicker.date_only.end').data("DateTimePicker").maxDate(moment());
-            /*time linking*/
-            $(".datetimepicker.date_only.start").on("dp.change", function (e) {
-                var date_start = $('.datetimepicker.date_only.start').data("DateTimePicker").date();
-                var date_end = $('.datetimepicker.date_only.end').data("DateTimePicker").date();
-                if (date_end == null || date_end == undefined)
-                    $('.datetimepicker.date_only.end').data("DateTimePicker").date(date_start);
-                $('.datetimepicker.date_only.end').data("DateTimePicker").minDate(e.date);
-            });
-            $(".datetimepicker.time_only.start").on("dp.change", function (e) {
-                GuiManager.check_end_time(e);
-            });
-            $('.datetimepicker.date_only').on("dp.change", function (e) {
-                GuiManager.check_end_time(e);
-            });
-            $('.datetimepicker').on("dp.change", function (e) {
-                GuiManager.UIerror_check(this);
 
-            });
-
-            $('.datetimepicker').on("dp.change", function (e) {
-                $('.datetimepicker.date_only.start').data("DateTimePicker").viewDate($('.datetimepicker.date_only.start').data("DateTimePicker").date());
-                $('.datetimepicker.date_only.end').data("DateTimePicker").viewDate($('.datetimepicker.date_only.end').data("DateTimePicker").date());
-            });
-
-            //setting current date
-            var cur_date = moment();
-            $('.datetimepicker.date_only.end').data("DateTimePicker").date(this.dateConverter.formatInterface(cur_date));
-            $('.datetimepicker.time_only.end').data("DateTimePicker").date(this.dateConverter.formatInterfaceTime(cur_date));
-            var day_before = moment().subtract(1, 'days');
-            $('.datetimepicker.date_only.start').data("DateTimePicker").date(this.dateConverter.formatInterface(day_before));
-            $('.datetimepicker.time_only.start').data("DateTimePicker").date(this.dateConverter.formatInterfaceTime(day_before));
         };
 
-        //avoid time clipping on hours time pickers
-        this.check_end_time = function (e) {
-            var date_start = $('.datetimepicker.date_only.start').data("DateTimePicker").date();
-            var date_end = $('.datetimepicker.date_only.end').data("DateTimePicker").date();
-            var time_start = $('.datetimepicker.time_only.start').data("DateTimePicker").date();
-            if (date_start == null && date_end == null)
-                $('.datetimepicker.time_only.end').data("DateTimePicker").minDate(time_start);
-            else if (moment(date_start).isSame(date_end, 'date') && !((time_start == null) || (time_start == "") || (time_start == undefined))) {
-                $('.datetimepicker.time_only.end').data("DateTimePicker").minDate(time_start);
-            }
-            else
-                $('.datetimepicker.time_only.end').data("DateTimePicker").minDate(false);
-        };
-
-        //setup the tokenfield <-- TO CALL AT SETUP
-        this.tokenfield_setup = function () {
-            var GuiManager = this;
-            //tokenfield
-            this.tokenfield.tokenfield();//{limit:GuiManager.max_tokens}
-            //var placeholder=$('.tokenfield').find('input').attr('placeholder');
-            //$('.tokenfield').find('input').attr('placeholder', placeholder+" ("+GuiManager.max_tokens+" max)");
-            this.tokenfield.on('keydown', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            });
-            this.tokenfield.on("change", function (e) {
-                GuiManager.UIerror_check($(this).parent().parent());
-            });
-        };
-
-        /**if the field get updated remove the error class**/
-        this.UIerror_check = function (e) {
-            var val = $(e).find('input').val();
-            if (val != null && val != "" && val != undefined)
-                $(e).removeClass("has-error");
-        };
-
-        //setup the input address <-- TO CALL AT SETUP
-        this.input_address_setup = function () {
-            var GuiManager = this;
-            $('input.add_address').on('keydown', function (e) {
-                var version = $("input[name='ipversion']:checked").val();
-                var val = $(this).parent().find('input').val();
-                var valid = false;
-                if ((val != null && val != undefined && val != "") && GuiManager.valid_address())
-                    var valid = true;
-                if (e.which == 13) {
-                    e.preventDefault();
-                    if (valid) {
-                        switch (version) {
-                            case "asn":
-                                val = "AS" + val;
-                                break;
-                            case "4":
-                                var bar = $('input[name="add_bar"]').val();
-                                if (bar != "" && bar != null && bar != undefined)
-                                    val = val + "/" + bar;
-                                $('input[name="add_bar"]').val("");
-                                break;
-                            case "6":
-                                var bar = $('input[name="add_bar"]').val();
-                                if (bar != "" && bar != null && bar != undefined)
-                                    val = val + "/" + bar;
-                                $('input[name="add_bar"]').val("");
-                                break;
-                        }
-                        if ($(".tokenfield").find("input").val().replace(/\s/g, '').split(",").indexOf(val) < 0)
-                            $('.tokenfield').tokenfield('createToken', val);
-                        $(this).parent().find('input').val("");
-                    }
-                    $("input.token-input").css("width", "auto");
-                }
-            });
-
-            $('input.add_address').on('keyup', function (e) {
-                var val = $(this).parent().find('input').val();
-                if (val == null || val == undefined || val == "") {
-                    $(this).parent().removeClass("has-success");
-                    $(this).parent().removeClass("has-error");
-                }
-            });
-
-            $('input.add_address').on('paste', function (e) {
-                var pasteData = e.originalEvent.clipboardData.getData('text');
-                var fields;
-                if (GuiManager.validator.check_ipv4(pasteData) || GuiManager.validator.check_ipv6(pasteData) || GuiManager.validator.check_asn(pasteData)) {
-                    if (GuiManager.validator.check_asn(pasteData)) {
-                        fields = pasteData.replace(/^(A|a)(S|s)/, "").trim();
-                        $('input[name="ipversion"][value="asn"]').prop('checked', true);
-                        $('input.add_address').val(fields);
-                        $('input[name="ipversion"]').change();
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                    else {
-                        fields = pasteData.trim().split("/");
-                        if (fields.length == 2)
-                            if ((GuiManager.validator.check_ipv6(fields[0]) && parseInt(fields[1]) < 129) || (GuiManager.validator.check_ipv4(fields[0]) && parseInt(fields[1]) < 33)) {
-                                if (GuiManager.validator.check_ipv4(fields[0]))
-                                    $('input[name="ipversion"][value="4"]').prop('checked', true);
-                                if (GuiManager.validator.check_ipv6(fields[0]))
-                                    $('input[name="ipversion"][value="6"]').prop('checked', true);
-                                $('input.add_address').val(fields[0]);
-                                $('input[name="ipversion"]').change();
-                                $('input.bar').val(fields[1]);
-                                e.preventDefault();
-                                e.stopPropagation();
-                            }
-                    }
-                }
-            });
-
-            $('input.add_address').on('focusout', function (e) {
-                var val = $('input.add_address').val();
-                if (val == "")
-                    $('input.add_address').parent().removeClass("has-error");
-            });
-        };
-
-        //setup the bar address <-- TO CALL WHEN BAR IS CREATED
-        this.input_bar_setup = function () {
-            $('input.bar').on('keydown', function (e) {
-                if (e.which == 13) {
-                    e.preventDefault();
-                    $('input.add_address').trigger(e);
-                    $('input.add_address').focus();
-                }
-            })
-                .on("focus", function () {
-                    $("input.add_address").tooltip('show')
-                });
-            ;
-
-            $('input.bar').on('focusout', function (e) {
-                var val = $('input.bar').val();
-                if (val == "")
-                    $('input.bar').parent().removeClass("has-error");
-            });
-        };
-
-        //check if the address field is in a valid state
-        this.valid_address = function (val) {
-            var version = $("input[name='ipversion']:checked").val();
-            var has_error = $('.add_address').parent().parent().find('.has-error').length;
-            var has_success = $('.add_address').parent().parent().find('.has-success').length
-            if (has_success && !has_error)
-                return true;
-            else
-                return false;
-        };
-
-        //radio button setup
-        //call the new validator on the address field  <-- TO CALL AT SETUP FUNCTION
-        this.ipversion_setup = function () {
-            var GuiManager = this;
-            $('input[name="ipversion"]').on('change', function (e) {
-
-                GuiManager.validator_destroy();
-                var version = $("input[name='ipversion']:checked").val();
-                //destroy old validator
-                $('input.add_address').parent().find('.asnumber').remove();
-                $('input.add_address').parent().find('.bar').remove();
-                switch (version) {
-                    case "4" :
-                        GuiManager.set_ipv4_validator();
-                        break;
-                    case "6" :
-                        GuiManager.set_ipv6_validator();
-                        break;
-                    case "asn" :
-                        GuiManager.set_asn_validator();
-                        break;
-                    case "free" :
-                        GuiManager.set_free_validator();
-                        break;
-                    default :
-                        break;
-                }
-                //call the new validator to validate
-                GuiManager.validator_validate();
-                $('input.add_address').parent().find('input.add_address').trigger('focus');
-            });
-            //default first validaor
-            GuiManager.set_ipv4_validator();
-        };
-
-        //call the validation method
-        this.validator_validate = function () {
-            $('.registrationForm').bootstrapValidator('validate');
-        };
-
-        //detroy the validator
-        this.validator_destroy = function () {
-            $('.registrationForm').data('bootstrapValidator').destroy();
-        };
-
-        //setup the new validator ipv4
-        this.set_ipv4_validator = function () {
-            $('input.add_address').parent().addClass("input-group");
-            $('input.add_address').parent().append("<span class='input-group-addon bar'>/</span>");
-            $('input.add_address').parent().append("<input type='text' class='form-control bar righ_radius' name='add_bar' maxlength='2' placeholder='Subnet' />");
-            $('input.add_address').attr('placeholder', 'IPv4 address');
-            $('input.add_address').attr('maxlength', '15');
-            this.input_bar_setup();
-            $('.registrationForm').bootstrapValidator({
-                // I am validating Bootstrap form
-                framework: 'bootstrap',
-
-                // Feedback icons
-                icon: {
-                    valid: 'glyphicon glyphicon-ok',
-                    invalid: 'glyphicon glyphicon-remove',
-                    validating: 'glyphicon glyphicon-refresh'
-                },
-
-                // List of fields and their validation rules
-                fields: {
-                    add_address: {
-                        validators: {
-                            ip: {
-                                ipv4: true,
-                                ipv6: false
-                            },
-                            notEmpty: {}
-                        }
-                    },
-                    add_bar: {
-                        validators: {
-                            integer: {},
-                            between: {
-                                min: 0,
-                                max: 32
-                            }
-                        }
-                    }
-                }
-            });
-        };
-
-        //setup the new validator ipv6
-        this.set_ipv6_validator = function () {
-            $('input.add_address').parent().addClass("input-group");
-            $('input.add_address').parent().append("<span class='input-group-addon bar'>/</span>");
-            $('input.add_address').parent().append("<input type='text' class='form-control bar righ_radius' name='add_bar' maxlength='3' placeholder='Subnet' />");
-            $('input.add_address').attr('placeholder', 'IPv6 address');
-            $('input.add_address').attr('maxlength', '45');
-            this.input_bar_setup();
-            $('.registrationForm').bootstrapValidator({
-                // I am validating Bootstrap form
-                framework: 'bootstrap',
-
-                // Feedback icons
-                icon: {
-                    valid: 'glyphicon glyphicon-ok',
-                    invalid: 'glyphicon glyphicon-remove',
-                    validating: 'glyphicon glyphicon-refresh'
-                },
-
-                // List of fields and their validation rules
-                fields: {
-                    add_address: {
-                        validators: {
-                            ip: {
-                                ipv4: false,
-                                ipv6: true
-                            },
-                            notEmpty: {}
-                        }
-                    },
-                    add_bar: {
-                        validators: {
-                            integer: {},
-                            between: {
-                                min: 0,
-                                max: 128
-                            }
-                        }
-                    }
-                }
-            });
-        };
-
-        //setup the new validator ipv6
-        this.set_asn_validator = function () {
-            $('input.add_address').parent().addClass("input-group");
-            $('input.add_address').parent().append("<span class='input-group-addon asnumber righ_radius'>AS</span>");
-            $('input.add_address').attr('maxlength', '10');
-            $('input.add_address').attr('placeholder', 'AS Number');
-            $('.registrationForm').bootstrapValidator({
-                // I am validating Bootstrap form
-                framework: 'bootstrap',
-
-                // Feedback icons
-                icon: {
-                    valid: 'glyphicon glyphicon-ok',
-                    invalid: 'glyphicon glyphicon-remove',
-                    validating: 'glyphicon glyphicon-refresh'
-                },
-
-                // List of fields and their validation rules
-                fields: {
-                    add_address: {
-                        validators: {
-                            integer: {},
-                            between: {
-                                min: 0,
-                                max: 4294967296
-                            },
-                            notEmpty: {}
-                        }
-                    }
-                }
-            });
-        };
-
-        //setup the new validator ipv6
-        this.set_free_validator = function () {
-            $('input.add_address').parent().removeClass("input-group");
-            $('input.add_address').parent().find('.asnumber').remove();
-            $('input.add_address').parent().find('.bar').remove();
-            $('input.add_address').attr('placeholder', 'Enter something');
-            $('.registrationForm').bootstrapValidator({
-                // I am validating Bootstrap form
-                framework: 'bootstrap',
-
-                // Feedback icons
-                icon: {
-                    valid: 'glyphicon glyphicon-ok',
-                    invalid: 'glyphicon glyphicon-remove',
-                    validating: 'glyphicon glyphicon-refresh'
-                },
-
-                // List of fields and their validation rules
-                fields: {
-                    add_address: {
-                        validators: {
-                            notEmpty: {}
-                        }
-                    }
-                }
-            });
-        };
-
-        //clear_targets_button setup <-- TO CALL AT SETUP FUNCTION
-        //empty the tokenfield
-        this.clear_button_setup = function () {
-            $(".clear_targets_button").on('click', function () {
-                $('.tokenfield').tokenfield('setTokens', []);
-                $('.tokenfield').find('input').val('');
-            });
-        };
-
-        //go_button click setup  <-- TO CALL AT SETUP FUNCTION
-        //check if the fields are valid and then submit the query to RIPEstat rest API
-        // this.go_button_setup = function () {
-        //
-        //     GuiManager.ripeDataBroker.getData();
-        //     var GuiManager = this;
-        //     // $(".go_button").on('click', function () {
-        //     //     var time_start = $(".datetimepicker.time_only.start").find("input").val();
-        //     //     var time_end = $(".datetimepicker.time_only.end").find("input").val();
-        //     //     var date_start = $(".datetimepicker.date_only.start").find("input").val();
-        //     //     var date_end = $(".datetimepicker.date_only.end").find("input").val();
-        //     //     var tgs = $(".tokenfield").find("input").val().replace(/\s/g, '');
-        //     //     var bar = $("input.bar").val();
-        //     //     var input = $("input.add_address").val();
-        //     //     if (tgs == "" && $("div.input_add").hasClass("has-success")) {
-        //     //         var tgs = input;
-        //     //         if (GuiManager.validator.check_asn(tgs))
-        //     //             tgs = "AS" + tgs;
-        //     //         else if (bar != "" && bar != null && !isNaN(parseInt(bar)))
-        //     //             tgs += "/" + bar;
-        //     //     }
-        //     //     var check = true;
-        //     //     if (time_start == null || time_start == "") {
-        //     //         check = false;
-        //     //         $(".datetimepicker.time_only.start").addClass("has-error");
-        //     //     }
-        //     //     if (time_end == null || time_end == "") {
-        //     //         check = false;
-        //     //         $(".datetimepicker.time_only.end").addClass("has-error");
-        //     //     }
-        //     //     if (date_start == null || date_start == "") {
-        //     //         check = false;
-        //     //         $(".datetimepicker.date_only.start").addClass("has-error");
-        //     //     }
-        //     //     if (date_end == null || date_end == "") {
-        //     //         check = false;
-        //     //         $(".datetimepicker.date_only.end").addClass("has-error");
-        //     //     }
-        //     //     if (tgs == null || tgs == "") {
-        //     //         check = false;
-        //     //         $(".tokenfield").parent().addClass("has-error");
-        //     //     }
-        //     //     if (check) {
-        //     //         $("input.add_address").val("");
-        //     //         $("input.bar").val("");
-        //     //         $("div.input_add").removeClass("has-success");
-        //     //         // GuiManager.RipeDataBroker.requestBuilderData(date_start, time_start, date_end, time_end, tgs);
-        //     //         GuiManager.ripeDataBroker.getData();
-        //     //     }
-        //     // });
-        // };
-
-
-        this.set_address = function (val) {
-            $('input.add_address').parent().find('input').val(val);
-            $('input.add_address').trigger('focus');
-            $('input[name="ipversion"]').trigger('change');
-        };
 
         //other_command_menu
         this.other_command_button_setup = function () {
@@ -7764,17 +7294,16 @@ define('bgpst.view.gui',[
         };
 
         this.prepending_prevention_btn_setup = function () {
-            var GuiManager = this;
             $(".prepending_prevention_btn").on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
-                GuiManager.prepending_prevention = !GuiManager.prepending_prevention;
-                if (GuiManager.isGraphPresent())
-                    if (GuiManager.graph_type == "stream")
-                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
-                    else if (GuiManager.graph_type == "heat")
-                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
+                $this.prepending_prevention = !$this.prepending_prevention;
+                if ($this.isGraphPresent())
+                    if ($this.graph_type == "stream")
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
+                    else if ($this.graph_type == "heat")
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 

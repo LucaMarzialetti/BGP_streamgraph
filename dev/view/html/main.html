@@ -37,7 +37,7 @@
                     IPv4
                 </label>
                 <label class="btn btn-default">
-                    <input type="checkbox" name="ip_version" value="6" autocomplete="off"> 
+                    <input type="checkbox" name="ip_version" value="6" autocomplete="off">
                     IPv6
                 </label>
             </div>
@@ -47,7 +47,7 @@
                     Global
                 </label>
                 <label class="btn btn-default">
-                    <input type="radio" name="graph_type" value="heat" autocomplete="off"> 
+                    <input type="radio" name="graph_type" value="heat" autocomplete="off">
                     Local
                 </label>
             </div>
@@ -93,8 +93,8 @@
                             Merge events with same routing
 
                         </a>
-                        <input type="number" name="merge_events" min="0" max="500" 
-                        style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">
+                        <input type="number" name="merge_events" min="0" max="500"
+                               style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">
                     </li>   
                     <li class="stream_option">
                         <a href="#" class="global_visibility_btn">
@@ -107,8 +107,8 @@
                             Upstream Level (AS-path hop)
 
                         </a>
-                        <input type="number" name="asn_lvl" min="0" max="50" 
-                        style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">
+                        <input type="number" name="asn_lvl" min="0" max="50"
+                               style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">
                     </li>
                 </ul>
             </span>
@@ -194,134 +194,54 @@
                 <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>
             </ul>
         </span>
+        </div>
     </div>
-</div>
-<div class="container controls_container left_margin">
-    <form class="registrationForm">
-        <div class="row">
-            <div class="col-sm-4">
-                <h4>From</h4>
-            </div>
-            <div class="col-sm-4">
-                <h4>To</h4>
-            </div>
-            <div class="col-sm-3">
-                <h4>Target</h4>
-            </div>
-
-            <div class="col-sm-1">
-                <div class="row left_margin">
-                    <div class="col-sm-1">
-                        <div class="radio">
-                          <label><input type="radio" name="ipversion" value="4" checked/>IPv4</label>
-                      </div>  
-                  </div>
-              </div>
-              <div class="row left_margin">
-                <div class="col-sm-1">          
-                    <div class="radio">
-                      <label><input type="radio" name="ipversion" value="6"/>IPv6</label>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-      <div class="col-sm-2">
-        <div class='input-group date datetimepicker date_only start form-group'>
-            <input type='text' class="form-control" placeholder="Enter date" />
+    <div class="container controls_container left_margin">
+        <form class="registrationForm">
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class='input-group date datetimepicker date_only start form-group'>
+                        <input type='text' class="form-control" placeholder="Enter date" />
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
-        </div>
-    </div>
+                    </div>
+                </div>
 
-    <div class="col-sm-2">
-        <div class='input-group date datetimepicker time_only start form-group'>
-            <input type='text' class="form-control" placeholder="Enter time" />
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-time"></span>
-            </span>
-        </div>
-    </div>
 
-    <div class="col-sm-2">
-        <div class='input-group date datetimepicker date_only end form-group'>
-            <input type='text' class="form-control" placeholder="Enter date"/>
+                <div class="col-sm-2">
+                    <div class='input-group date datetimepicker date_only end form-group'>
+                        <input type='text' class="form-control" placeholder="Enter date"/>
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
-        </div>
-    </div>
+                    </div>
+                </div>
 
-    <div class="col-sm-2">
-        <div class='input-group date datetimepicker time_only end form-group'>
-            <input type='text' class="form-control" placeholder="Enter time" />
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-time"></span>
-            </span>
-        </div>
-    </div>
 
-    <div class="col-sm-3">
-        <div class="form-group input_add">
-            <input type="text" class="form-control add_address fullsized" data-toggle="tooltip" trigger="focus" data-placement="top" title="Press 'Enter' to add" name="add_address" />
-        </div>
-    </div>
 
-    <div class="col-sm-1">
-        <div class="row left_margin">
-            <div class="col-sm-1">
-                <div class="radio">
-                  <label><input type="radio" name="ipversion" value="asn"/>ASN</label>
-              </div>              
-          </div>
-      </div>
-      <div class="row left_margin">
-        <div class="col-sm-1">
-            <div class="radio">
-              <label><input type="radio" name="ipversion" value="free"/>Free</label>
-          </div>
-      </div>
-  </div>
-</div>
-</div>
-
-<div class="row">
-    <div class="col-sm-8">
-        <div class="form-group">
-            <input type="text" class="tokenfield form-control" placeholder="Targets">
-        </div>
-    </div>
-    <div class="col-sm-2">  
-        <button type="button" class="btn btn-default clear_targets_button fullsized text_centerd">Clear Targets</button>                    
-    </div>
-    <div class="col-sm-1">  
-        <button type="button" class="btn btn-default my_ip_button fullsized text_centerd">My IP</button>                    
-    </div>
-    <div class="col-sm-1">  
-        <button type="button" class="btn btn-default go_button fullsized text_centerd">Go</button>                  
-    </div>
-</div>
-</form>
-</div>
-<div class="svg_tooltip hidden"></div>
-<div class="container canvas_container left_margin main_svg">
-    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">
-    </svg>
-</div>
-<div class="container canvas_container left_margin mini_svg" style="height: 35vh">
-    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">
-    </svg>
-</div>
-<div class="last_row footer">
-    <nav class="navbar">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>
-                <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>
-                <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>
             </div>
-        </div>
-    </nav>
-</div>
+
+        </form>
+    </div>
+    <div class="svg_tooltip hidden"></div>
+    <div class="container canvas_container left_margin main_svg">
+        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">
+        </svg>
+    </div>
+    <div class="container canvas_container left_margin mini_svg" style="height: 35vh">
+        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">
+        </svg>
+    </div>
+    <div class="last_row footer">
+        <nav class="navbar">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>
+                    <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>
+                    <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>
+                </div>
+            </div>
+        </nav>
+    </div>
 </div>
