@@ -10,7 +10,6 @@ small.help-block {
 }
 
 .first_row {
-    /*width: 90%;*/
     padding: 0;
 }
 
@@ -36,7 +35,6 @@ a#cp_list_btn+.popover .popover-content {
 }
 
 .canvas_container {
-    /*position: fixed;*/
     width: 100%;
     padding: 0;
     height:70vh;
@@ -51,7 +49,6 @@ a#cp_list_btn+.popover .popover-content {
 .controls_container {
     position: relative;
     padding: 0;
-    /*width:90%;*/
 }
 
 .other_controls {
@@ -374,7 +371,7 @@ ol.drag_sort_list li.placeholder:before {
 }
 
 .dropdown-menu.asn_list {
-    min-width: auto;
+    /*min-width: auto;*/
     width: auto;
 }
 
@@ -388,7 +385,7 @@ ol.drag_sort_list li.placeholder:before {
 }
 
 .dropdown-menu.cp_list {
-    min-width: auto;
+    /*min-width: auto;*/
     width: auto;
 }
 
