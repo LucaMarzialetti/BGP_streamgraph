@@ -6915,7 +6915,7 @@ define.amd = true;
 }));
 define('bgpst.lib.stache',{load: function(id){throw new Error("Dynamic load not allowed: " + id);}});
 
-define('bgpst.lib.stache!main', ['bgpst.lib.mustache'], function (Mustache) { var template = '<div class="bgpst_container">\n    <div class="row first_row left_margin">\n        <div class="col-sm-3" style="padding-right: 0;padding-left: 0; text-anchor: left">\n            <h2 class="title">Global View</h2>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#Events</label>\n                <div class="counter_events" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#ASN</label>\n                <div class="counter_asn" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-7 text-right" style="padding-right: 0;padding-left: 0; text-anchor: right">\n            <div class="btn-group other_command_btn steps_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="steps" value="steps" autocomplete="off">\n                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>\n                    Steps\n                </label>\n            </div>\n            <div class="btn-group other_command_btn streaming_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="streaming" value="streaming" autocomplete="off">\n                    <span class="glyphicon glyphicon-record" aria-hidden="true"></span>\n                    <!--glyphicon glyphicon-stop-->\n                    Streaming\n                </label>\n            </div>\n            <div class="btn-group other_command_btn ip_version" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="4" autocomplete="off">\n                    IPv4\n                </label>\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="6" autocomplete="off">\n                    IPv6\n                </label>\n            </div>\n            <div class="btn-group other_command_btn graph_type" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="stream" autocomplete="off">\n                    Global\n                </label>\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="heat" autocomplete="off">\n                    Local\n                </label>\n            </div>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn option_command_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>\n                    <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>\n                    <li>\n                        <a href="#" class="preserve_color_btn">\n                            Preserve Color Map\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="gather_information_btn">\n                            Gather Information (CP Geo, ASN Detail)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="localstorage_enabled_btn">\n                            Enable Local Storage\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="prepending_prevention_btn">\n                            AS-Path Anti-Prepending\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="merge_cp_btn">\n                            Merge CPs with same paths\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option" style="display: inline-flex;">\n                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Merge events with same routing\n\n                        </a>\n                        <input type="number" name="merge_events" min="0" max="500"\n                               style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">\n                    </li>   \n                    <li class="stream_option">\n                        <a href="#" class="global_visibility_btn">\n                            Global visibility (All CPs)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li style="display: inline-flex;">\n                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Upstream Level (AS-path hop)\n\n                        </a>\n                        <input type="number" name="asn_lvl" min="0" max="50"\n                               style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">\n                    </li>\n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn path_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li>\n                        <a href="#" class="draw_path_btn">Draw Path</a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="events_labels_btn">\n                            Events labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="cp_labels_btn">\n                            CP labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="heatmap_time_btn">\n                            Use time mapping\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>       \n                    <li class="heat_option">\n                        <a href="#" class="scrollbars_btn">\n                            Use scrollbars\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>                       \n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn list_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">\n                   <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>\n                </li>\n                <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>\n                </li>\n            </ul>\n        </span>\n        <span class="dropdown">\n            <button type="button" class="dropdown-toggle other_command_btn sort_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>\n                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li>\n\n                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>\n                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>\n                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>\n            </ul>\n        </span>\n        </div>\n    </div>\n    <div class="controls_container left_margin">\n        <form class="registrationForm">\n            <div class="row">\n                <div class="col-sm-2">\n                    <div class=\'input-group date datetimepicker date_only start form-group\'>\n                        <input type=\'text\' class="form-control" placeholder="Enter date" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n                    </div>\n                </div>\n\n\n                <div class="col-sm-2">\n                    <div class=\'input-group date datetimepicker date_only end form-group\'>\n                        <input type=\'text\' class="form-control" placeholder="Enter date"/>\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n                    </div>\n                </div>\n\n\n\n            </div>\n\n        </form>\n    </div>\n    <div class="svg_tooltip hidden"></div>\n    <div class="canvas_container left_margin main_svg">\n        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">\n        </svg>\n    </div>\n    <div class="canvas_container left_margin mini_svg" style="height: 35vh">\n        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">\n        </svg>\n    </div>\n    <div class="last_row footer">\n        <nav class="navbar">\n            <div class="container-fluid">\n                <div class="navbar-header">\n                    <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>\n                    <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>\n                    <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>\n                </div>\n            </div>\n        </nav>\n    </div>\n</div>'; Mustache.parse( template ); return function( view, partials) { return Mustache.render( template, view, partials); } });
+define('bgpst.lib.stache!main', ['bgpst.lib.mustache'], function (Mustache) { var template = '<div class="bgpst_container">\n    <div class="row first_row left_margin">\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#Events</label>\n                <div class="counter_events" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#ASN</label>\n                <div class="counter_asn" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-7 text-right" style="padding-right: 0;padding-left: 0; text-anchor: right">\n            <div class="btn-group other_command_btn steps_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="steps" value="steps" autocomplete="off">\n                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>\n                    Steps\n                </label>\n            </div>\n            <div class="btn-group other_command_btn streaming_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="streaming" value="streaming" autocomplete="off">\n                    <span class="glyphicon glyphicon-record" aria-hidden="true"></span>\n                    <!--glyphicon glyphicon-stop-->\n                    Streaming\n                </label>\n            </div>\n            <div class="btn-group other_command_btn ip_version" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="4" autocomplete="off">\n                    IPv4\n                </label>\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="6" autocomplete="off">\n                    IPv6\n                </label>\n            </div>\n            <div class="btn-group other_command_btn graph_type" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="stream" autocomplete="off">\n                    Global\n                </label>\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="heat" autocomplete="off">\n                    Local\n                </label>\n            </div>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn option_command_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>\n                    <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>\n                    <li>\n                        <a href="#" class="preserve_color_btn">\n                            Preserve Color Map\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="gather_information_btn">\n                            Gather Information (CP Geo, ASN Detail)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="localstorage_enabled_btn">\n                            Enable Local Storage\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="prepending_prevention_btn">\n                            AS-Path Anti-Prepending\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="merge_cp_btn">\n                            Merge CPs with same paths\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option" style="display: inline-flex;">\n                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Merge events with same routing\n\n                        </a>\n                        <input type="number" name="merge_events" min="0" max="500"\n                               style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">\n                    </li>   \n                    <li class="stream_option">\n                        <a href="#" class="global_visibility_btn">\n                            Global visibility (All CPs)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li style="display: inline-flex;">\n                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Upstream Level (AS-path hop)\n\n                        </a>\n                        <input type="number" name="asn_lvl" min="0" max="50"\n                               style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">\n                    </li>\n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn path_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li>\n                        <a href="#" class="draw_path_btn">Draw Path</a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="events_labels_btn">\n                            Events labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="cp_labels_btn">\n                            CP labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="heatmap_time_btn">\n                            Use time mapping\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>       \n                    <li class="heat_option">\n                        <a href="#" class="scrollbars_btn">\n                            Use scrollbars\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>                       \n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn list_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">\n                   <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>\n                </li>\n                <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>\n                </li>\n            </ul>\n        </span>\n        <span class="dropdown">\n            <button type="button" class="dropdown-toggle other_command_btn sort_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>\n                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li>\n\n                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>\n                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>\n                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>\n            </ul>\n        </span>\n        </div>\n    </div>\n    <div class="controls_container left_margin">\n        <form class="registrationForm">\n            <div class="row">\n                <div class="col-sm-2">\n                    <div class=\'input-group date datetimepicker date_only start form-group\'>\n                        <input type=\'text\' class="form-control" placeholder="Enter date" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n                    </div>\n                </div>\n\n\n                <div class="col-sm-2">\n                    <div class=\'input-group date datetimepicker date_only end form-group\'>\n                        <input type=\'text\' class="form-control" placeholder="Enter date"/>\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n                    </div>\n                </div>\n\n\n\n            </div>\n\n        </form>\n    </div>\n    <div class="svg_tooltip hidden"></div>\n    <div class="canvas_container left_margin main_svg">\n        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">\n        </svg>\n    </div>\n    <div class="canvas_container left_margin mini_svg" style="height: 35vh">\n        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">\n        </svg>\n    </div>\n    <div class="last_row footer">\n        <nav class="navbar">\n            <div class="container-fluid">\n                <div class="navbar-header">\n                    <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>\n                    <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>\n                    <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>\n                </div>\n            </div>\n        </nav>\n    </div>\n</div>'; Mustache.parse( template ); return function( view, partials) { return Mustache.render( template, view, partials); } });
 
 define('bgpst.view.gui',[
     "bgpst.view.graphdrawer",
@@ -6935,11 +6935,10 @@ define('bgpst.view.gui',[
         var $this = this;
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
-        this.container = env.parentDom.find(".bgpst_container");
-        this.tokenfield = env.parentDom.find(".tokenfield");
+        this.loader = $(".loading_text");
+        this.container = $("div.body_container");
 
         this.drawer = new GraphDrawer(env);
-
 
         this.preserve_map = true;
         this.localstorage_enabled = true;
@@ -6961,8 +6960,6 @@ define('bgpst.view.gui',[
         this.heatmap_time_map = true;
         this.streaming_speed = 10000;
 
-        this.url = location.protocol + '//' + location.host + location.pathname;
-
         this.init = function () {
             this.ripeDataBroker = new RipeDataBroker(env);
             this.validator = new Validator();
@@ -6976,38 +6973,12 @@ define('bgpst.view.gui',[
             this.ripeDataBroker.getData();
         };
 
-        this.isGraphPresent = function (text) {
-            //return d3.select("svg").select(".chart").node() != null;
-            return this.drawer.isGraphPresent();
-        };
-
-        //Loader splashscreen managing
-        this.changeLoaderText = function (text) {
-            //console.log("CAMBIA in "+text);
-            $(this.loader).html(text);
-        };
-
-        //add tooltip  <-- TO CALL AT SETUP
-        this.tooltip_setup = function () {
-            env.parentDom.find('[data-toggle="tooltip"]').tooltip();
-        };
-
-        this.draggable_setup = function () {
-            env.parentDom.find(".drag_sort_list").sortable();
-        };
-
-        this.pickers_setup = function () {
-
-        };
-
-
         //other_command_menu
         this.other_command_button_setup = function () {
             this.shuffle_color_map_btn_setup();
             this.erase_graph_btn_setup();
             this.gather_information_btn_setup();
             this.preserve_color_map_btn_setup();
-            this.local_storage_enabled_btn_setup();
             this.prepending_prevention_btn_setup();
             this.merge_events_btn_setup();
             this.merge_cp_btn_setup();
@@ -7023,6 +6994,7 @@ define('bgpst.view.gui',[
             this.steps_btn_setup();
             this.asn_list_btn_setup();
             this.cp_list_btn_setup();
+            /***********************************************/
             this.boolean_checker();
             /***********************************************/
             this.sort_asn_ascstdev_btn_setup();
@@ -7054,244 +7026,388 @@ define('bgpst.view.gui',[
             this.embed_btn_setup();
         };
 
-        this.shuffle_color_map_btn_setup = function () {
-            env.parentDom.find(".shuffle_color_map_btn").on("click", function (e) {
-                if ($this.isGraphPresent()) {
-                    $this.drawer.shuffle_color_map($this.graph_type);
-                }
-            });
-        };
 
-
-        this.draw_functions_btn_enabler = function () {
-            if (!this.streaming) {
-                env.parentDom.find(".option_command_btn").removeClass("disabled");
-                env.parentDom.find(".clear_targets_button").removeClass("disabled");
-                env.parentDom.find(".my_ip_button").removeClass("disabled");
-                env.parentDom.find(".go_button").removeClass("disabled");
-                env.parentDom.find(".input_add").find("input").removeClass("disabled");
-                env.parentDom.find(".date").removeClass("disabled");
-
-                env.parentDom.find(".option_command_btn").removeClass("not-active");
-                env.parentDom.find(".clear_targets_button").removeClass("not-active");
-                env.parentDom.find(".my_ip_button").removeClass("not-active");
-                env.parentDom.find(".go_button").removeClass("not-active");
-                env.parentDom.find(".input_add").find("input").removeClass("not-active");
-                env.parentDom.find(".date").removeClass("not-active");
-
-                env.parentDom.find(".tokenfield").tokenfield('enable');
-                env.parentDom.find(".tokenfield").removeClass('disabled');
-                env.parentDom.find(".tokenfield").removeClass('not-active');
-
-                env.parentDom.find("input[name='ipversion']").attr("disabled", false);
-                env.parentDom.find("input[name='ipversion']").parent().removeClass("disabled");
-                env.parentDom.find("input[name='ipversion']").parent().removeClass("not-active");
-
-                env.parentDom.find("input[name='graph_type']").parent().removeClass("disabled");
-                env.parentDom.find("input[name='graph_type']").parent().removeClass("not-active");
-                env.parentDom.find("input[name='graph_type']").parent().attr("disabled", false);
-
-                if (this.isGraphPresent()) {
-                    env.parentDom.find(".path_btn").removeClass("disabled");
-                    env.parentDom.find(".list_btn").removeClass("disabled");
-                    env.parentDom.find(".sort_btn").removeClass("disabled");
-                    env.parentDom.find(".path_btn").removeClass("not-active");
-                    env.parentDom.find(".list_btn").removeClass("not-active");
-                    env.parentDom.find(".sort_btn").removeClass("not-active");
-                    if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                            return env.parentDom.findthis.validator.check_ipv4(e);
-                        })) {
-                        env.parentDom.find("input[name='ip_version'][value='4']").parent().addClass("disabled");
-                        env.parentDom.find("input[name='ip_version'][value='4']").parent().addClass("not-active");
-                        env.parentDom.find("input[name='ip_version'][value='4']").parent().attr("disabled", true);
-                    }
-                    else {
-                        env.parentDom.find("input[name='ip_version'][value='4']").parent().removeClass("disabled");
-                        env.parentDom.find("input[name='ip_version'][value='4']").parent().removeClass("not-active");
-                        env.parentDom.find("input[name='ip_version'][value='4']").parent().attr("disabled", false);
-                    }
-                    if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                            return env.parentDom.findthis.validator.check_ipv6(e);
-                        })) {
-                        env.parentDom.find("input[name='ip_version'][value='6']").parent().addClass("disabled");
-                        env.parentDom.find("input[name='ip_version'][value='6']").parent().addClass("not-active");
-                        env.parentDom.find("input[name='ip_version'][value='6']").parent().attr("disabled", true);
-                    }
-                    else {
-                        env.parentDom.find("input[name='ip_version'][value='6']").parent().removeClass("disabled");
-                        env.parentDom.find("input[name='ip_version'][value='6']").parent().removeClass("not-active");
-                        env.parentDom.find("input[name='ip_version'][value='6']").parent().attr("disabled", false);
-                    }
-                    if (this.ip_version.indexOf(4) != -1) {
-                        env.parentDom.find('input[name="ip_version"]').filter('[value="4"]').prop('checked', true);
-                        env.parentDom.find('input[name="ip_version"]').filter('[value="4"]').parent().addClass("active");
-                    }
-                    else {
-                        env.parentDom.find('input[name="ip_version"]').filter('[value="4"]').prop('checked', false);
-                        env.parentDom.find('input[name="ip_version"]').filter('[value="4"]').parent().removeClass("active");
-                    }
-                    if (this.ip_version.indexOf(6) != -1) {
-                        env.parentDom.find('input[name="ip_version"]').filter('[value="6"]').prop('checked', true);
-                        env.parentDom.find('input[name="ip_version"]').filter('[value="6"]').parent().addClass("active");
-                    }
-                    else {
-                        env.parentDom.find('input[name="ip_version"]').filter('[value="6"]').prop('checked', false);
-                        env.parentDom.find('input[name="ip_version"]').filter('[value="6"]').parent().removeClass("active");
-                    }
-                    env.parentDom.find(".counter").removeClass("hidden");
-                    this.draggable_setup();
-                    if (this.graph_type == "stream") {
-                        env.parentDom.find("input[name='steps'][value='steps']").parent().removeClass("disabled");
-                        env.parentDom.find("input[name='steps'][value='steps']").parent().removeClass("not-active");
-                        env.parentDom.find("input[name='steps'][value='steps']").parent().attr("disabled", false);
-                        env.parentDom.find(".steps_btn").removeClass("not-active");
-
-                        env.parentDom.find("input[name='streaming'][value='streaming']").parent().removeClass("disabled");
-                        env.parentDom.find("input[name='streaming'][value='streaming']").parent().removeClass("not-active");
-                        env.parentDom.find("input[name='streaming'][value='streaming']").parent().attr("disabled", false);
-                        env.parentDom.find(".streaming_btn").removeClass("not-active");
-                    }
-                    if (this.graph_type == "heat") {
-                        env.parentDom.find("input[name='steps'][value='steps']").parent().addClass("disabled");
-                        env.parentDom.find("input[name='steps'][value='steps']").parent().addClass("not-active");
-                        env.parentDom.find("input[name='steps'][value='steps']").parent().attr("disabled", true);
-                        env.parentDom.find(".steps_btn").addClass("not-active");
-
-                        env.parentDom.find("input[name='streaming'][value='streaming']").parent().addClass("disabled");
-                        env.parentDom.find("input[name='streaming'][value='streaming']").parent().addClass("not-active");
-                        env.parentDom.find("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
-                        env.parentDom.find(".streaming_btn").addClass("not-active");
-                    }
-                    if (!this.steps) {
-                        env.parentDom.find('input[name="steps"][value="steps"]').prop('checked', false);
-                        env.parentDom.find('input[name="steps"][value="steps"]').parent().removeClass("active");
-                    }
-                }
-                else {
-                    env.parentDom.find(".path_btn").addClass("disabled");
-                    env.parentDom.find(".list_btn").addClass("disabled");
-                    env.parentDom.find(".sort_btn").addClass("disabled");
-                    env.parentDom.find(".path_btn").addClass("not-active");
-                    env.parentDom.find(".list_btn").addClass("not-active");
-                    env.parentDom.find(".sort_btn").addClass("not-active");
-
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().addClass("disabled");
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().addClass("not-active");
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().attr("disabled", true);
-
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().addClass("disabled");
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().addClass("not-active");
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().attr("disabled", true);
-
-                    env.parentDom.find(".counter").addClass("hidden");
-
-                    env.parentDom.find("input[name='steps'][value='steps']").parent().addClass("disabled");
-                    env.parentDom.find("input[name='steps'][value='steps']").parent().addClass("not-active");
-                    env.parentDom.find("input[name='steps'][value='steps']").parent().attr("disabled", true);
-                    env.parentDom.find(".steps_btn").addClass("not-active");
-
-                    env.parentDom.find("input[name='streaming'][value='streaming']").parent().addClass("disabled");
-                    env.parentDom.find("input[name='streaming'][value='streaming']").parent().addClass("not-active");
-                    env.parentDom.find("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
-                    env.parentDom.find(".streaming_btn").addClass("not-active");
-                }
-            }
-            env.parentDom.find("input.token-input").css("width", "auto");
+        this.isGraphPresent = function (text) {
+            //return d3.select("svg").select(".chart").node() != null;
+            return this.drawer.isGraphPresent();
         };
 
         this.lock_all = function () {
-            env.parentDom.find(".path_btn").addClass("disabled");
-            env.parentDom.find(".list_btn").addClass("disabled");
-            env.parentDom.find(".sort_btn").addClass("disabled");
-            env.parentDom.find(".option_command_btn").addClass("disabled");
-            env.parentDom.find(".clear_targets_button").addClass("disabled");
-            env.parentDom.find(".my_ip_button").addClass("disabled");
-            env.parentDom.find(".go_button").addClass("disabled");
-            env.parentDom.find(".input_add").find("input").addClass("disabled");
-            env.parentDom.find(".date").addClass("disabled");
+            $(".path_btn").addClass("disabled");
+            $(".list_btn").addClass("disabled");
+            $(".sort_btn").addClass("disabled");
+            $(".option_command_btn").addClass("disabled");
+            $(".clear_targets_button").addClass("disabled");
+            $(".my_ip_button").addClass("disabled");
+            $(".go_button").addClass("disabled");
+            $(".date").addClass("disabled");
 
-            env.parentDom.find(".path_btn").addClass("not-active");
-            env.parentDom.find(".list_btn").addClass("not-active");
-            env.parentDom.find(".sort_btn").addClass("not-active");
-            env.parentDom.find(".option_command_btn").addClass("not-active");
-            env.parentDom.find(".clear_targets_button").addClass("not-active");
-            env.parentDom.find(".my_ip_button").addClass("not-active");
-            env.parentDom.find(".go_button").addClass("not-active");
-            env.parentDom.find(".input_add").find("input").addClass("not-active");
-            env.parentDom.find(".date").addClass("not-active");
+            $(".path_btn").addClass("not-active");
+            $(".list_btn").addClass("not-active");
+            $(".sort_btn").addClass("not-active");
+            $(".option_command_btn").addClass("not-active");
+            $(".clear_targets_button").addClass("not-active");
+            $(".my_ip_button").addClass("not-active");
+            $(".go_button").addClass("not-active");
+            $(".date").addClass("not-active");
 
-            env.parentDom.find(".tokenfield").tokenfield('disable');
-            env.parentDom.find(".tokenfield").addClass('disabled');
-            env.parentDom.find(".tokenfield").addClass('not-active');
+            $("input[name='graph_type']").parent().addClass("disabled");
+            $("input[name='graph_type']").parent().addClass("not-active");
+            $("input[name='graph_type']").parent().attr("disabled", true);
 
-            env.parentDom.find("input[name='graph_type']").parent().addClass("disabled");
-            env.parentDom.find("input[name='graph_type']").parent().addClass("not-active");
-            env.parentDom.find("input[name='graph_type']").parent().attr("disabled", true);
+            $("input[name='ip_version'][value='6']").parent().addClass("disabled");
+            $("input[name='ip_version'][value='6']").parent().addClass("not-active");
+            $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
 
-            env.parentDom.find("input[name='ipversion']").parent().addClass("disabled");
-            env.parentDom.find("input[name='ipversion']").parent().addClass("not-active");
-            env.parentDom.find("input[name='ipversion']").attr("disabled", true);
+            $("input[name='ip_version'][value='4']").parent().addClass("disabled");
+            $("input[name='ip_version'][value='4']").parent().addClass("not-active");
+            $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
 
-            env.parentDom.find("input[name='ip_version'][value='6']").parent().addClass("disabled");
-            env.parentDom.find("input[name='ip_version'][value='6']").parent().addClass("not-active");
-            env.parentDom.find("input[name='ip_version'][value='6']").parent().attr("disabled", true);
-
-            env.parentDom.find("input[name='ip_version'][value='4']").parent().addClass("disabled");
-            env.parentDom.find("input[name='ip_version'][value='4']").parent().addClass("not-active");
-            env.parentDom.find("input[name='ip_version'][value='4']").parent().attr("disabled", true);
-
-            env.parentDom.find("input[name='steps'][value='steps']").parent().addClass("disabled");
-            env.parentDom.find("input[name='steps'][value='steps']").parent().addClass("not-active");
-            env.parentDom.find("input[name='steps'][value='steps']").parent().attr("disabled", true);
-            env.parentDom.find(".steps_btn").addClass("not-active");
+            $("input[name='steps'][value='steps']").parent().addClass("disabled");
+            $("input[name='steps'][value='steps']").parent().addClass("not-active");
+            $("input[name='steps'][value='steps']").parent().attr("disabled", true);
+            $(".steps_btn").addClass("not-active");
 
             if (!this.streaming) {
-                env.parentDom.find("input[name='streaming'][value='streaming']").parent().addClass("disabled");
-                env.parentDom.find("input[name='streaming'][value='streaming']").parent().addClass("not-active");
-                env.parentDom.find("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
-                env.parentDom.find(".streaming_btn").addClass("not-active");
+                $("input[name='streaming'][value='streaming']").parent().addClass("disabled");
+                $("input[name='streaming'][value='streaming']").parent().addClass("not-active");
+                $("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
+                $(".streaming_btn").addClass("not-active");
+            }
+        };
+    
+        this.boolean_checker = function () {
+            if (!this.gather_information) {
+                $(".gather_information_btn").find("span").addClass("hidden");
+                $(".gather_information_btn").parent().removeClass("active");
+            }
+            else {
+                $(".gather_information_btn").find("span").removeClass("hidden");
+                $(".gather_information_btn").parent().addClass("active");
+            }
+
+            if (!this.preserve_map) {
+                $(".preserve_color_btn").find("span").addClass("hidden");
+                $(".preserve_color_btn").parent().removeClass("active");
+            }
+            else {
+                $(".preserve_color_btn").find("span").removeClass("hidden");
+                $(".preserve_color_btn").parent().addClass("active");
+            }
+
+            if (!this.global_visibility) {
+                $(".global_visibility_btn").find("span").addClass("hidden");
+                $(".global_visibility_btn").parent().removeClass("active");
+            }
+            else {
+                $(".global_visibility_btn").find("span").removeClass("hidden");
+                $(".global_visibility_btn").parent().addClass("active");
+            }
+
+            if (!this.prepending_prevention) {
+                $(".prepending_prevention_btn").find("span").addClass("hidden");
+                $(".prepending_prevention_btn").parent().removeClass("active");
+            }
+            else {
+                $(".prepending_prevention_btn").find("span").removeClass("hidden");
+                $(".prepending_prevention_btn").parent().addClass("active");
+            }
+
+            if (!this.merge_cp) {
+                $(".merge_cp_btn").find("span").addClass("hidden");
+                $(".merge_cp_btn").parent().removeClass("active");
+            }
+            else {
+                $(".merge_cp_btn").find("span").removeClass("hidden");
+                $(".merge_cp_btn").parent().addClass("active");
+            }
+
+            if (!this.events_labels) {
+                $(".events_labels_btn").find("span").addClass("hidden");
+                $(".events_labels_btn").parent().removeClass("active");
+            }
+            else {
+                $(".events_labels_btn").find("span").removeClass("hidden");
+                $(".events_labels_btn").parent().addClass("active");
+            }
+
+            if (!this.cp_labels) {
+                $(".cp_labels_btn").find("span").addClass("hidden");
+                $(".cp_labels_btn").parent().removeClass("active");
+            }
+            else {
+                $(".cp_labels_btn").find("span").removeClass("hidden");
+                $(".cp_labels_btn").parent().addClass("active");
+            }
+
+            if (!this.heatmap_time_map) {
+                $(".heatmap_time_btn").find("span").addClass("hidden");
+                $(".heatmap_time_btn").parent().removeClass("active");
+            }
+            else {
+                $(".heatmap_time_btn").find("span").removeClass("hidden");
+                $(".heatmap_time_btn").parent().addClass("active");
+            }
+
+            if (!this.use_scrollbars) {
+                $(".scrollbars_btn").find("span").addClass("hidden");
+                $(".scrollbars_btn").parent().removeClass("active");
+            }
+            else {
+                $(".scrollbars_btn").find("span").removeClass("hidden");
+                $(".scrollbars_btn").parent().addClass("active");
+            }
+
+            if (this.graph_type == "stream") {
+                $('input[name="graph_type"][value="stream"]').prop('checked', true);
+                $('input[name="graph_type"][value="stream"]').parent().addClass("active");
+                $('input[name="graph_type"][value="heat"]').parent().removeClass("active");
+                $(".stream_option").removeClass("hidden");
+                $(".heat_option").addClass("hidden");
+            }
+            else if (this.graph_type == "heat") {
+                $('input[name="graph_type"][value="heat"]').prop('checked', true);
+                $('input[name="graph_type"][value="heat"]').parent().addClass("active");
+                $('input[name="graph_type"][value="stream"]').parent().removeClass("active");
+                $(".heat_option").removeClass("hidden");
+                $(".stream_option").addClass("hidden");
+            }
+            if (this.ip_version.indexOf(4) != -1) {
+                $('input[name="ip_version"][value="4"]').prop('checked', true);
+                $('input[name="ip_version"][value="4"]').parent().addClass("active");
+            }
+            if (this.ip_version.indexOf(6) != -1) {
+                $('input[name="ip_version"][value="6"]').prop('checked', true);
+                $('input[name="ip_version"][value="6"]').parent().addClass("active");
+            }
+
+            $(".asn_lvl").spinner();
+            $(".asn_lvl").spinner("value", this.asn_level);
+            $(".merge_events").spinner();
+            $(".merge_events").spinner("value", this.merge_events);
+        };
+
+        this.draw_functions_btn_enabler = function () {
+            GuiManager = this;
+            if (!this.streaming) {
+                $(".option_command_btn").removeClass("disabled");
+                $(".my_ip_button").removeClass("disabled");
+                $(".go_button").removeClass("disabled");
+                $(".date").removeClass("disabled");
+
+                $(".option_command_btn").removeClass("not-active");
+                $(".my_ip_button").removeClass("not-active");
+                $(".go_button").removeClass("not-active");
+                $(".date").removeClass("not-active");
+
+                $("input[name='graph_type']").parent().removeClass("disabled");
+                $("input[name='graph_type']").parent().removeClass("not-active");
+                $("input[name='graph_type']").parent().attr("disabled", false);
+
+                if (this.isGraphPresent()) {
+                    $(".path_btn").removeClass("disabled");
+                    $(".list_btn").removeClass("disabled");
+                    $(".sort_btn").removeClass("disabled");
+                    $(".path_btn").removeClass("not-active");
+                    $(".list_btn").removeClass("not-active");
+                    $(".sort_btn").removeClass("not-active");
+                    if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
+                            return GuiManager.validator.check_ipv4(e);
+                        })) {
+                        $("input[name='ip_version'][value='4']").parent().addClass("disabled");
+                        $("input[name='ip_version'][value='4']").parent().addClass("not-active");
+                        $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
+                    }
+                    else {
+                        $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
+                        $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
+                        $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
+                    }
+                    if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
+                            return GuiManager.validator.check_ipv6(e);
+                        })) {
+                        $("input[name='ip_version'][value='6']").parent().addClass("disabled");
+                        $("input[name='ip_version'][value='6']").parent().addClass("not-active");
+                        $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
+                    }
+                    else {
+                        $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
+                        $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
+                        $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
+                    }
+                    if (this.ip_version.indexOf(4) != -1) {
+                        $('input[name="ip_version"]').filter('[value="4"]').prop('checked', true);
+                        $('input[name="ip_version"]').filter('[value="4"]').parent().addClass("active");
+                    }
+                    else {
+                        $('input[name="ip_version"]').filter('[value="4"]').prop('checked', false);
+                        $('input[name="ip_version"]').filter('[value="4"]').parent().removeClass("active");
+                    }
+                    if (this.ip_version.indexOf(6) != -1) {
+                        $('input[name="ip_version"]').filter('[value="6"]').prop('checked', true);
+                        $('input[name="ip_version"]').filter('[value="6"]').parent().addClass("active");
+                    }
+                    else {
+                        $('input[name="ip_version"]').filter('[value="6"]').prop('checked', false);
+                        $('input[name="ip_version"]').filter('[value="6"]').parent().removeClass("active");
+                    }
+                    $(".counter").removeClass("hidden");
+                    this.draggable_setup();
+                    if (this.graph_type == "stream") {
+                        $("input[name='steps'][value='steps']").parent().removeClass("disabled");
+                        $("input[name='steps'][value='steps']").parent().removeClass("not-active");
+                        $("input[name='steps'][value='steps']").parent().attr("disabled", false);
+                        $(".steps_btn").removeClass("not-active");
+
+                        $("input[name='streaming'][value='streaming']").parent().removeClass("disabled");
+                        $("input[name='streaming'][value='streaming']").parent().removeClass("not-active");
+                        $("input[name='streaming'][value='streaming']").parent().attr("disabled", false);
+                        $(".streaming_btn").removeClass("not-active");
+                    }
+                    if (this.graph_type == "heat") {
+                        $("input[name='steps'][value='steps']").parent().addClass("disabled");
+                        $("input[name='steps'][value='steps']").parent().addClass("not-active");
+                        $("input[name='steps'][value='steps']").parent().attr("disabled", true);
+                        $(".steps_btn").addClass("not-active");
+
+                        $("input[name='streaming'][value='streaming']").parent().addClass("disabled");
+                        $("input[name='streaming'][value='streaming']").parent().addClass("not-active");
+                        $("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
+                        $(".streaming_btn").addClass("not-active");
+                    }
+                    if (!this.steps) {
+                        $('input[name="steps"][value="steps"]').prop('checked', false);
+                        $('input[name="steps"][value="steps"]').parent().removeClass("active");
+                    }
+                }
+                else {
+                    $(".path_btn").addClass("disabled");
+                    $(".list_btn").addClass("disabled");
+                    $(".sort_btn").addClass("disabled");
+                    $(".path_btn").addClass("not-active");
+                    $(".list_btn").addClass("not-active");
+                    $(".sort_btn").addClass("not-active");
+
+                    $("input[name='ip_version'][value='6']").parent().addClass("disabled");
+                    $("input[name='ip_version'][value='6']").parent().addClass("not-active");
+                    $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
+
+                    $("input[name='ip_version'][value='4']").parent().addClass("disabled");
+                    $("input[name='ip_version'][value='4']").parent().addClass("not-active");
+                    $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
+
+                    $(".counter").addClass("hidden");
+
+                    $("input[name='steps'][value='steps']").parent().addClass("disabled");
+                    $("input[name='steps'][value='steps']").parent().addClass("not-active");
+                    $("input[name='steps'][value='steps']").parent().attr("disabled", true);
+                    $(".steps_btn").addClass("not-active");
+
+                    $("input[name='streaming'][value='streaming']").parent().addClass("disabled");
+                    $("input[name='streaming'][value='streaming']").parent().addClass("not-active");
+                    $("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
+                    $(".streaming_btn").addClass("not-active");
+                }
             }
         };
 
+        this.ip_version_checkbox_enabler = function () {
+            GuiManager = this;
+            if (!this.streaming) {
+                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
+                        return GuiManager.validator.check_ipv4(e);
+                    })) {
+                    $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
+                    $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
+                    $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
+                    this.ip_version = [4];
+                }
+                else {
+                    $("input[name='ip_version'][value='4']").parent().addClass("disabled");
+                    $("input[name='ip_version'][value='4']").parent().addClass("not-active");
+                    $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
+                }
+                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
+                        return GuiManager.validator.check_ipv6(e);
+                    })) {
+                    $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
+                    $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
+                    $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
+                    this.ip_version = [6];
+                }
+                else {
+                    $("input[name='ip_version'][value='6']").parent().addClass("disabled");
+                    $("input[name='ip_version'][value='6']").parent().addClass("not-active");
+                    $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
+                }
+                if (this.ripeDataBroker.current_parsed.targets.some(function (e) {
+                        return GuiManager.validator.check_ipv4(e);
+                    }) && this.ripeDataBroker.current_parsed.targets.some(function (e) {
+                        return GuiManager.validator.check_ipv6(e);
+                    })) {
+                    $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
+                    $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
+                    $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
+                    $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
+                    $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
+                    $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
+                    if (this.ip_version.length == 0)
+                        this.ip_version = [4];
+                }
+            }
+        };
+
+   
+        /************************** CLICKABLE UI SETUP **************************/
+        //TO CALL AT SETUP
+        
+        this.tooltip_setup = function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        };
+
+        this.shuffle_color_map_btn_setup = function () {
+            var GuiManager = this;
+            $(".shuffle_color_map_btn").on("click", function (e) {
+                if (GuiManager.isGraphPresent())
+                    GuiManager.drawer.shuffle_color_map(GuiManager.graph_type);
+            });
+        };
+
         this.erase_graph_btn_setup = function () {
-            env.parentDom.find(".erase_graph_btn").on("click", function (e) {
-                $this.drawer.drawer_init();
-                $this.draw_functions_btn_enabler();
+            var GuiManager = this;
+            $(".erase_graph_btn").on("click", function (e) {
+                GuiManager.drawer.drawer_init();
+                GuiManager.draw_functions_btn_enabler();
             });
         };
 
         this.gather_information_btn_setup = function () {
-            env.parentDom.find(".gather_information_btn").on("click", function (e) {
+            var GuiManager = this;
+            $(".gather_information_btn").on("click", function (e) {
                 var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
-                $this.gather_information = !$this.gather_information;
+                $(target).find("span").toggleClass("hidden");
+                $(target).parent().toggleClass("active");
+                GuiManager.gather_information = !GuiManager.gather_information;
+                // GuiManager.url_string();
             });
         };
 
         this.preserve_color_map_btn_setup = function () {
-            env.parentDom.find(".preserve_color_btn").on("click", function (e) {
+            var GuiManager = this;
+            $(".preserve_color_btn").on("click", function (e) {
                 var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
-                $this.preserve_map = !$this.preserve_map;
-            });
-        };
-
-        this.local_storage_enabled_btn_setup = function () {
-            env.parentDom.find(".localstorage_enabled_btn").on("click", function (e) {
-                var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
-                $this.localstorage_enabled = !$this.localstorage_enabled;
+                $(target).find("span").toggleClass("hidden");
+                $(target).parent().toggleClass("active");
+                GuiManager.preserve_map = !GuiManager.preserve_map;
+                // GuiManager.url_string();
             });
         };
 
         this.prepending_prevention_btn_setup = function () {
-            env.parentDom.find(".prepending_prevention_btn").on("click", function (e) {
+            $(".prepending_prevention_btn").on("click", function (e) {
                 var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
+                $(target).find("span").toggleClass("hidden");
+                $(target).parent().toggleClass("active");
                 $this.prepending_prevention = !$this.prepending_prevention;
                 if ($this.isGraphPresent())
                     if ($this.graph_type == "stream")
@@ -7302,40 +7418,42 @@ define('bgpst.view.gui',[
         };
 
         this.merge_cp_btn_setup = function () {
-            env.parentDom.find(".merge_cp_btn").on("click", function (e) {
+            var GuiManager = this;
+            $(".merge_cp_btn").on("click", function (e) {
                 var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
-                $this.merge_cp = !$this.merge_cp;
-                if ($this.isGraphPresent()) {
-                    $this.ripeDataBroker.loadCurrentState(false, null, true);
-                    if ($this.merge_cp)
-                        $this.update_counters(".counter_asn", $this.drawer.keys.length + "/" + $this.ripeDataBroker.current_parsed.cp_set.length);
+                $(target).find("span").toggleClass("hidden");
+                $(target).parent().toggleClass("active");
+                GuiManager.merge_cp = !GuiManager.merge_cp;
+                if (GuiManager.isGraphPresent()) {
+                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
+                    if (GuiManager.merge_cp)
+                        GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length + "/" + GuiManager.ripeDataBroker.current_parsed.cp_set.length);
                     else
-                        $this.update_counters(".counter_asn", $this.drawer.keys.length);
+                        GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length);
                 }
             });
         };
 
         this.merge_events_btn_setup = function () {
-            env.parentDom.find("input[name='merge_events']:input").on("change", function (e, ui) {
-                $this.merge_events = env.parentDom.find("input[name='merge_events']").spinner("value");
-                if ($this.isGraphPresent()) {
-                    $this.ripeDataBroker.loadCurrentState(false, null, true);
-                    if ($this.merge_events)
-                        $this.update_counters(".counter_events", $this.drawer.event_set.length + "/" + $this.ripeDataBroker.current_parsed.events.length);
+            var GuiManager = this;
+            $("input[name='merge_events']:input").on("change", function (e, ui) {
+                GuiManager.merge_events = $("input[name='merge_events']").spinner("value");
+                if (GuiManager.isGraphPresent()) {
+                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
+                    if (GuiManager.merge_events)
+                        GuiManager.update_counters(".counter_events", GuiManager.drawer.event_set.length + "/" + GuiManager.ripeDataBroker.current_parsed.events.length);
                     else
-                        $this.update_counters(".counter_events", $this.ripeDataBroker.current_parsed.events.length);
+                        GuiManager.update_counters(".counter_events", GuiManager.ripeDataBroker.current_parsed.events.length);
                 }
             });
         };
 
         this.events_labels_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".events_labels_btn").on("click", function (e) {
+            $(".events_labels_btn").on("click", function (e) {
                 var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
+                $(target).find("span").toggleClass("hidden");
+                $(target).parent().toggleClass("active");
                 GuiManager.events_labels = !GuiManager.events_labels;
                 if (GuiManager.isGraphPresent())
                     GuiManager.ripeDataBroker.loadCurrentState(false, null, false);
@@ -7344,10 +7462,10 @@ define('bgpst.view.gui',[
 
         this.cp_labels_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".cp_labels_btn").on("click", function (e) {
+            $(".cp_labels_btn").on("click", function (e) {
                 var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
+                $(target).find("span").toggleClass("hidden");
+                $(target).parent().toggleClass("active");
                 GuiManager.cp_labels = !GuiManager.cp_labels;
                 if (GuiManager.isGraphPresent())
                     GuiManager.ripeDataBroker.loadCurrentState(false, null, false);
@@ -7356,10 +7474,10 @@ define('bgpst.view.gui',[
 
         this.heatmap_time_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".heatmap_time_btn").on("click", function (e) {
+            $(".heatmap_time_btn").on("click", function (e) {
                 var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
+                $(target).find("span").toggleClass("hidden");
+                $(target).parent().toggleClass("active");
                 GuiManager.heatmap_time_map = !GuiManager.heatmap_time_map;
                 if (GuiManager.isGraphPresent())
                     GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7368,27 +7486,27 @@ define('bgpst.view.gui',[
 
         this.scrollbars_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".scrollbars_btn").on("click", function (e) {
+            $(".scrollbars_btn").on("click", function (e) {
                 var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
+                $(target).find("span").toggleClass("hidden");
+                $(target).parent().toggleClass("active");
                 GuiManager.use_scrollbars = !GuiManager.use_scrollbars;
                 if (GuiManager.use_scrollbars) {
-                    env.parentDom.find("svg").parent().css("overflow", "scroll");
+                    $("svg").parent().css("overflow", "scroll");
 
                 }
                 else {
-                    env.parentDom.find("svg").parent().css("overflow", "visible");
+                    $("svg").parent().css("overflow", "visible");
                 }
             });
         };
 
         this.global_visiblity_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".global_visibility_btn").on("click", function (e) {
+            $(".global_visibility_btn").on("click", function (e) {
                 var target = e.target;
-                env.parentDom.find(target).find("span").toggleClass("hidden");
-                env.parentDom.find(target).parent().toggleClass("active");
+                $(target).find("span").toggleClass("hidden");
+                $(target).parent().toggleClass("active");
                 GuiManager.global_visibility = !GuiManager.global_visibility;
                 if (GuiManager.isGraphPresent())
                     if (GuiManager.graph_type == "stream")
@@ -7398,151 +7516,31 @@ define('bgpst.view.gui',[
             });
         };
 
-        this.boolean_checker = function () {
-            if (!this.gather_information) {
-                env.parentDom.find(".gather_information_btn").find("span").addClass("hidden");
-                env.parentDom.find(".gather_information_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".gather_information_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".gather_information_btn").parent().addClass("active");
-            }
-
-            if (!this.preserve_map) {
-                env.parentDom.find(".preserve_color_btn").find("span").addClass("hidden");
-                env.parentDom.find(".preserve_color_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".preserve_color_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".preserve_color_btn").parent().addClass("active");
-            }
-
-            if (!this.localstorage_enabled) {
-                env.parentDom.find(".localstorage_enabled_btn").find("span").addClass("hidden");
-                env.parentDom.find(".localstorage_enabled_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".localstorage_enabled_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".localstorage_enabled_btn").parent().addClass("active");
-            }
-
-            if (!this.global_visibility) {
-                env.parentDom.find(".global_visibility_btn").find("span").addClass("hidden");
-                env.parentDom.find(".global_visibility_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".global_visibility_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".global_visibility_btn").parent().addClass("active");
-            }
-
-            if (!this.prepending_prevention) {
-                env.parentDom.find(".prepending_prevention_btn").find("span").addClass("hidden");
-                env.parentDom.find(".prepending_prevention_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".prepending_prevention_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".prepending_prevention_btn").parent().addClass("active");
-            }
-
-            if (!this.merge_cp) {
-                env.parentDom.find(".merge_cp_btn").find("span").addClass("hidden");
-                env.parentDom.find(".merge_cp_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".merge_cp_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".merge_cp_btn").parent().addClass("active");
-            }
-
-            if (!this.events_labels) {
-                env.parentDom.find(".events_labels_btn").find("span").addClass("hidden");
-                env.parentDom.find(".events_labels_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".events_labels_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".events_labels_btn").parent().addClass("active");
-            }
-
-            if (!this.cp_labels) {
-                env.parentDom.find(".cp_labels_btn").find("span").addClass("hidden");
-                env.parentDom.find(".cp_labels_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".cp_labels_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".cp_labels_btn").parent().addClass("active");
-            }
-
-            if (!this.heatmap_time_map) {
-                env.parentDom.find(".heatmap_time_btn").find("span").addClass("hidden");
-                env.parentDom.find(".heatmap_time_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".heatmap_time_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".heatmap_time_btn").parent().addClass("active");
-            }
-
-            if (!this.use_scrollbars) {
-                env.parentDom.find(".scrollbars_btn").find("span").addClass("hidden");
-                env.parentDom.find(".scrollbars_btn").parent().removeClass("active");
-            }
-            else {
-                env.parentDom.find(".scrollbars_btn").find("span").removeClass("hidden");
-                env.parentDom.find(".scrollbars_btn").parent().addClass("active");
-            }
-
-            if (this.graph_type == "stream") {
-                env.parentDom.find('input[name="graph_type"][value="stream"]').prop('checked', true);
-                env.parentDom.find('input[name="graph_type"][value="stream"]').parent().addClass("active");
-                env.parentDom.find('input[name="graph_type"][value="heat"]').parent().removeClass("active");
-                env.parentDom.find(".stream_option").removeClass("hidden");
-                env.parentDom.find(".heat_option").addClass("hidden");
-            }
-            else if (this.graph_type == "heat") {
-                env.parentDom.find('input[name="graph_type"][value="heat"]').prop('checked', true);
-                env.parentDom.find('input[name="graph_type"][value="heat"]').parent().addClass("active");
-                env.parentDom.find('input[name="graph_type"][value="stream"]').parent().removeClass("active");
-                env.parentDom.find(".heat_option").removeClass("hidden");
-                env.parentDom.find(".stream_option").addClass("hidden");
-            }
-            if (this.ip_version.indexOf(4) != -1) {
-                env.parentDom.find('input[name="ip_version"][value="4"]').prop('checked', true);
-                env.parentDom.find('input[name="ip_version"][value="4"]').parent().addClass("active");
-            }
-            if (this.ip_version.indexOf(6) != -1) {
-                env.parentDom.find('input[name="ip_version"][value="6"]').prop('checked', true);
-                env.parentDom.find('input[name="ip_version"][value="6"]').parent().addClass("active");
-            }
-
-            env.parentDom.find(".asn_lvl").spinner();
-            env.parentDom.find(".asn_lvl").spinner("value", this.asn_level);
-            env.parentDom.find(".merge_events").spinner();
-            env.parentDom.find(".merge_events").spinner("value", this.merge_events);
-        };
-
         this.graph_type_radio_setup = function () {
             var GuiManager = this;
-            env.parentDom.find("input[name='graph_type']").on("change", function (e) {
-                GuiManager.graph_type = env.parentDom.find("input[name='graph_type']:checked").val();
+            $("input[name='graph_type']").on("change", function (e) {
+                GuiManager.graph_type = $("input[name='graph_type']:checked").val();
                 if (GuiManager.graph_type == "stream") {
-                    env.parentDom.find(".title").html("Global View");
-                    env.parentDom.find("div.main_svg").css("height", "70vh");
-                    env.parentDom.find("div.main_svg").css("width", "auto");
-                    env.parentDom.find(".canvas_container").css("width", "auto");
-                    env.parentDom.find("svg").parent().css("overflow", "visible");
-                    env.parentDom.find(".counter_asn").parent().find("label").text("#ASN");
-                    env.parentDom.find(".stream_option").removeClass("hidden");
-                    env.parentDom.find(".heat_option").addClass("hidden");
+                    $(".title").html("Global View");
+                    $("div.main_svg").css("height", "70vh");
+                    $("div.main_svg").css("width", "auto");
+                    $(".canvas_container").css("width", "auto");
+                    $("svg").parent().css("overflow", "visible");
+                    $(".counter_asn").parent().find("label").text("#ASN");
+                    $(".stream_option").removeClass("hidden");
+                    $(".heat_option").addClass("hidden");
                 }
                 if (GuiManager.graph_type == "heat") {
-                    env.parentDom.find(".title").html("Local View");
-                    env.parentDom.find(".canvas_container").css("width", "100%");
+                    $(".title").html("Local View");
+                    $(".canvas_container").css("width", "100%");
                     if (GuiManager.use_scrollbars) {
-                        env.parentDom.find("svg").parent().css("overflow", "scroll");
+                        $("svg").parent().css("overflow", "scroll");
                     }
                     else
-                        env.parentDom.find("body").css("overflow-y", "scroll");
-                    env.parentDom.find(".counter_asn").parent().find("label").text("#CP");
-                    env.parentDom.find(".stream_option").addClass("hidden");
-                    env.parentDom.find(".heat_option").removeClass("hidden");
+                        $("body").css("overflow-y", "scroll");
+                    $(".counter_asn").parent().find("label").text("#CP");
+                    $(".stream_option").addClass("hidden");
+                    $(".heat_option").removeClass("hidden");
                 }
                 GuiManager.ripeDataBroker.heuristicsManager.setDefaultHeuristic(GuiManager.graph_type);
                 if (GuiManager.isGraphPresent())
@@ -7552,9 +7550,9 @@ define('bgpst.view.gui',[
 
         this.ip_version_checkbox_setup = function () {
             var GuiManager = this;
-            env.parentDom.find("input[name='ip_version']").on("change", function (e) {
+            $("input[name='ip_version']").on("change", function (e) {
                 GuiManager.ip_version = [];
-                env.parentDom.find("input[name='ip_version']:checked").each(function () {
+                $("input[name='ip_version']:checked").each(function () {
                     GuiManager.ip_version.push(parseInt($(this).val()));
                 });
                 if (GuiManager.isGraphPresent()) {
@@ -7566,56 +7564,10 @@ define('bgpst.view.gui',[
             });
         };
 
-        this.ip_version_checkbox_enabler = function () {
-            GuiManager = this;
-            if (!this.streaming) {
-                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
-                        return GuiManager.validator.check_ipv4(e);
-                    })) {
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().removeClass("disabled");
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().removeClass("not-active");
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().attr("disabled", false);
-                    this.ip_version = [4];
-                }
-                else {
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().addClass("disabled");
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().addClass("not-active");
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().attr("disabled", true);
-                }
-                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
-                        return GuiManager.validator.check_ipv6(e);
-                    })) {
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().removeClass("disabled");
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().removeClass("not-active");
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().attr("disabled", false);
-                    this.ip_version = [6];
-                }
-                else {
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().addClass("disabled");
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().addClass("not-active");
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().attr("disabled", true);
-                }
-                if (this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                        return GuiManager.validator.check_ipv4(e);
-                    }) && this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                        return GuiManager.validator.check_ipv6(e);
-                    })) {
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().removeClass("disabled");
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().removeClass("not-active");
-                    env.parentDom.find("input[name='ip_version'][value='4']").parent().attr("disabled", false);
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().removeClass("disabled");
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().removeClass("not-active");
-                    env.parentDom.find("input[name='ip_version'][value='6']").parent().attr("disabled", false);
-                    if (this.ip_version.length == 0)
-                        this.ip_version = [4];
-                }
-            }
-        };
-
         this.asn_level_setup = function () {
             var GuiManager = this;
-            env.parentDom.find("input[name='asn_lvl']:input").on("change", function (e, ui) {
-                GuiManager.asn_level = env.parentDom.find("input[name='asn_lvl']").spinner("value");
+            $("input[name='asn_lvl']:input").on("change", function (e, ui) {
+                GuiManager.asn_level = $("input[name='asn_lvl']").spinner("value");
                 if (GuiManager.isGraphPresent())
                     GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
             });
@@ -7624,9 +7576,9 @@ define('bgpst.view.gui',[
         this.streaming_btn_setup = function () {
             var GuiManager = this;
             var interval;
-            env.parentDom.find(".streaming_btn").on("click", function (e, ui) {
+            $(".streaming_btn").on("click", function (e, ui) {
                 GuiManager.streaming = !GuiManager.streaming;
-                GuiManager.streaming_icon_swap();
+                streaming_icon_swap();
                 if (GuiManager.streaming) {
                     GuiManager.lock_all();
                     interval = GuiManager.ripeDataBroker.streamgraph_streaming(GuiManager.streaming_speed);
@@ -7637,23 +7589,23 @@ define('bgpst.view.gui',[
                     GuiManager.draw_functions_btn_enabler();
                 }
             });
-        };
 
-        this.streaming_icon_swap = function () {
-            var icon = env.parentDom.find(".streaming_btn").find("span");
-            if (this.streaming) {
-                icon.removeClass("glyphicon-record");
-                icon.addClass("glyphicon-stop");
-            }
-            else {
-                icon.addClass("glyphicon-record");
-                icon.removeClass("glyphicon-stop");
-            }
+            streaming_icon_swap = function () {
+                var icon = $(".streaming_btn").find("span");
+                if (this.streaming) {
+                    icon.removeClass("glyphicon-record");
+                    icon.addClass("glyphicon-stop");
+                }
+                else {
+                    icon.addClass("glyphicon-record");
+                    icon.removeClass("glyphicon-stop");
+                }
+            };
         };
 
         this.steps_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".steps_btn").on("click", function (e, ui) {
+            $(".steps_btn").on("click", function (e, ui) {
                 GuiManager.steps = !GuiManager.steps;
                 if (GuiManager.steps) {
                     GuiManager.lock_all();
@@ -7664,29 +7616,29 @@ define('bgpst.view.gui',[
 
         this.list_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".list_btn").on("click", function (e) {
+            $(".list_btn").on("click", function (e) {
                 if (GuiManager.asn_info_done) {
-                    env.parentDom.find(".asn_list_btn").parent().removeClass("not-active");
-                    env.parentDom.find(".asn_list_btn").parent().removeClass("disabled");
+                    $(".asn_list_btn").parent().removeClass("not-active");
+                    $(".asn_list_btn").parent().removeClass("disabled");
                 }
                 else {
-                    env.parentDom.find(".asn_list_btn").parent().addClass("not-active");
-                    env.parentDom.find(".asn_list_btn").parent().addClass("disabled");
+                    $(".asn_list_btn").parent().addClass("not-active");
+                    $(".asn_list_btn").parent().addClass("disabled");
                 }
                 if (GuiManager.cp_info_done) {
-                    env.parentDom.find(".cp_list_btn").parent().removeClass("not-active");
-                    env.parentDom.find(".cp_list_btn").parent().removeClass("disabled");
+                    $(".cp_list_btn").parent().removeClass("not-active");
+                    $(".cp_list_btn").parent().removeClass("disabled");
                 }
                 else {
-                    env.parentDom.find(".cp_list_btn").parent().addClass("not-active");
-                    env.parentDom.find(".cp_list_btn").parent().addClass("disabled");
+                    $(".cp_list_btn").parent().addClass("not-active");
+                    $(".cp_list_btn").parent().addClass("disabled");
                 }
             });
         };
 
         this.asn_list_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".asn_list_btn").hover(function (event) {
+            $(".asn_list_btn").hover(function (event) {
                 var html = "";
                 var set;
                 if (GuiManager.graph_type == "stream")
@@ -7712,21 +7664,21 @@ define('bgpst.view.gui',[
                     }
                     html += "</li>";
                 }
-                env.parentDom.find(".asn_list").html(html);
+                $(".asn_list").html(html);
                 if (set.length < 11) {
-                    env.parentDom.find(".asn_list").css("height", "auto");
-                    env.parentDom.find(".asn_list").css("overflow-y", "visible");
+                    $(".asn_list").css("height", "auto");
+                    $(".asn_list").css("overflow-y", "visible");
                 }
                 else {
-                    env.parentDom.find(".asn_list").css("height", "");
-                    env.parentDom.find(".asn_list").css("overflow-y", "");
+                    $(".asn_list").css("height", "");
+                    $(".asn_list").css("overflow-y", "");
                 }
             });
         };
 
         this.cp_list_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".cp_list_btn").hover(function (event) {
+            $(".cp_list_btn").hover(function (event) {
                 var html = "";
                 var set;
                 if (GuiManager.graph_type == "stream")
@@ -7747,23 +7699,23 @@ define('bgpst.view.gui',[
                     }
                     html += "</li>";
                 }
-                env.parentDom.find(".cp_list").html(html);
+                $(".cp_list").html(html);
                 if (set.length < 11) {
-                    env.parentDom.find(".cp_list").css("height", "auto");
-                    env.parentDom.find(".cp_list").css("overflow-y", "visible");
+                    $(".cp_list").css("height", "auto");
+                    $(".cp_list").css("overflow-y", "visible");
                 }
                 else {
-                    env.parentDom.find(".cp_list").css("height", "");
-                    env.parentDom.find(".cp_list").css("overflow-y", "");
+                    $(".cp_list").css("height", "");
+                    $(".cp_list").css("overflow-y", "");
                 }
             });
         };
 
-        /************************** ORDERING **************************/
+        /************************** ORDERING BUTTONS **************************/
         //levensthein
         this.lev_dist_randwalk_cum_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".lev_dist_randwalk_cum_btn").on("click", function (e) {
+            $(".lev_dist_randwalk_cum_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_cum";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7772,7 +7724,7 @@ define('bgpst.view.gui',[
 
         this.lev_dist_randwalk_max_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".lev_dist_randwalk_max_btn").on("click", function (e) {
+            $(".lev_dist_randwalk_max_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_max";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7782,7 +7734,7 @@ define('bgpst.view.gui',[
         //best std dev random walking
         this.point_dist_by_randwalk_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".point_dist_by_randwalk_btn").on("click", function (e) {
+            $(".point_dist_by_randwalk_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_rnd_cum";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7791,7 +7743,7 @@ define('bgpst.view.gui',[
 
         this.point_dist_by_inference_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".point_dist_by_inference_btn").on("click", function (e) {
+            $(".point_dist_by_inference_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_inf_cum";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7801,7 +7753,7 @@ define('bgpst.view.gui',[
         //STD DEV SWAP
         this.point_dist_greedy_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".point_dist_greedy_btn").on("click", function (e) {
+            $(".point_dist_greedy_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7811,7 +7763,7 @@ define('bgpst.view.gui',[
         //NEARFLOWS
         this.exchange_greedy_sort_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".exchange_greedy_sort_btn").on("click", function (e) {
+            $(".exchange_greedy_sort_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "n_f";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7821,7 +7773,7 @@ define('bgpst.view.gui',[
         //WIGGLES
         this.wiggle_sum_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".wiggle_sum_btn").on("click", function (e) {
+            $(".wiggle_sum_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "w_cum";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7830,7 +7782,7 @@ define('bgpst.view.gui',[
 
         this.wiggle_max_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".wiggle_max_btn").on("click", function (e) {
+            $(".wiggle_max_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "w_max";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7840,7 +7792,7 @@ define('bgpst.view.gui',[
         //SORTS
         this.sort_asn_ascstdev_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".sort_asn_ascstdev_btn").on("click", function (e) {
+            $(".sort_asn_ascstdev_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7849,7 +7801,7 @@ define('bgpst.view.gui',[
 
         this.sort_asn_dscstdev_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".sort_asn_dscstdev_btn").on("click", function (e) {
+            $(".sort_asn_dscstdev_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7858,7 +7810,7 @@ define('bgpst.view.gui',[
 
         this.sort_asn_ascvar_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".sort_asn_ascvar_btn").on("click", function (e) {
+            $(".sort_asn_ascvar_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7867,7 +7819,7 @@ define('bgpst.view.gui',[
 
         this.sort_asn_dscvar_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".sort_asn_dscvar_btn").on("click", function (e) {
+            $(".sort_asn_dscvar_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7876,7 +7828,7 @@ define('bgpst.view.gui',[
 
         this.sort_asn_ascavg_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".sort_asn_ascavg_btn").on("click", function (e) {
+            $(".sort_asn_ascavg_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7885,7 +7837,7 @@ define('bgpst.view.gui',[
 
         this.sort_asn_dscavg_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".sort_asn_dscavg_btn").on("click", function (e) {
+            $(".sort_asn_dscavg_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7894,7 +7846,7 @@ define('bgpst.view.gui',[
 
         this.sort_asn_ascsum_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".sort_asn_ascsum_btn").on("click", function (e) {
+            $(".sort_asn_ascsum_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7903,7 +7855,7 @@ define('bgpst.view.gui',[
 
         this.sort_asn_dscsum_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".sort_asn_dscsum_btn").on("click", function (e) {
+            $(".sort_asn_dscsum_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7913,7 +7865,7 @@ define('bgpst.view.gui',[
         /**HEATMAP**/
         this.heat_greedy_sort_1_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".heat_greedy_sort_1_btn").on("click", function (e) {
+            $(".heat_greedy_sort_1_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "nf_1";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7922,7 +7874,7 @@ define('bgpst.view.gui',[
 
         this.heat_greedy_sort_2_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".heat_greedy_sort_2_btn").on("click", function (e) {
+            $(".heat_greedy_sort_2_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "nf_2";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7931,7 +7883,7 @@ define('bgpst.view.gui',[
 
         this.heat_stdev_sort_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".heat_stdev_sort_btn").on("click", function (e) {
+            $(".heat_stdev_sort_btn").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7940,7 +7892,7 @@ define('bgpst.view.gui',[
 
         this.heat_geo_sort_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".heat_country_sort").on("click", function (e) {
+            $(".heat_country_sort").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "geo";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
@@ -7949,13 +7901,15 @@ define('bgpst.view.gui',[
 
         this.heat_asn_sort_btn_setup = function () {
             var manager = this;
-            env.parentDom.find(".heat_as_sort").on("click", function (e) {
+            $(".heat_as_sort").on("click", function (e) {
                 manager.ripeDataBroker.heuristicsManager.current_heuristic = "asn";
                 manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
+
+        /**************************************** OTHERS ************************************************/
         this.set_ordering = function (order) {
             this.ripeDataBroker.loadCurrentState(order, false, null, true);
         };
@@ -7969,13 +7923,13 @@ define('bgpst.view.gui',[
         };
 
         this.update_counters = function (selector, quantity) {
-            env.parentDom.find(selector).text(quantity);
+            $(selector).text(quantity);
         };
 
-        /*******************************************************************************/
+        /*************************************** BOTTOM BUTTONS ****************************************/
         this.docs_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".docs_btn").on("click", function (e) {
+            $(".docs_btn").on("click", function (e) {
                 var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/', '_blank');
                 thewindow.blur();
             });
@@ -7983,7 +7937,7 @@ define('bgpst.view.gui',[
 
         this.about_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".about_btn").on("click", function (e) {
+            $(".about_btn").on("click", function (e) {
                 var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/', '_blank');
                 thewindow.blur();
             });
@@ -7991,7 +7945,7 @@ define('bgpst.view.gui',[
 
         this.embed_btn_setup = function () {
             var GuiManager = this;
-            env.parentDom.find(".embed_btn").on("click", function (e) {
+            $(".embed_btn").on("click", function (e) {
                 var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/#embed', '_blank');
                 thewindow.blur();
             });
