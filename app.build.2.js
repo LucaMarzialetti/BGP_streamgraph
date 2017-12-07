@@ -16,13 +16,13 @@
         "bgpst.lib.jquery-amd": "dev/libs/jquery-libs-amd",
         "bgpst.lib.jquery-libs": "dev/libs/jquery-libs",
         "bgpst.lib.date-format": "dev/libs/dateFormat",
-        "bgpst.lib.d3-amd": "dev/libs/d3/js/d3.v4.amd",
+        "bgpst.lib.d3-amd": "dev/libs/d3-libs",
         "bgpst.lib.mustache": "dev/libs/mustache",
         "bgpst.lib.text": "dev/libs/require-text",
         "bgpst.lib.stache": "dev/libs/stache",
         "bgpst.lib.colorbrewer": "dev/libs/colorbrewer",
         "bgpst.lib.d3.legend": "dev/libs/d3.legend",
-        "bgpst.lib.moment": "dev/libs/moment/2.18.1/moment.min",
+        "bgpst.lib.moment": "dev/libs/moment-libs",
 
         "bgpst.lib.bootstrap.datetimepicker": "dev/libs/datetimepicker/4.17.47/bootstrap-datetimepicker.min",
         "bgpst.lib.bootstrap.validator": "dev/libs/form_validator/0.5.3/bootstrapValidator.min",
@@ -79,6 +79,9 @@
         },
         "bgpst.lib.bootstrap-tokenfield": {
             deps: ["bgpst.lib.jquery-amd"]
+        },
+        "bgpst.lib.d3-amd": {
+            export: "d3"
         }
     },
         
@@ -88,8 +91,8 @@
     },
     stubModules: ["bgpst.lib.text", "bgpst.lib.stache"],
     removeCombined: true,
-    optimize: "none",//uglify2
-    wrapShim: false,
+    optimize: "uglify2",//uglify2
+    wrapShim: true,
     generateSourceMaps: false,
 
     out: "bgpst-dist.js"

@@ -15,11 +15,11 @@ define([
 
     var GraphDrawer = function(env) {
         var $this = this;
-        this.main_svg = d3.select("div.main_svg").select("svg");
-        this.mini_svg = d3.select("div.mini_svg").select("svg");
-        this.background = d3.select("div.main_svg").select(".background");
+        this.main_svg = d3.select(env.parentDom[0]).select("div.main_svg").select("svg");
+        this.mini_svg = d3.select(env.parentDom[0]).select("div.mini_svg").select("svg");
+        this.background = d3.select(env.parentDom[0]).select("div.main_svg").select(".background");
         this.brush = d3.select(".brush");
-        this.tooltip = $(".svg_tooltip");
+        this.tooltip = env.parentDom.find(".svg_tooltip");
         this.colors = [];
         this.keys = [];
         this.colorManager = new ColorManager(env);

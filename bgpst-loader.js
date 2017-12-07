@@ -16,7 +16,7 @@ requirejs.config({
         "bgpst.lib.jquery-amd": window.atlas._widgets.bgpst.urls.libs + "jquery-libs-amd",
         "bgpst.lib.jquery-libs": window.atlas._widgets.bgpst.urls.libs + "jquery-libs",
         "bgpst.lib.date-format": window.atlas._widgets.bgpst.urls.libs + "dateFormat",
-        "bgpst.lib.d3-amd": window.atlas._widgets.bgpst.urls.libs + "d3/js/d3.v4.amd",
+        "bgpst.lib.d3-amd": window.atlas._widgets.bgpst.urls.libs + "d3-libs",
         "bgpst.lib.mustache": window.atlas._widgets.bgpst.urls.libs + "mustache",
         "bgpst.lib.text": window.atlas._widgets.bgpst.urls.libs + "require-text",
         "bgpst.lib.stache": window.atlas._widgets.bgpst.urls.libs + "stache",
@@ -79,7 +79,7 @@ requirejs.config({
         "bgpst.lib.bootstrap-tokenfield": {
             deps: ["bgpst.lib.jquery-amd"]
         },
-        "bgpst.lib.d3": {
+        "bgpst.lib.d3-amd": {
             export: "d3"
         }
     },

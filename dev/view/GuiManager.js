@@ -269,6 +269,7 @@ define([
         };
 
         this.draw_functions_btn_enabler = function () {
+            GuiManager = this;
             if (!this.streaming) {
                 $(".option_command_btn").removeClass("disabled");
                 $(".my_ip_button").removeClass("disabled");
@@ -292,7 +293,7 @@ define([
                     $(".list_btn").removeClass("not-active");
                     $(".sort_btn").removeClass("not-active");
                     if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                            return $this.validator.check_ipv4(e);
+                            return GuiManager.validator.check_ipv4(e);
                         })) {
                         $("input[name='ip_version'][value='4']").parent().addClass("disabled");
                         $("input[name='ip_version'][value='4']").parent().addClass("not-active");
@@ -304,7 +305,7 @@ define([
                         $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
                     }
                     if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                            return $this.validator.check_ipv6(e);
+                            return GuiManager.validator.check_ipv6(e);
                         })) {
                         $("input[name='ip_version'][value='6']").parent().addClass("disabled");
                         $("input[name='ip_version'][value='6']").parent().addClass("not-active");

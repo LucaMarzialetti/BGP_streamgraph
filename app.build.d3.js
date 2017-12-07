@@ -6,15 +6,15 @@
     wrap: {
         start: "define([], function(){" +
         "define.amd=false;",
-        end: "return moment; });"
+        end: "return d3; });"
     },
 
     include: [
-        "bgpst.lib.moment"
+        "bgpst.lib.d3-amd"
     ],
 
     paths: {
-        "bgpst.lib.moment": "dev/libs/moment/2.18.1/moment.min"
+        "bgpst.lib.d3-amd": "dev/libs/d3/js/d3.v4.amd"
     },
 
     shim: {
@@ -23,6 +23,6 @@
     optimize: "none",
     wrapShim: true,
     generateSourceMaps: false,
-    out: "dev/libs/moment-libs.js"
+    out: "dev/libs/d3-libs.js"
 
 })
