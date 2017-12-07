@@ -52,16 +52,16 @@ define([
             this.dateConverter = new DateConverter();
 
             this.drawer.drawer_init();
-            this.get_local_ip();
             this.pickers_setup();
             this.tokenfield_setup();
             this.input_address_setup();
             this.ipversion_setup();
             this.clear_button_setup();
-            this.my_ip_button_setup();
-            this.go_button_setup();
+            // this.go_button_setup();
             this.other_command_button_setup();
             this.tooltip_setup();
+
+            this.ripeDataBroker.getData();
         };
 
         this.isGraphPresent = function (text) {
@@ -497,122 +497,56 @@ define([
 
         //go_button click setup  <-- TO CALL AT SETUP FUNCTION
         //check if the fields are valid and then submit the query to RIPEstat rest API
-        this.go_button_setup = function () {
-            var GuiManager = this;
-            $(".go_button").on('click', function () {
-                var time_start = $(".datetimepicker.time_only.start").find("input").val();
-                var time_end = $(".datetimepicker.time_only.end").find("input").val();
-                var date_start = $(".datetimepicker.date_only.start").find("input").val();
-                var date_end = $(".datetimepicker.date_only.end").find("input").val();
-                var tgs = $(".tokenfield").find("input").val().replace(/\s/g, '');
-                var bar = $("input.bar").val();
-                var input = $("input.add_address").val();
-                if (tgs == "" && $("div.input_add").hasClass("has-success")) {
-                    var tgs = input;
-                    if (GuiManager.validator.check_asn(tgs))
-                        tgs = "AS" + tgs;
-                    else if (bar != "" && bar != null && !isNaN(parseInt(bar)))
-                        tgs += "/" + bar;
-                }
-                var check = true;
-                if (time_start == null || time_start == "") {
-                    check = false;
-                    $(".datetimepicker.time_only.start").addClass("has-error");
-                }
-                if (time_end == null || time_end == "") {
-                    check = false;
-                    $(".datetimepicker.time_only.end").addClass("has-error");
-                }
-                if (date_start == null || date_start == "") {
-                    check = false;
-                    $(".datetimepicker.date_only.start").addClass("has-error");
-                }
-                if (date_end == null || date_end == "") {
-                    check = false;
-                    $(".datetimepicker.date_only.end").addClass("has-error");
-                }
-                if (tgs == null || tgs == "") {
-                    check = false;
-                    $(".tokenfield").parent().addClass("has-error");
-                }
-                if (check) {
-                    $("input.add_address").val("");
-                    $("input.bar").val("");
-                    $("div.input_add").removeClass("has-success");
-                    // GuiManager.RipeDataBroker.requestBuilderData(date_start, time_start, date_end, time_end, tgs);
-                    GuiManager.ripeDataBroker.getData();
-                }
-            });
-        };
-
-        // this.url_string = function () {
+        // this.go_button_setup = function () {
+        //
+        //     GuiManager.ripeDataBroker.getData();
         //     var GuiManager = this;
-        //     var url_to_push = GuiManager.url + "?";
-        //     url_to_push += 'w.starttime=' + env.queryParams.startDate.;
-        //     url_to_push += "&w.endtime=" + GuiManager.RipeDataBroker.current_endtime;
-        //     url_to_push += "&w.type=" + GuiManager.graph_type;
-        //     url_to_push += "&w.level=" + GuiManager.asn_level;
-        //     url_to_push += "&w.prepending=" + GuiManager.prepending_prevention;
-        //     url_to_push += "&w.merge_cp=" + GuiManager.merge_cp;
-        //     url_to_push += "&w.merge_events=" + GuiManager.merge_events;
-        //     url_to_push += "&w.timemap=" + GuiManager.heatmap_time_map;
-        //     url_to_push += "&w.global=" + GuiManager.global_visibility;
-        //     url_to_push += "&w.info=" + GuiManager.gather_information;
-        //     url_to_push += "&w.heu=" + GuiManager.RipeDataBroker.heuristicsManager.current_heuristic;
-        //     if (GuiManager.RipeDataBroker.heuristicsManager.current_sort_type)
-        //         url_to_push += "&w.sort_type=" + GuiManager.RipeDataBroker.heuristicsManager.current_sort_type;
-        //     url_to_push += "&w.colors=" + GuiManager.preserve_map;
-        //     if (GuiManager.drawer.events_range) {
-        //         url_to_push += "&w.brush_s=" + GuiManager.DateConverter.formatRipe(GuiManager.drawer.events_range[0]);
-        //         url_to_push += "&w.brush_e=" + GuiManager.DateConverter.formatRipe(GuiManager.drawer.events_range[1]);
-        //     }
-        //     url_to_push += "&w.resources=" + GuiManager.RipeDataBroker.current_targets;
-        //     history.pushState("", 'BGPStreamgraph', url_to_push);
+        //     // $(".go_button").on('click', function () {
+        //     //     var time_start = $(".datetimepicker.time_only.start").find("input").val();
+        //     //     var time_end = $(".datetimepicker.time_only.end").find("input").val();
+        //     //     var date_start = $(".datetimepicker.date_only.start").find("input").val();
+        //     //     var date_end = $(".datetimepicker.date_only.end").find("input").val();
+        //     //     var tgs = $(".tokenfield").find("input").val().replace(/\s/g, '');
+        //     //     var bar = $("input.bar").val();
+        //     //     var input = $("input.add_address").val();
+        //     //     if (tgs == "" && $("div.input_add").hasClass("has-success")) {
+        //     //         var tgs = input;
+        //     //         if (GuiManager.validator.check_asn(tgs))
+        //     //             tgs = "AS" + tgs;
+        //     //         else if (bar != "" && bar != null && !isNaN(parseInt(bar)))
+        //     //             tgs += "/" + bar;
+        //     //     }
+        //     //     var check = true;
+        //     //     if (time_start == null || time_start == "") {
+        //     //         check = false;
+        //     //         $(".datetimepicker.time_only.start").addClass("has-error");
+        //     //     }
+        //     //     if (time_end == null || time_end == "") {
+        //     //         check = false;
+        //     //         $(".datetimepicker.time_only.end").addClass("has-error");
+        //     //     }
+        //     //     if (date_start == null || date_start == "") {
+        //     //         check = false;
+        //     //         $(".datetimepicker.date_only.start").addClass("has-error");
+        //     //     }
+        //     //     if (date_end == null || date_end == "") {
+        //     //         check = false;
+        //     //         $(".datetimepicker.date_only.end").addClass("has-error");
+        //     //     }
+        //     //     if (tgs == null || tgs == "") {
+        //     //         check = false;
+        //     //         $(".tokenfield").parent().addClass("has-error");
+        //     //     }
+        //     //     if (check) {
+        //     //         $("input.add_address").val("");
+        //     //         $("input.bar").val("");
+        //     //         $("div.input_add").removeClass("has-success");
+        //     //         // GuiManager.RipeDataBroker.requestBuilderData(date_start, time_start, date_end, time_end, tgs);
+        //     //         GuiManager.ripeDataBroker.getData();
+        //     //     }
+        //     // });
         // };
 
-        //cache the current local ip <-- TO CALL AT SETUP FUNCTION
-        //return the current pubblic ip of the local machine  <-- TO CALL AT SETUP FUNCTION
-        this.get_local_ip = function () {
-            var GuiManager = this;
-            $.ajax({
-                type: "GET",
-                data: {},
-                url: "https://ipinfo.io/json",
-                error: function (response) {
-                    console.log(response);
-                    var code = parseInt(response.status / 100);
-                    if (code == 0)
-                        alert("IpInfo: Blocked by client, may disable AdBlock.");
-                    else
-                        switch (code) {
-                            case 4:
-                                alert("IpInfo: Client error.");
-                                break;
-                            case 5:
-                                alert("IpInfo: server is not responding.");
-                                break;
-                            default:
-                                break;
-                        }
-                },
-                success: function (response) {
-                    console.log("== GUiManager IP info");
-                    console.log(response);
-                    GuiManager.current_local_ip = response.ip;
-                }
-            });
-        };
-
-        //my_ip_button click setup  <-- TO CALL AT SETUP FUNCTION
-        //check for the current machine pubblic ip
-        this.my_ip_button_setup = function () {
-            var GuiManager = this;
-            $(".my_ip_button").on("click", function () {
-                if (!GuiManager.current_local_ip)
-                    GuiManager.get_local_ip();
-                GuiManager.set_address(GuiManager.current_local_ip)
-            });
-        };
 
         this.set_address = function (val) {
             $('input.add_address').parent().find('input').val(val);
@@ -682,7 +616,6 @@ define([
         };
 
 
-        //d3.select("svg").select(".chart").node()
         this.draw_functions_btn_enabler = function () {
             GuiManager = this;
             if (!this.streaming) {

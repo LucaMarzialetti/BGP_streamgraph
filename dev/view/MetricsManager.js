@@ -22,9 +22,10 @@ define([
     MetricsManager.prototype.disconnections = function(current_parsed, asn_ordering){
         //values store the myUtils.cumulates in every instant for every ASN
         var values = [];
-        for(var e in current_parsed.asn_distributions)
+        for(var e in current_parsed.asn_distributions) {
             values.push({});
-        for(var e in current_parsed.asn_distributions){
+        }
+        for(var e in current_parsed.asn_distributions) {
             var dist = current_parsed.asn_distributions[e];
             for(var a = 0; a<asn_ordering.length; a++){
                 var current_as = asn_ordering[a];
@@ -64,15 +65,18 @@ define([
 
     MetricsManager.prototype.disconnectionsScore = function(disconnections){
         var disc = 0 ;
-        for(var d in disconnections)
-            disc+=disconnections[d];
+
+        for (var d in disconnections) {
+            disc += disconnections[d];
+        }
+
         return disc;
     };
 
     /************************ BORDER LINES STANDARD DEVIATION ************************/
     MetricsManager.prototype.lineDistances = function(asn_distributions, asn_ordering){
         var distances = [];
-        for(var i = 0; i<asn_distributions.length-1;i++){
+        for(var i = 0; i<asn_distributions.length-1; i++){
             distances[i] = [];
         }
         for(var i = 0; i<distances.length; i++){

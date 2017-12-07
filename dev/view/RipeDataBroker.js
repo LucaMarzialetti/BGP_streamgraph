@@ -80,7 +80,7 @@ define([
                                 $this.getCPInfo($this.current_parsed.resources,0)
                             },0);
                         }
-                        env.queryParams.targets = data.data.targets.map(function (e) {return e['prefix'].replace(/"/g,'');}).join(",");
+                        env.queryParams.targets = data.data.targets.map(function (e) {return e['prefix'].replace(/"/g,'');});
                         $this.loadCurrentState(true, env.guiManager.drawer.events_range, true);
 
                         if(env.guiManager.gather_information){
