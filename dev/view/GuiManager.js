@@ -337,7 +337,6 @@ define([
                         $('input[name="ip_version"]').filter('[value="6"]').parent().removeClass("active");
                     }
                     $(".counter").removeClass("hidden");
-                    this.draggable_setup();
                     if (this.graph_type == "stream") {
                         $("input[name='steps'][value='steps']").parent().removeClass("disabled");
                         $("input[name='steps'][value='steps']").parent().removeClass("not-active");
