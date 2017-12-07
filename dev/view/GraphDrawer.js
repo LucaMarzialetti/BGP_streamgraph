@@ -132,11 +132,11 @@ define([
                     if (!$this.events_range || !(moment(start).isSame($this.events_range[0]) && moment(end).isSame($this.events_range[1]))) {
                         $this.events_range = [moment(start), moment(end)];
                         $this.check_brush();
-                        env.guiManager.RipeDataBroker.brush($this.events_range);
+                        env.guiManager.ripeDataBroker.brush($this.events_range);
                     }
                 } else {
                     $this.events_range = null;
-                    env.guiManager.RipeDataBroker.brush();
+                    env.guiManager.ripeDataBroker.brush();
                 }
             };
             var draw_stream = function(data, stack) {

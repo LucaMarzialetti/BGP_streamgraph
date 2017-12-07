@@ -12,7 +12,7 @@ define([
 
 	/****************************************************************/
 	DateConverter.prototype.parseRipe = function(date){
-		return moment(date,this.ripestat_data_format);
+		return moment(date, this.ripestat_data_format);
 	};
 
 	DateConverter.prototype.parseRipeTime = function(date){

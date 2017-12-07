@@ -16,7 +16,7 @@ define([
 	};
 
 	Validator.prototype.check_date_with_format = function(str, format){
-		return this.date_validator.checkdate_format(str,format);
+		return this.date_validator.checkdate_format(str, format);
 	};
 
 

@@ -422,18 +422,18 @@
 					if(context_manager.guiManager.isGraphPresent){
 						if(context_manager.guiManager.graph_type=="stream")
 							context_manager.drawer.draw_streamgraph(
-								context_manager.RipeDataBroker.current_parsed,
+								context_manager.ripeDataBroker.current_parsed,
 								context_manager.guiManager.graph_type,
-								context_manager.guiManager.RipeDataBroker.current_asn_tsv,
+								context_manager.guiManager.ripeDataBroker.current_asn_tsv,
 								context_manager.guiManager.drawer.keys,
 								context_manager.guiManager.preserve_map,
-								context_manager.guiManager.RipeDataBroker.current_visibility,
-								context_manager.guiManager.RipeDataBroker.current_parsed.targets,
-								context_manager.guiManager.RipeDataBroker.current_parsed.query_id,
-								function(pos){return context_manager.guiManager.RipeDataBroker.go_to_bgplay(
-									context_manager.guiManager.RipeDataBroker.current_starttime,
-									context_manager.guiManager.RipeDataBroker.current_endtime,
-									context_manager.guiManager.RipeDataBroker.current_targets,
+								context_manager.guiManager.ripeDataBroker.current_visibility,
+								context_manager.guiManager.ripeDataBroker.current_parsed.targets,
+								context_manager.guiManager.ripeDataBroker.current_parsed.query_id,
+								function(pos){return context_manager.guiManager.ripeDataBroker.go_to_bgplay(
+									context_manager.guiManager.ripeDataBroker.current_starttime,
+									context_manager.guiManager.ripeDataBroker.current_endtime,
+									context_manager.guiManager.ripeDataBroker.current_targets,
 									pos)},
 								null,
 								null,
@@ -441,18 +441,18 @@
 						else
 						if(context_manager.guiManager.graph_type=="heat")
 							context_manager.guiManager.drawer.draw_heatmap(
-								context_manager.guiManager.RipeDataBroker.current_parsed,
-								context_manager.guiManager.RipeDataBroker.current_cp_tsv,
-								context_manager.guiManager.RipeDataBroker.current_asn_tsv,
+								context_manager.guiManager.ripeDataBroker.current_parsed,
+								context_manager.guiManager.ripeDataBroker.current_cp_tsv,
+								context_manager.guiManager.ripeDataBroker.current_asn_tsv,
 								context_manager.guiManager.drawer.keys,
 								context_manager.guiManager.preserve_map,
-								context_manager.guiManager.RipeDataBroker.current_visibility,
-								context_manager.guiManager.RipeDataBroker.current_parsed.targets,
-								context_manager.guiManager.RipeDataBroker.current_parsed.query_id,
+								context_manager.guiManager.ripeDataBroker.current_visibility,
+								context_manager.guiManager.ripeDataBroker.current_parsed.targets,
+								context_manager.guiManager.ripeDataBroker.current_parsed.query_id,
 								function(pos){return RipeDataBroker.go_to_bgplay(
-									context_manager.guiManager.RipeDataBroker.current_starttime,
-									context_manager.guiManager.RipeDataBroker.current_endtime,
-									context_manager.guiManager.RipeDataBroker.current_targets,pos)},
+									context_manager.guiManager.ripeDataBroker.current_starttime,
+									context_manager.guiManager.ripeDataBroker.current_endtime,
+									context_manager.guiManager.ripeDataBroker.current_targets,pos)},
 								context_manager.guiManager.asn_level,
 								context_manager.guiManager.ip_version,
 								context_manager.guiManager.prepending_prevention,

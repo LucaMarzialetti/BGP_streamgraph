@@ -11,7 +11,7 @@ define([
 ], function(DateConverter, MetricsManager, myUtils, moment, GDBS){
 
 	var HeuristicsManager = function(env) {
-		this.DateConverter = new DateConverter();
+		this.dateConverter = new DateConverter();
 		this.MetricsManager = new MetricsManager();
 
 		this.StreamgraphHeuristics = {
@@ -168,7 +168,7 @@ define([
 
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return best_ordering;
 	};
 
@@ -193,7 +193,7 @@ define([
 
 		var ordering = this.stdDevBubbles(current_parsed,done);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return ordering;
 	};
 
@@ -267,7 +267,7 @@ define([
 			done.push(best);
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return done;
 	};
 
@@ -309,7 +309,7 @@ define([
 
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return best_ordering;
 	};
 
@@ -351,7 +351,7 @@ define([
 
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return best_ordering;
 	};
 
@@ -377,7 +377,7 @@ define([
 			return o[0];
 		});
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return values;
 	};
 
@@ -403,7 +403,7 @@ define([
 			return o[0];
 		});
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return values;
 	};
 
@@ -427,7 +427,7 @@ define([
 		}
 		var values = new_order.map(function(o){return o[0] });
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return values;
 	};
 
@@ -451,7 +451,7 @@ define([
 		}
 		var values = new_order.map(function(o){return o[0]});
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return values;
 	};
 
@@ -506,7 +506,7 @@ define([
 		ordering = this.exchanges_plus_sd_greedy_block(current_parsed, bind_structure, non_exchange_as);
 		ordering = ordering.filter(function(e){return e != null;});
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return ordering;
 	};
 
@@ -623,7 +623,7 @@ define([
 		console.log("bubble phase");
 		order = this.wiggleBubblesPhase(current_parsed,order, calc_type);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -688,7 +688,7 @@ define([
 		console.log("bubble phase");
 		order = this.disconnectionsBubblesPhase(current_parsed,order);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -733,7 +733,7 @@ define([
 			}
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return result;
 	};
 
@@ -778,7 +778,7 @@ define([
 			}
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return result;
 	};
 
@@ -844,7 +844,7 @@ define([
 		var asn_ordering = this.getSortedASByExchanges(current_parsed)
 		var order = this.sortCPByASOrdering_level(current_parsed,current_parsed.asn_set);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -853,7 +853,7 @@ define([
 		var asn_ordering = this.getSortedASByExchanges(current_parsed)
 		var order = this.sortCPByASOrdering_level_var(current_parsed,current_parsed.asn_set);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -862,7 +862,7 @@ define([
 		var asn_ordering = this.asnStdDevByPointMinimizationGreedy(current_parsed)
 		var order = this.sortCPByASOrdering_level_var(current_parsed,current_parsed.asn_set);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -870,7 +870,7 @@ define([
 		var start = moment().valueOf();
 		var order = this.sortCPByGeoOrder(current_parsed);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -878,7 +878,7 @@ define([
 		var start = moment().valueOf();
 		var order = this.sortCPByAsnOrder(current_parsed);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 

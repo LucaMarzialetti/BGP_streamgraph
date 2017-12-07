@@ -119,12 +119,15 @@ define([
             "autoStart": instanceParams.autoStart || true,
             "widgetUrl": WIDGET_URL + "dev/",
             "parentDom": $(parentDom),
-            "queryParams": queryParams // { resource: is the ip }
+            "queryParams": queryParams
+            //{ resource: "IP", startDate: new Date(), stopDate: new Date()}
         };
 
         //window.env = env; // TEMP: just for debugging
 
 
+        env.queryParams.startDate = (env.queryParams.startDate) ? moment.utc(env.queryParams.startDate) : null;
+        env.queryParams.stopDate =  (env.queryParams.stopDate) ? moment.utc(env.queryParams.stopDate) : null;
 
         /*
          * Check if parent dom exists

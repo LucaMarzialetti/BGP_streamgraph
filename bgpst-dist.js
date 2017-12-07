@@ -2092,11 +2092,11 @@ define('bgpst.view.graphdrawer',[
                     if (!$this.events_range || !(moment(start).isSame($this.events_range[0]) && moment(end).isSame($this.events_range[1]))) {
                         $this.events_range = [moment(start), moment(end)];
                         $this.check_brush();
-                        env.guiManager.RipeDataBroker.brush($this.events_range);
+                        env.guiManager.ripeDataBroker.brush($this.events_range);
                     }
                 } else {
                     $this.events_range = null;
-                    env.guiManager.RipeDataBroker.brush();
+                    env.guiManager.ripeDataBroker.brush();
                 }
             };
             var draw_stream = function(data, stack) {
@@ -3170,7 +3170,7 @@ define('bgpst.controller.datevalidator',[
 	};
 
 	DateValidator.prototype.checkdate_format = function(str,format){
-		if(str&&str != "")
+		if(str && str != "")
 			try{
 				return moment(str,format,true).isValid();
 			}
@@ -3719,7 +3719,7 @@ define('bgpst.controller.validator',[
 	};
 
 	Validator.prototype.check_date_with_format = function(str, format){
-		return this.date_validator.checkdate_format(str,format);
+		return this.date_validator.checkdate_format(str, format);
 	};
 
 
@@ -3751,7 +3751,7 @@ define('bgpst.controller.dateconverter',[
 
 	/****************************************************************/
 	DateConverter.prototype.parseRipe = function(date){
-		return moment(date,this.ripestat_data_format);
+		return moment(date, this.ripestat_data_format);
 	};
 
 	DateConverter.prototype.parseRipeTime = function(date){
@@ -3821,13 +3821,12 @@ define('bgpst.controller.dateconverter',[
 	return DateConverter;
 });
 define('bgpst.view.parser',[
-    /*validator*/
-    /*functions*/
+    "bgpst.lib.moment",
     "bgpst.controller.validator",
     "bgpst.controller.functions"
-], function(Validator, myUtils){
+], function(moment, Validator, myUtils){
 
-    var RipeDataParser = function() {
+    var RipeDataParser = function(env) {
         console.log("==== RipeParser Starting");
         this.validator = new Validator();
         this.states = [];
@@ -3853,599 +3852,599 @@ define('bgpst.view.parser',[
         this.known_cp = {};
 
         console.log("==== RipeParser Ready");
-    };
 
-    /**manage the events and state of the announcement**/
-    //the level of detail is by CP and only later cumulated to ASN view
-    //there are fiew global variables used to maintain the state of the flow
-    //states_asn:array of states, each state is a normalized vector of ASN weight on routing
-    //states:array of states, each state is cp routing
-    //events:array of timestamps, one for each state
-    //cp_map:object used to maintain the current state
-    //last_date:last timestamp seen
+        /**manage the events and state of the announcement**/
+        //the level of detail is by CP and only later cumulated to ASN view
+        //there are fiew global variables used to maintain the state of the flow
+        //states_asn:array of states, each state is a normalized vector of ASN weight on routing
+        //states:array of states, each state is cp routing
+        //events:array of timestamps, one for each state
+        //cp_map:object used to maintain the current state
+        //last_date:last timestamp seen
 
-    //ripe_response_parse();
-    //main function to call for parsing
-    RipeDataParser.prototype.ripe_response_parse = function(json,start,end) {
-        //on local load from data.json
-        //json = require('./data.json');
-        //global variables init
-        var data = json['data'];
-        this.cp_map = {};
-        this.states = {};
-        this.events = [];
-        this.resources = [];
-        this.targets = [];
-        this.last_date = data['query_starttime'];
-        this.asn_distributions = [];
-        this.asn_set = [];
-        this.cp_set = [];
-        this.asn_freqs = {};
-        this.asn_sumfreqs = {};
-        this.asn_avgfreqs = {};
-        this.asn_varfreqs = {};
-        this.asn_stdev = {};
+        //ripe_response_parse();
+        //main function to call for parsing
+        this.ripe_response_parse = function (json, start, end) {
+            //on local load from data.json
+            //json = require('./data.json');
+            //global variables init
+            var data = json['data'];
+            this.cp_map = {};
+            this.states = {};
+            this.events = [];
+            this.resources = [];
+            this.targets = [];
+            this.last_date = data['query_starttime'];
+            this.asn_distributions = [];
+            this.asn_set = [];
+            this.cp_set = [];
+            this.asn_freqs = {};
+            this.asn_sumfreqs = {};
+            this.asn_avgfreqs = {};
+            this.asn_varfreqs = {};
+            this.asn_stdev = {};
 
-        //fetch nodes and cp
-        this.fetchNodes(data);
-        this.fetchCP(data);
+            //fetch nodes and cp
+            this.fetchNodes(data);
+            this.fetchCP(data);
 
-        //date
-        this.query_starttime = data['query_starttime'];
-        this.query_endtime = data['query_endtime'];
+            //date
+            this.query_starttime = data['query_starttime'];
+            this.query_endtime = data['query_endtime'];
 
-        //estraggo i targets
-        for(var t in data['targets']){
-            this.targets.push(data['targets'][t]['prefix']);
-        }
-        this.resources = data.sources;
-        //inizializza la mappa in base al numero di targets
-        for(var t in this.targets){
-            this.cp_map[this.targets[t]] = {};
-            this.states[this.targets[t]] = [];
-        }
-        //stato iniziale
-        if(data.initial_state.length>0)
-            this.loadFirstState(json);
-        //eventi
-        if(data.events.length>0)
-            this.loadUpdates(json);
-        //zero fill
-        this.zeroFilling(start,end);
-        //for debugging
-        var log_on = false;
-        var print_on = false;
-        if(log_on) {
-            console.log(this.states);
-            console.log(this.events);
-            console.log(this.resources);
-            console.log(this.targets);
-            console.log(this.cp_set);
-        }
-        if(print_on){
-            this.print_json_to_file(this.states,'states.json');
-            this.print_json_to_file(this.events,'events.json');
-            this.print_json_to_file(this.targets,'targets.json');
-            this.print_json_to_file(this.resources,'resources.json');
-            this.print_json_to_file(this.cp_set,'map.json');
-        }
-        return {
-            query_id:json['query_id'],
-            states:this.states,			//array of values % by cp
-            events:this.events,			//array of timestamps
-            targets:this.targets,		//array of targets
-            resources:this.resources,	//array of CP by asn
-            cp_set: this.cp_set,		//array of cp
-            asn_set: this.asn_set,
-
-            asn_freqs:this.asn_freqs,
-            asn_sumfreqs:this.asn_sumfreqs,
-            asn_avgfreqs:this.asn_avgfreqs,
-            asn_varfreqs:this.asn_varfreqs,
-            asn_stdev:this.asn_stdev,
-            asn_distributions:this.asn_distributions,
-
-            query_starttime:this.query_starttime,
-            query_endtime:this.query_endtime,
-            fake_head:this.fake_head,
-            fake_tail:this.fake_tail,
-
-            known_asn: this.known_asn,
-            known_cp: this.known_cp
-        }
-    };
-
-    //first load function, load the initial state and the first events
-    RipeDataParser.prototype.loadFirstState = function(json) {
-        var data = json['data'];
-        this.makeIntialStateMapping(data);
-        this.snapshotOfState();
-        //data_check();
-    };
-
-    //only load new events on the already existing configuration
-    RipeDataParser.prototype.loadUpdates = function(json) {
-        var data = json['data'];
-        this.fetchUpdates(data);
-        this.snapshotOfState();
-        //data_check();
-    };
-
-    //initialize the cp_map
-    RipeDataParser.prototype.makeIntialStateMapping = function(data) {
-        var initial_state = data['initial_state'];
-        for(var i in initial_state){
-            var state = initial_state[i];
-            var path = state['path'];
-            var cp_id = state['source_id'];
-            if(this.cp_set.indexOf(cp_id) == -1)
-                this.cp_set.push(cp_id);
-            this.cp_map[state['target_prefix']][cp_id] = path;
-        }
-    };
-
-    //fetch updates event using timestamp to cumultate the effects
-    //everytime the last_date is different from the current event timestamp a new "state" as a snapshot is taken
-    //from the cp_map
-    RipeDataParser.prototype.fetchUpdates = function(data) {
-        var updates = data['events'];
-        this.last_date = updates[0]['timestamp'];
-        for(var i in updates) {
-            var e = updates[i];
-            var e_attrs = e['attrs'];
-            var e_s_id = e_attrs['source_id'];
-            var e_target = e_attrs['target_prefix'];
-            var e_type = e['type'];
-            //if its a new resource add to cp_set
-            if(this.cp_set.indexOf(e_s_id) == -1)
-                this.cp_set.push(e_s_id);
-            //make snapshot if timestamp is different
-            if(this.last_date != e['timestamp']){
-                this.snapshotOfState();
-                this.last_date = e['timestamp'];
+            //estraggo i targets
+            for (var t in data['targets']) {
+                this.targets.push(data['targets'][t]['prefix']);
             }
-            switch(e_type){
-                case 'A':
-                    this.cp_map[e_target][e_s_id] = e_attrs['path'];
-                    break;
-                case 'W':
-                    this.cp_map[e_target][e_s_id] = "";
-                    break;
-                default:
-                    break;
+            this.resources = data.sources;
+            //inizializza la mappa in base al numero di targets
+            for (var t in this.targets) {
+                this.cp_map[this.targets[t]] = {};
+                this.states[this.targets[t]] = [];
             }
-        }
-    };
+            //stato iniziale
+            if (data.initial_state.length > 0)
+                this.loadFirstState(json);
+            //eventi
+            if (data.events.length > 0)
+                this.loadUpdates(json);
+            //zero fill
+            this.zeroFilling(start, end);
+            //for debugging
+            var log_on = false;
+            var print_on = false;
+            if (log_on) {
+                console.log(this.states);
+                console.log(this.events);
+                console.log(this.resources);
+                console.log(this.targets);
+                console.log(this.cp_set);
+            }
+            if (print_on) {
+                this.print_json_to_file(this.states, 'states.json');
+                this.print_json_to_file(this.events, 'events.json');
+                this.print_json_to_file(this.targets, 'targets.json');
+                this.print_json_to_file(this.resources, 'resources.json');
+                this.print_json_to_file(this.cp_set, 'map.json');
+            }
+            return {
+                query_id: json['query_id'],
+                states: this.states,			//array of values % by cp
+                events: this.events,			//array of timestamps
+                targets: this.targets,		//array of targets
+                resources: this.resources,	//array of CP by asn
+                cp_set: this.cp_set,		//array of cp
+                asn_set: this.asn_set,
 
-    //take a snapshot of the cp_map
-    //cumulate the single CP announcement into ASN view
-    RipeDataParser.prototype.snapshotOfState = function() {
-        for(var t in this.targets)
-            this.states[this.targets[t]].push(JSON.parse(JSON.stringify(this.cp_map[this.targets[t]])));
-        this.events.push(this.last_date);
-    };
+                asn_freqs: this.asn_freqs,
+                asn_sumfreqs: this.asn_sumfreqs,
+                asn_avgfreqs: this.asn_avgfreqs,
+                asn_varfreqs: this.asn_varfreqs,
+                asn_stdev: this.asn_stdev,
+                asn_distributions: this.asn_distributions,
 
-    //zero fill the cps in every moment
-    RipeDataParser.prototype.zeroFilling = function(start,end) {
-        for(var t in this.targets){
-            var tgt = this.targets[t];
-            for(var i in this.states[tgt]){
-                var e = this.states[tgt][i];
-                for(var r in this.cp_set){
-                    var cp = this.cp_set[r];
-                    if(!e[cp])
-                        e[cp] = [];
+                query_starttime: this.query_starttime,
+                query_endtime: this.query_endtime,
+                fake_head: this.fake_head,
+                fake_tail: this.fake_tail,
+
+                known_asn: this.known_asn,
+                known_cp: this.known_cp
+            }
+        };
+
+        //first load function, load the initial state and the first events
+        this.loadFirstState = function (json) {
+            var data = json['data'];
+            this.makeIntialStateMapping(data);
+            this.snapshotOfState();
+            //data_check();
+        };
+
+        //only load new events on the already existing configuration
+        this.loadUpdates = function (json) {
+            var data = json['data'];
+            this.fetchUpdates(data);
+            this.snapshotOfState();
+            //data_check();
+        };
+
+        //initialize the cp_map
+        this.makeIntialStateMapping = function (data) {
+            var initial_state = data['initial_state'];
+            for (var i in initial_state) {
+                var state = initial_state[i];
+                var path = state['path'];
+                var cp_id = state['source_id'];
+                if (this.cp_set.indexOf(cp_id) == -1)
+                    this.cp_set.push(cp_id);
+                this.cp_map[state['target_prefix']][cp_id] = path;
+            }
+        };
+
+        //fetch updates event using timestamp to cumultate the effects
+        //everytime the last_date is different from the current event timestamp a new "state" as a snapshot is taken
+        //from the cp_map
+        this.fetchUpdates = function (data) {
+            var updates = data['events'];
+            this.last_date = updates[0]['timestamp'];
+            for (var i in updates) {
+                var e = updates[i];
+                var e_attrs = e['attrs'];
+                var e_s_id = e_attrs['source_id'];
+                var e_target = e_attrs['target_prefix'];
+                var e_type = e['type'];
+                //if its a new resource add to cp_set
+                if (this.cp_set.indexOf(e_s_id) == -1)
+                    this.cp_set.push(e_s_id);
+                //make snapshot if timestamp is different
+                if (this.last_date != e['timestamp']) {
+                    this.snapshotOfState();
+                    this.last_date = e['timestamp'];
+                }
+                switch (e_type) {
+                    case 'A':
+                        this.cp_map[e_target][e_s_id] = e_attrs['path'];
+                        break;
+                    case 'W':
+                        this.cp_map[e_target][e_s_id] = "";
+                        break;
+                    default:
+                        break;
                 }
             }
-        }
+        };
 
-        //PATCH EVENT BEFORE AND AFTER
-        if(moment(this.events[0]).isAfter(moment(start))){
-            console.log("ADDED HEAD FAKE EVENT");
-            this.fake_head = true;
-            this.query_starttime = start;
-        }
-        else
-            this.fake_head = false;
-        if(moment(this.events[this.events.length-1]).isBefore(moment(end))){
-            console.log("ADDED TAIL FAKE EVENT");
-            this.fake_tail = true;
-            this.query_endtime = end;
-        }
-        else
-            this.fake_tail = false;
-        //}
-    };
+        //take a snapshot of the cp_map
+        //cumulate the single CP announcement into ASN view
+        this.snapshotOfState = function () {
+            for (var t in this.targets)
+                this.states[this.targets[t]].push(JSON.parse(JSON.stringify(this.cp_map[this.targets[t]])));
+            this.events.push(this.last_date);
+        };
 
-    //object of cp and an array of states for any of them
-    // MAP OF CP AND THEIR ASN TRAVERSED
-    RipeDataParser.prototype.states_cp = function(parsed,level,antiprepending){
-        this.states_by_cp = {};
-        //init
-        for(var r in parsed.cp_set)
-            this.states_by_cp[parsed.cp_set[r]] = [];
-        //popolate
-        for(var t in parsed.targets){
-            var tgt = parsed.targets[t];
-            var states = parsed.states[tgt];
-            for(var s in states){
-                var state = states[s];
-                for(var r in state){
-                    var cp = state[r];
-                    if(antiprepending)
-                        cp = myUtils.no_consecutive_repetition(cp);
-                    if(cp.length>level)
-                        this.states_by_cp[r].push(cp[cp.length-level-1]);
-                    else
-                        this.states_by_cp[r].push(null);
-                }
-            }
-        }
-        parsed.states_by_cp = this.states_by_cp;
-    };
-
-    //object of cp and their asn sorted for occurrences
-    //MAP OF CP AND ASN COMPOSITION (ORDERED SET OF ASN FOR THAT CP)
-    RipeDataParser.prototype.cp_composition = function(parsed){
-        this.cp_by_composition = {};
-        for(var r in parsed.cp_set) {
-            var cp = parsed.cp_set[r];
-            var asn_seq = parsed.states_by_cp[cp];
-            this.cp_by_composition[cp] = myUtils.sort_by_occurrences(asn_seq);
-        }
-        parsed.cp_by_composition = this.cp_by_composition;
-    }; 
-
-    //object of cp and their asn seqs changed
-    //MAP OF CP AND ASN TRAVERSED (SEQUENCE OF ASN TRAVERSED)
-    RipeDataParser.prototype.cp_seqs = function(parsed){
-        this.cp_by_seqs = {};
-        for(var r in parsed.cp_set) {
-            var cp = parsed.cp_set[r];
-            var asn_seq = parsed.states_by_cp[cp];
-            this.cp_by_seqs[cp] = myUtils.no_consecutive_repetition(asn_seq);
-        }
-        parsed.cp_by_seqs = this.cp_by_seqs;
-    };
-
-    //MAP OF ASN (AND EXCHANGES FOR OTHER ASN COUNTED)
-    RipeDataParser.prototype.asn_exchanges = function(parsed){
-        this.asn_by_exchanges = {}
-        for(var i in parsed.cp_set){
-            var as_list = parsed.cp_by_seqs[parsed.cp_set[i]];
-            if(as_list.length>1){
-                for(var a = 0; a<as_list.length-1; a++){
-                    var pre = as_list[a];
-                    var post = as_list[a+1];
-                    if(!this.asn_by_exchanges[pre])
-                        this.asn_by_exchanges[pre] = {};
-                    var counter = this.asn_by_exchanges[pre][post];
-                    if(!counter)
-                        counter = 0;
-                    counter++;
-                    this.asn_by_exchanges[pre][post] = counter;
-                }
-            }
-        }
-        parsed.asn_by_exchanges = this.asn_by_exchanges;
-    };
-
-    RipeDataParser.prototype.get_cp_shiftings = function(parsed){
-        this.cp_shiftings = {};
-        for(var t in parsed.targets){
-            this.cp_shiftings[parsed.targets[t]] = {};
-        }
-        for(var r in parsed.cp_set) {
-            this.cp_shiftings[parsed.cp_set[r]] = [];
-        }
-        for(var r in parsed.cp_set) {
-            var cp = parsed.cp_set[r];
-            for(var s in parsed.states){
-                var  val = parsed.states[s][cp];
-                this.cp_shiftings[cp].push(val);
-            }
-        }
-        parsed.cp_shiftings = this.cp_shiftings;
-    };
-
-    /* compute the frequency analysis */
-    RipeDataParser.prototype.computeAsnFrequencies = function(data){
-        //initialization
-        this.asn_freqs = {};
-        this.asn_sumfreqs = {};
-        this.asn_avgfreqs = {};
-        this.asn_varfreqs = {};
-        this.asn_stdev = {};
-        for(var a in this.asn_set)
-            this.asn_freqs[this.asn_set[a]] = [];
-        for(var i in data){
-            for(var a in this.asn_set){
-                this.asn_freqs[this.asn_set[a]].push(data[i][this.asn_set[a]]);
-            }
-        }
-        //compute cumulate, avg, variance and std_dev
-        for(var a in this.asn_freqs){
-            this.asn_sumfreqs[a] = myUtils.cumulate(this.asn_freqs[a]);
-            this.asn_avgfreqs[a] = myUtils.average(this.asn_freqs[a],this.asn_sumfreqs[a]);
-            this.asn_varfreqs[a] = myUtils.variance(this.asn_freqs[a],this.asn_avgfreqs[a]);
-            this.asn_stdev[a] = myUtils.std_dev(this.asn_freqs[a],this.asn_varfreqs[a]);
-        }
-    };
-
-    RipeDataParser.prototype.fetchNodes = function(data) {
-        for(var a in data.nodes){
-            var node = data.nodes[a];
-            var asn = node["as_number"];
-            var owner = node["owner"];
-            if(!this.known_asn[asn])
-                this.known_asn[asn] = owner;
-        }
-    };
-
-    RipeDataParser.prototype.fetchCP = function(data) {
-        for(var a in data.sources){
-            var node = data.sources[a];
-            var id = node["id"];
-            var ip = node["ip"];
-            var cp = node["cp"];
-            var as_number = node["as_number"];
-            var geo_of_as = this.known_asn[as_number];
-            if(geo_of_as){
-                var index = geo_of_as.lastIndexOf(",");
-                var geo = geo_of_as.substr(index+1).split("-")[0].trim();
-            }
-            if(geo){
-                this.known_cp[id] = {
-                    "ip":ip,
-                    "id":id,
-                    "cp":cp,
-                    "as_number":as_number,
-                    "geo":geo
-                }
-            }
-        }
-    };
-
-    //print out the object to a file
-    RipeDataParser.prototype.print_json_to_file = function(json, filename) {
-        var fs = require('fs');
-        fs.writeFile("./"+filename, JSON.stringify(json,null,4), function(err) {
-            if(err) {
-                return console.log(err);
-            }
-            console.log(filename+" file written");
-        });
-    };
-
-    /************************************************ CONVERSIONS ************************************************/
-
-    RipeDataParser.prototype.comune_converter = function(data, antiprepending, level, target_types) {
-        this.asn_distributions = [];
-        var include_ipv4 = target_types.indexOf(4)!= -1;
-        var include_ipv6 = target_types.indexOf(6)!= -1;
-
-        this.asn_set = [];
-        this.local_visibility = 0;
-        //initialize
-        for(var i in data.events)
-            this.asn_distributions.push({});
-        //counting
-        for(var t in data.targets) {
-            var tgt = data.targets[t];
-            if((include_ipv4 && this.validator.check_ipv4(tgt)) || (include_ipv6 && this.validator.check_ipv6(tgt))) {
-                for(var i in data.states[tgt]) {
-                    var state = data.states[tgt][i];
-                    var tot = 0;
-                    for(var e in state) {
-                        var path = state[e];
-                        if(antiprepending) {
-                            //antiprepending-da-spostare
-                            path = myUtils.no_consecutive_repetition(path);
-                        }
-                        if(path !== "" && path.length>(level)) {
-                            var asn = path[path.length-(level+1)];
-                            //update the asn list if wasnt discovered
-                            if(this.asn_set.indexOf(asn) == -1)
-                                this.asn_set.push(asn);
-                            //update counters
-                            var temp = this.asn_distributions[i][asn];
-                            if(!temp)
-                                temp = 0;
-                            this.asn_distributions[i][asn] = (temp+1);
-                            tot++;
-                        }
+        //zero fill the cps in every moment
+        this.zeroFilling = function (start, end) {
+            for (var t in this.targets) {
+                var tgt = this.targets[t];
+                for (var i in this.states[tgt]) {
+                    var e = this.states[tgt][i];
+                    for (var r in this.cp_set) {
+                        var cp = this.cp_set[r];
+                        if (!e[cp])
+                            e[cp] = [];
                     }
-                    this.asn_distributions[i]['tot_number'] = tot;
-                    if(tot>this.local_visibility)
-                        this.local_visibility = tot;
                 }
             }
-        }
-        //zero-filling
-        for(var i in this.asn_distributions)
-            for(var a in this.asn_set){
-                if(!this.asn_distributions[i][this.asn_set[a]])
-                    this.asn_distributions[i][this.asn_set[a]] = 0;
+
+            //PATCH EVENT BEFORE AND AFTER
+            if (moment(this.events[0]).isAfter(start)) {
+                console.log("ADDED HEAD FAKE EVENT");
+                this.fake_head = true;
+                this.query_starttime = start.format(env.dateConverter.ripestat_data_format);
             }
-        data.asn_distributions = this.asn_distributions;
-        this.computeAsnFrequencies(this.asn_distributions);
-        this.computeDifferenceVector(data);
-        this.computeDistanceVector(data);
-        this.get_cp_shiftings(data);
-        data.asn_freqs = this.asn_freqs;
-        data.asn_sumfreqs = this.asn_sumfreqs;
-        data.asn_avgfreqs = this.asn_avgfreqs;
-        data.asn_varfreqs = this.asn_varfreqs;
-        data.asn_stdev = this.asn_stdev;
-        data.query_starttime = this.query_starttime;
-        data.query_endtime = this.query_endtime;
-        data.local_visibility = this.local_visibility;
-    };
-
-    //convert the data to a TSV format for streamgraph
-    RipeDataParser.prototype.convert_to_streamgraph_tsv = function(data, antiprepending, level, target_types) {
-        this.comune_converter(data,antiprepending,level,target_types);
-
-        var real_states = data.asn_distributions.concat();
-        var real_events = data.events.concat();
-        var dummy_state = {};
-
-        if(data.fake_tail || data.fake_tail){
-            for(var d in this.asn_set){
-                dummy_state[this.asn_set[d]] = 0;
+            else
+                this.fake_head = false;
+            if (moment(this.events[this.events.length - 1]).isBefore(end)) {
+                console.log("ADDED TAIL FAKE EVENT");
+                this.fake_tail = true;
+                this.query_endtime = end.format(env.dateConverter.ripestat_data_format);
             }
-            dummy_state['tot_number'] = 0;
-        }
+            else
+                this.fake_tail = false;
+            //}
+        };
 
-        if(data.fake_head){
-            real_states = [dummy_state].concat(real_states);
-            real_events = [data.query_starttime].concat(real_events);
-            console.log(real_states)
-        }
+        //object of cp and an array of states for any of them
+        // MAP OF CP AND THEIR ASN TRAVERSED
+        this.states_cp = function (parsed, level, antiprepending) {
+            this.states_by_cp = {};
+            //init
+            for (var r in parsed.cp_set)
+                this.states_by_cp[parsed.cp_set[r]] = [];
+            //popolate
+            for (var t in parsed.targets) {
+                var tgt = parsed.targets[t];
+                var states = parsed.states[tgt];
+                for (var s in states) {
+                    var state = states[s];
+                    for (var r in state) {
+                        var cp = state[r];
+                        if (antiprepending)
+                            cp = myUtils.no_consecutive_repetition(cp);
+                        if (cp.length > level)
+                            this.states_by_cp[r].push(cp[cp.length - level - 1]);
+                        else
+                            this.states_by_cp[r].push(null);
+                    }
+                }
+            }
+            parsed.states_by_cp = this.states_by_cp;
+        };
 
-        if(data.fake_tail){
-            real_states = real_states.concat(real_states[real_states.length-1]);
-            real_events = real_events.concat(data.query_endtime);
-        }
+        //object of cp and their asn sorted for occurrences
+        //MAP OF CP AND ASN COMPOSITION (ORDERED SET OF ASN FOR THAT CP)
+        this.cp_composition = function (parsed) {
+            this.cp_by_composition = {};
+            for (var r in parsed.cp_set) {
+                var cp = parsed.cp_set[r];
+                var asn_seq = parsed.states_by_cp[cp];
+                this.cp_by_composition[cp] = myUtils.sort_by_occurrences(asn_seq);
+            }
+            parsed.cp_by_composition = this.cp_by_composition;
+        };
 
-        //parse to TSV
-        var converted_data = [];
-        //TSV header
-        var header = "date\ttot_number";
-        for(var i in this.asn_set)
-            header+="\t"+this.asn_set[i];
-        converted_data.push(header);
-        //TSV DATA
-        var last_values ="";
-        var length = real_events.length-1;
-        for(var i = 0; i<length; i++){
-            var date = real_events[i]+"\t";
-            var tot = real_states[i]['tot_number'];
-            var values = "";
-            for(var j in this.asn_set){
-                var value = real_states[i][this.asn_set[j]];
-                if(!value)
+        //object of cp and their asn seqs changed
+        //MAP OF CP AND ASN TRAVERSED (SEQUENCE OF ASN TRAVERSED)
+        this.cp_seqs = function (parsed) {
+            this.cp_by_seqs = {};
+            for (var r in parsed.cp_set) {
+                var cp = parsed.cp_set[r];
+                var asn_seq = parsed.states_by_cp[cp];
+                this.cp_by_seqs[cp] = myUtils.no_consecutive_repetition(asn_seq);
+            }
+            parsed.cp_by_seqs = this.cp_by_seqs;
+        };
+
+        //MAP OF ASN (AND EXCHANGES FOR OTHER ASN COUNTED)
+        this.asn_exchanges = function (parsed) {
+            this.asn_by_exchanges = {}
+            for (var i in parsed.cp_set) {
+                var as_list = parsed.cp_by_seqs[parsed.cp_set[i]];
+                if (as_list.length > 1) {
+                    for (var a = 0; a < as_list.length - 1; a++) {
+                        var pre = as_list[a];
+                        var post = as_list[a + 1];
+                        if (!this.asn_by_exchanges[pre])
+                            this.asn_by_exchanges[pre] = {};
+                        var counter = this.asn_by_exchanges[pre][post];
+                        if (!counter)
+                            counter = 0;
+                        counter++;
+                        this.asn_by_exchanges[pre][post] = counter;
+                    }
+                }
+            }
+            parsed.asn_by_exchanges = this.asn_by_exchanges;
+        };
+
+        this.get_cp_shiftings = function (parsed) {
+            this.cp_shiftings = {};
+            for (var t in parsed.targets) {
+                this.cp_shiftings[parsed.targets[t]] = {};
+            }
+            for (var r in parsed.cp_set) {
+                this.cp_shiftings[parsed.cp_set[r]] = [];
+            }
+            for (var r in parsed.cp_set) {
+                var cp = parsed.cp_set[r];
+                for (var s in parsed.states) {
+                    var val = parsed.states[s][cp];
+                    this.cp_shiftings[cp].push(val);
+                }
+            }
+            parsed.cp_shiftings = this.cp_shiftings;
+        };
+
+        /* compute the frequency analysis */
+        this.computeAsnFrequencies = function (data) {
+            //initialization
+            this.asn_freqs = {};
+            this.asn_sumfreqs = {};
+            this.asn_avgfreqs = {};
+            this.asn_varfreqs = {};
+            this.asn_stdev = {};
+            for (var a in this.asn_set)
+                this.asn_freqs[this.asn_set[a]] = [];
+            for (var i in data) {
+                for (var a in this.asn_set) {
+                    this.asn_freqs[this.asn_set[a]].push(data[i][this.asn_set[a]]);
+                }
+            }
+            //compute cumulate, avg, variance and std_dev
+            for (var a in this.asn_freqs) {
+                this.asn_sumfreqs[a] = myUtils.cumulate(this.asn_freqs[a]);
+                this.asn_avgfreqs[a] = myUtils.average(this.asn_freqs[a], this.asn_sumfreqs[a]);
+                this.asn_varfreqs[a] = myUtils.variance(this.asn_freqs[a], this.asn_avgfreqs[a]);
+                this.asn_stdev[a] = myUtils.std_dev(this.asn_freqs[a], this.asn_varfreqs[a]);
+            }
+        };
+
+        this.fetchNodes = function (data) {
+            for (var a in data.nodes) {
+                var node = data.nodes[a];
+                var asn = node["as_number"];
+                var owner = node["owner"];
+                if (!this.known_asn[asn])
+                    this.known_asn[asn] = owner;
+            }
+        };
+
+        this.fetchCP = function (data) {
+            for (var a in data.sources) {
+                var node = data.sources[a];
+                var id = node["id"];
+                var ip = node["ip"];
+                var cp = node["cp"];
+                var as_number = node["as_number"];
+                var geo_of_as = this.known_asn[as_number];
+                if (geo_of_as) {
+                    var index = geo_of_as.lastIndexOf(",");
+                    var geo = geo_of_as.substr(index + 1).split("-")[0].trim();
+                }
+                if (geo) {
+                    this.known_cp[id] = {
+                        "ip": ip,
+                        "id": id,
+                        "cp": cp,
+                        "as_number": as_number,
+                        "geo": geo
+                    }
+                }
+            }
+        };
+
+        //print out the object to a file
+        this.print_json_to_file = function (json, filename) {
+            var fs = require('fs');
+            fs.writeFile("./" + filename, JSON.stringify(json, null, 4), function (err) {
+                if (err) {
+                    return console.log(err);
+                }
+                console.log(filename + " file written");
+            });
+        };
+
+        /************************************************ CONVERSIONS ************************************************/
+
+        this.comune_converter = function (data, antiprepending, level, target_types) {
+            this.asn_distributions = [];
+            var include_ipv4 = target_types.indexOf(4) != -1;
+            var include_ipv6 = target_types.indexOf(6) != -1;
+
+            this.asn_set = [];
+            this.local_visibility = 0;
+            //initialize
+            for (var i in data.events)
+                this.asn_distributions.push({});
+            //counting
+            for (var t in data.targets) {
+                var tgt = data.targets[t];
+                if ((include_ipv4 && this.validator.check_ipv4(tgt)) || (include_ipv6 && this.validator.check_ipv6(tgt))) {
+                    for (var i in data.states[tgt]) {
+                        var state = data.states[tgt][i];
+                        var tot = 0;
+                        for (var e in state) {
+                            var path = state[e];
+                            if (antiprepending) {
+                                //antiprepending-da-spostare
+                                path = myUtils.no_consecutive_repetition(path);
+                            }
+                            if (path !== "" && path.length > (level)) {
+                                var asn = path[path.length - (level + 1)];
+                                //update the asn list if wasnt discovered
+                                if (this.asn_set.indexOf(asn) == -1)
+                                    this.asn_set.push(asn);
+                                //update counters
+                                var temp = this.asn_distributions[i][asn];
+                                if (!temp)
+                                    temp = 0;
+                                this.asn_distributions[i][asn] = (temp + 1);
+                                tot++;
+                            }
+                        }
+                        this.asn_distributions[i]['tot_number'] = tot;
+                        if (tot > this.local_visibility)
+                            this.local_visibility = tot;
+                    }
+                }
+            }
+            //zero-filling
+            for (var i in this.asn_distributions)
+                for (var a in this.asn_set) {
+                    if (!this.asn_distributions[i][this.asn_set[a]])
+                        this.asn_distributions[i][this.asn_set[a]] = 0;
+                }
+            data.asn_distributions = this.asn_distributions;
+            this.computeAsnFrequencies(this.asn_distributions);
+            this.computeDifferenceVector(data);
+            this.computeDistanceVector(data);
+            this.get_cp_shiftings(data);
+            data.asn_freqs = this.asn_freqs;
+            data.asn_sumfreqs = this.asn_sumfreqs;
+            data.asn_avgfreqs = this.asn_avgfreqs;
+            data.asn_varfreqs = this.asn_varfreqs;
+            data.asn_stdev = this.asn_stdev;
+            data.query_starttime = this.query_starttime;
+            data.query_endtime = this.query_endtime;
+            data.local_visibility = this.local_visibility;
+        };
+
+        //convert the data to a TSV format for streamgraph
+        this.convert_to_streamgraph_tsv = function (data, antiprepending, level, target_types) {
+            this.comune_converter(data, antiprepending, level, target_types);
+
+            var real_states = data.asn_distributions.concat();
+            var real_events = data.events.concat();
+            var dummy_state = {};
+
+            if (data.fake_tail || data.fake_tail) {
+                for (var d in this.asn_set) {
+                    dummy_state[this.asn_set[d]] = 0;
+                }
+                dummy_state['tot_number'] = 0;
+            }
+
+            if (data.fake_head) {
+                real_states = [dummy_state].concat(real_states);
+                real_events = [data.query_starttime].concat(real_events);
+                console.log(real_states)
+            }
+
+            if (data.fake_tail) {
+                real_states = real_states.concat(real_states[real_states.length - 1]);
+                real_events = real_events.concat(data.query_endtime);
+            }
+
+            //parse to TSV
+            var converted_data = [];
+            //TSV header
+            var header = "date\ttot_number";
+            for (var i in this.asn_set)
+                header += "\t" + this.asn_set[i];
+            converted_data.push(header);
+            //TSV DATA
+            var last_values = "";
+            var length = real_events.length - 1;
+            for (var i = 0; i < length; i++) {
+                var date = real_events[i] + "\t";
+                var tot = real_states[i]['tot_number'];
+                var values = "";
+                for (var j in this.asn_set) {
+                    var value = real_states[i][this.asn_set[j]];
+                    if (!value)
+                        value = 0;
+                    values += "\t" + value;
+                }
+                values = tot + values;
+                line = date + values;
+
+                //PATCH FOR STREAMGRAPH AVOID INTERPOLATION
+                if (last_values != "" && last_values != values && i < data.events.length - 2) {
+                    converted_data.push(date + last_values);
+                }
+                converted_data.push(line);
+                last_values = values;
+            }
+
+            var last_date = real_events[length] + "\t";
+            var last_tot = real_states[length]['tot_number'];
+            var last_values = "";
+            for (var j in this.asn_set) {
+                var value = real_states[length][this.asn_set[j]];
+                if (!value)
                     value = 0;
-                values+="\t"+value;
+                last_values += "\t" + value;
             }
-            values = tot+values;
-            line = date+values;
+            last_values = last_tot + last_values;
+            converted_data.push(date + last_values);
+            converted_data.push(last_date + last_values);
 
-            //PATCH FOR STREAMGRAPH AVOID INTERPOLATION
-            if(last_values != "" && last_values != values && i<data.events.length-2){
-                converted_data.push(date+last_values);
+            var converted = converted_data.join("\n");
+            data.asn_set = this.asn_set;
+            return converted;
+        };
+
+        //convert the data to a TSV format for heatmap
+        this.convert_to_heatmap_tsv = function (data, antiprepending, level, target_types) {
+            this.comune_converter(data, antiprepending, level, target_types);
+
+            var real_states = {};
+            var real_events = data.events.concat();
+            var dummy_state = {};
+
+            if (data.fake_tail || data.fake_tail) {
+                for (var d in this.cp_set)
+                    dummy_state[this.cp_set[d]] = [];
             }
-            converted_data.push(line);
-            last_values = values;
-        }
 
-        var last_date = real_events[length]+"\t";
-        var last_tot = real_states[length]['tot_number'];
-        var last_values ="";
-        for(var j in this.asn_set){
-            var value = real_states[length][this.asn_set[j]];
-            if(!value)
-                value = 0;
-            last_values+="\t"+value;
-        }
-        last_values = last_tot+last_values;
-        converted_data.push(date+last_values);
-        converted_data.push(last_date+last_values);
-
-        var converted = converted_data.join("\n");
-        data.asn_set = this.asn_set;
-        return converted;
-    };
-
-    //convert the data to a TSV format for heatmap
-    RipeDataParser.prototype.convert_to_heatmap_tsv = function(data,antiprepending, level, target_types) {
-        this.comune_converter(data,antiprepending,level,target_types);
-
-        var real_states = {};
-        var real_events = data.events.concat();
-        var dummy_state = {};
-
-        if(data.fake_tail || data.fake_tail){
-            for(var d in this.cp_set)
-                dummy_state[this.cp_set[d]] = [];
-        }
-
-        for(var t in data.targets) {
-            var tgt = data.targets[t];
-            real_states[tgt] = data.states[tgt].concat();
-        }
-
-        if(data.fake_head){
-            for(var t in data.targets) {
+            for (var t in data.targets) {
                 var tgt = data.targets[t];
-                real_states[tgt] = [dummy_state].concat(real_states[tgt]);
+                real_states[tgt] = data.states[tgt].concat();
             }
-            real_events = [data.query_starttime].concat(real_events);
-        }
 
-        if(data.fake_tail){
-            for(var t in data.targets) {
+            if (data.fake_head) {
+                for (var t in data.targets) {
+                    var tgt = data.targets[t];
+                    real_states[tgt] = [dummy_state].concat(real_states[tgt]);
+                }
+                real_events = [data.query_starttime].concat(real_events);
+            }
+
+            if (data.fake_tail) {
+                for (var t in data.targets) {
+                    var tgt = data.targets[t];
+                    //real_states[tgt]=real_states[tgt].concat(real_states[tgt][real_states[tgt].length-1]);
+                    real_states[tgt] = real_states[tgt].concat(dummy_state);
+                }
+                real_events = real_events.concat(data.query_endtime);
+            }
+
+            console.log(real_events)
+            var converted_data = [];
+            var header = "date\tcp\tasn_path";
+            var cp_set = data.cp_set.sort();
+            var include_ipv4 = target_types.indexOf(4) != -1;
+            var include_ipv6 = target_types.indexOf(6) != -1;
+            converted_data.push(header);
+            for (var t in data.targets) {
                 var tgt = data.targets[t];
-                //real_states[tgt]=real_states[tgt].concat(real_states[tgt][real_states[tgt].length-1]);
-                real_states[tgt] = real_states[tgt].concat(dummy_state);
-            }
-            real_events = real_events.concat(data.query_endtime);
-        }
-
-        console.log(real_events)
-        var converted_data = [];
-        var header = "date\tcp\tasn_path";
-        var cp_set = data.cp_set.sort();
-        var include_ipv4 = target_types.indexOf(4)!= -1;
-        var include_ipv6 = target_types.indexOf(6)!= -1;
-        converted_data.push(header);
-        for(var t in data.targets){
-            var tgt = data.targets[t];
-            if((include_ipv4 && this.validator.check_ipv4(tgt)) || (include_ipv6 && this.validator.check_ipv6(tgt))) {
-                for(var i in real_states[tgt]){
-                    var state = real_states[tgt][i];
-                    for(var j in cp_set){
-                        var path = state[cp_set[j]];
-                        if(!Array.isArray(path))
-                            path = [];
-                        var line = real_events[i];
-                        line+="\t"+cp_set[j]+"\t"+JSON.stringify(path);
-                        converted_data.push(line);
+                if ((include_ipv4 && this.validator.check_ipv4(tgt)) || (include_ipv6 && this.validator.check_ipv6(tgt))) {
+                    for (var i in real_states[tgt]) {
+                        var state = real_states[tgt][i];
+                        for (var j in cp_set) {
+                            var path = state[cp_set[j]];
+                            if (!Array.isArray(path))
+                                path = [];
+                            var line = real_events[i];
+                            line += "\t" + cp_set[j] + "\t" + JSON.stringify(path);
+                            converted_data.push(line);
+                        }
                     }
                 }
             }
-        }
-        var converted = converted_data.join("\n");
-        return converted;
-    };
+            var converted = converted_data.join("\n");
+            return converted;
+        };
 
-    /************************ OTHER ************************/
-    /**freq difference**/
-    /* compute the difference vector (N-1) length by each sample (column) */
-    RipeDataParser.prototype.computeDifferenceVector = function(current_parsed){
-        var counters = [];
-        for(var i = 0; i<current_parsed.events.length-1;i++)
-            counters[i] = 0;
-        for(var i = 0; i<counters.length; i++)
-        for(var k in current_parsed.asn_freqs) {
-            counters[i]+=Math.abs(current_parsed.asn_freqs[k][i]-current_parsed.asn_freqs[k][i+1]);
-        }
-        //counters è un array della differenza tra ogni campione considerando le frequenze
-        return counters;
-    };
+        /************************ OTHER ************************/
+        /**freq difference**/
+        /* compute the difference vector (N-1) length by each sample (column) */
+        this.computeDifferenceVector = function (current_parsed) {
+            var counters = [];
+            for (var i = 0; i < current_parsed.events.length - 1; i++)
+                counters[i] = 0;
+            for (var i = 0; i < counters.length; i++)
+                for (var k in current_parsed.asn_freqs) {
+                    counters[i] += Math.abs(current_parsed.asn_freqs[k][i] - current_parsed.asn_freqs[k][i + 1]);
+                }
+            //counters è un array della differenza tra ogni campione considerando le frequenze
+            return counters;
+        };
 
-    /**freq distance**/
-    /* compute the distance vector (N-1) length by each sample (column) */
-    RipeDataParser.prototype.computeDistanceVector = function(current_parsed){
-        var counters = [];
-        for(var i = 0; i<current_parsed.events.length-1;i++)
-            counters[i] = 0;
-        for(var i = 0; i<counters.length; i++)
-        for(var k in current_parsed.asn_freqs) {
-            counters[i]+=Math.sqrt(Math.abs(Math.pow(current_parsed.asn_freqs[k][i],2)-Math.pow(current_parsed.asn_freqs[k][i+1],2)));
-        }
-        //counters è un array delle distanza tra ogni campione considerando le frequenze
-        return counters;
+        /**freq distance**/
+        /* compute the distance vector (N-1) length by each sample (column) */
+        this.computeDistanceVector = function (current_parsed) {
+            var counters = [];
+            for (var i = 0; i < current_parsed.events.length - 1; i++)
+                counters[i] = 0;
+            for (var i = 0; i < counters.length; i++)
+                for (var k in current_parsed.asn_freqs) {
+                    counters[i] += Math.sqrt(Math.abs(Math.pow(current_parsed.asn_freqs[k][i], 2) - Math.pow(current_parsed.asn_freqs[k][i + 1], 2)));
+                }
+            //counters è un array delle distanza tra ogni campione considerando le frequenze
+            return counters;
+        };
     };
 
     return RipeDataParser;
@@ -4927,7 +4926,7 @@ define('bgpst.view.heuristics',[
 ], function(DateConverter, MetricsManager, myUtils, moment, GDBS){
 
 	var HeuristicsManager = function(env) {
-		this.DateConverter = new DateConverter();
+		this.dateConverter = new DateConverter();
 		this.MetricsManager = new MetricsManager();
 
 		this.StreamgraphHeuristics = {
@@ -5084,7 +5083,7 @@ define('bgpst.view.heuristics',[
 
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return best_ordering;
 	};
 
@@ -5109,7 +5108,7 @@ define('bgpst.view.heuristics',[
 
 		var ordering = this.stdDevBubbles(current_parsed,done);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return ordering;
 	};
 
@@ -5183,7 +5182,7 @@ define('bgpst.view.heuristics',[
 			done.push(best);
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return done;
 	};
 
@@ -5225,7 +5224,7 @@ define('bgpst.view.heuristics',[
 
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return best_ordering;
 	};
 
@@ -5267,7 +5266,7 @@ define('bgpst.view.heuristics',[
 
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return best_ordering;
 	};
 
@@ -5293,7 +5292,7 @@ define('bgpst.view.heuristics',[
 			return o[0];
 		});
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return values;
 	};
 
@@ -5319,7 +5318,7 @@ define('bgpst.view.heuristics',[
 			return o[0];
 		});
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return values;
 	};
 
@@ -5343,7 +5342,7 @@ define('bgpst.view.heuristics',[
 		}
 		var values = new_order.map(function(o){return o[0] });
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return values;
 	};
 
@@ -5367,7 +5366,7 @@ define('bgpst.view.heuristics',[
 		}
 		var values = new_order.map(function(o){return o[0]});
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return values;
 	};
 
@@ -5422,7 +5421,7 @@ define('bgpst.view.heuristics',[
 		ordering = this.exchanges_plus_sd_greedy_block(current_parsed, bind_structure, non_exchange_as);
 		ordering = ordering.filter(function(e){return e != null;});
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return ordering;
 	};
 
@@ -5539,7 +5538,7 @@ define('bgpst.view.heuristics',[
 		console.log("bubble phase");
 		order = this.wiggleBubblesPhase(current_parsed,order, calc_type);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -5604,7 +5603,7 @@ define('bgpst.view.heuristics',[
 		console.log("bubble phase");
 		order = this.disconnectionsBubblesPhase(current_parsed,order);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -5649,7 +5648,7 @@ define('bgpst.view.heuristics',[
 			}
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return result;
 	};
 
@@ -5694,7 +5693,7 @@ define('bgpst.view.heuristics',[
 			}
 		}
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return result;
 	};
 
@@ -5760,7 +5759,7 @@ define('bgpst.view.heuristics',[
 		var asn_ordering = this.getSortedASByExchanges(current_parsed)
 		var order = this.sortCPByASOrdering_level(current_parsed,current_parsed.asn_set);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -5769,7 +5768,7 @@ define('bgpst.view.heuristics',[
 		var asn_ordering = this.getSortedASByExchanges(current_parsed)
 		var order = this.sortCPByASOrdering_level_var(current_parsed,current_parsed.asn_set);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -5778,7 +5777,7 @@ define('bgpst.view.heuristics',[
 		var asn_ordering = this.asnStdDevByPointMinimizationGreedy(current_parsed)
 		var order = this.sortCPByASOrdering_level_var(current_parsed,current_parsed.asn_set);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -5786,7 +5785,7 @@ define('bgpst.view.heuristics',[
 		var start = moment().valueOf();
 		var order = this.sortCPByGeoOrder(current_parsed);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -5794,7 +5793,7 @@ define('bgpst.view.heuristics',[
 		var start = moment().valueOf();
 		var order = this.sortCPByAsnOrder(current_parsed);
 		var end = moment().valueOf();
-		console.log("TIME_EXECUTED "+this.DateConverter.executionTime(start,end));
+		console.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
 		return order;
 	};
 
@@ -5814,51 +5813,26 @@ define('bgpst.view.broker',[
 
     var RipeDataBroker = function(env) {
         console.log("=== RipeBroker Starting");
-
-        this.parser = new RipeDataParser();
-        this.DateConverter = new DateConverter();
-        this.HeuristicsManager = new HeuristicsManager(env);
+        var $this = this;
+        this.parser = new RipeDataParser(env);
+        this.dateConverter = new DateConverter();
+        env.dateConverter = this.dateConverter;
+        this.heuristicsManager = new HeuristicsManager(env);
         this.ipv6_peerings = 0;
         this.ipv4_peerings = 0;
         console.log("=== RipeBroker Ready");
 
-        //format GET url for ripestat query
-        this.requestBuilder = function(start_d,start_t,end_d,end_t,targets) {
-            this.current_starttime = this.DateConverter.formatRipeDateTime(this.DateConverter.parseInterfaceDate(start_d), this.DateConverter.parseInterfaceTime(start_t));
-            this.current_endtime = this.DateConverter.formatRipeDateTime(this.DateConverter.parseInterfaceDate(end_d), this.DateConverter.parseInterfaceTime(end_t));
-            this.current_targets = "resource="+targets;
-            var starttime = "&starttime="+start_ts;
-            var endtime = "&endtime="+end_ts;
-            var get_url = base_url+this.current_targets+starttime+endtime;
-            return get_url;
-        };
-
-        //format GET url for ripestat query
-        this.requestBuilderData = function(start_d,start_t,end_d,end_t,targets) {
-            this.current_starttime = this.DateConverter.formatRipeDateTime(start_d,start_t);
-            this.current_endtime = this.DateConverter.formatRipeDateTime(end_d,end_t);
-            this.current_targets = targets;
-        };
 
         //do the ajax get
-        this.getData = function(start_d, end_d, targets) {
-            var $this = this;
-            if(start_d != null)
-                this.current_starttime = start_d;
-            if(end_d != null)
-                this.current_endtime = end_d;
-            if(targets != null)
-                this.current_targets = targets;
-
-            console.log(this.current_targets);
+        this.getData = function() {
             var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
+
             $.ajax({
                 url: url_ris_peer_count,
                 dataType: "json",
-                //unix_timestamps: true,
                 data : {
-                    starttime: $this.DateConverter.formatRipe(moment(this.current_starttime).subtract(1,"months")),
-                    endtime: $this.DateConverter.formatRipe(moment(this.current_endtime).add(1,"months"))
+                    starttime: env.queryParams.startDate.unix(),
+                    endtime: env.queryParams.stopDate.unix()
                 },
                 success: function(data){
                     console.log("=== RipeBroker Success! Peer count loaded");
@@ -5866,12 +5840,11 @@ define('bgpst.view.broker',[
                     try {
                         $this.ipv4_peerings = myUtils.max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
                         $this.ipv6_peerings = myUtils.max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
-                        if($this.ipv6_peerings == 0 && targets.split(",").some(function(e){return env.guiManager.validator.check_ipv6(e)}))
+                        if($this.ipv6_peerings == 0 && env.queryParams.targets.some(function(e){return env.guiManager.validator.check_ipv6(e)}))
                             env.guiManager.global_visibility = false;
-                        if($this.ipv4_peerings == 0 && targets.split(",").some(function(e){return env.guiManager.validator.check_ipv4(e)}))
+                        if($this.ipv4_peerings == 0 && env.queryParams.targets.some(function(e){return env.guiManager.validator.check_ipv4(e)}))
                             env.guiManager.global_visibility = false;
-                    }
-                    catch(err) {
+                    } catch(err) {
                         console.log("=== RipeBroker Warning: empty peerings size");
                         $this.ipv6_peerings = 0;
                         $this.ipv4_peerings = 0;
@@ -5888,22 +5861,20 @@ define('bgpst.view.broker',[
 
         this.getBGPData = function() {
             var url_bgplay = "https://stat.ripe.net/data/bgplay/data.json";
-            var $this = this;
             $.ajax({
                 url: url_bgplay,
                 dataType: "json",
-                unix_timestamps: true,
                 data : {
-                    resource: this.current_targets,
-                    starttime: this.current_starttime,
-                    endtime: this.current_endtime
+                    unix_timestamps: true,
+                    resource: env.queryParams.targets.join(","),
+                    starttime: env.queryParams.startDate.unix(),
+                    endtime: env.queryParams.stopDate.unix()
                 },
                 success: function(data){
                     console.log("=== RipeBroker Success! Data loaded from:"+url_bgplay);
                     console.log(data);
-                    env.guiManager.changeLoaderText("Parsing Obtained Data...");
                     try {
-                        $this.current_parsed = $this.parser.ripe_response_parse(data, $this.current_starttime, $this.current_endtime);
+                        $this.current_parsed = $this.parser.ripe_response_parse(data, env.queryParams.startDate, env.queryParams.stopDate);
                         if(env.guiManager.gather_information){
                             console.log("=== RipeBroker Starting gathering CP Info");
                             env.guiManager.rrc_info_done=false;
@@ -5911,7 +5882,7 @@ define('bgpst.view.broker',[
                                 $this.getCPInfo($this.current_parsed.resources,0)
                             },0);
                         }
-                        $this.current_targets = data.data.targets.map(function (e) {return e['prefix'].replace(/"/g,'');}).join(",");
+                        env.queryParams.targets = data.data.targets.map(function (e) {return e['prefix'].replace(/"/g,'');}).join(",");
                         $this.loadCurrentState(true, env.guiManager.drawer.events_range, true);
 
                         if(env.guiManager.gather_information){
@@ -5932,11 +5903,9 @@ define('bgpst.view.broker',[
                     }
                     finally {
                         env.guiManager.draw_functions_btn_enabler();
-                        env.guiManager.toggleLoader();
                     }
                 },
                 error: function(jqXHR, exception){
-                    env.guiManager.changeLoaderText("Uops, something went wrong");
                     switch(jqXHR.status){
                         case 500:
                             alert("Server error");
@@ -5948,22 +5917,19 @@ define('bgpst.view.broker',[
                             alert("Something went wrong");
                             break;
                     }
-                    env.guiManager.toggleLoader();
                 }
             });
-            env.guiManager.changeLoaderText("Waiting for RIPEStat...");
-        }
+        };
 
 
         this.CPInfoCallBack = function(res) {
-            var url_cp = "https://stat.ripe.net/data/geoloc/data.json?resource="+res.ip;
-            var RipeDataBroker = this;
+            var url_cp = "https://stat.ripe.net/data/geoloc/data.json?resource=" + res.ip;
             $.ajax({
                 url: url_cp,
                 dataType: "json",
                 success: function(data){
                     res["geo"] = data.data.locations[0].country;
-                    RipeDataBroker.current_parsed.known_cp[res.id] = res;
+                    $this.current_parsed.known_cp[res.id] = res;
                 },
                 error: function(jqXHR, exception){
                     alert("failed CP lookup for "+res);
@@ -5987,13 +5953,12 @@ define('bgpst.view.broker',[
         };
 
         this.ASNInfoCallBack = function(res) {
-            var url_asn = "https://stat.ripe.net/data/as-overview/data.json?resource=AS"+res;
-            var RipeDataBroker = this;
+            var url_asn = "https://stat.ripe.net/data/as-overview/data.json?resource=AS" + res;
             $.ajax({
                 url: url_asn,
                 dataType: "json",
                 success: function(data){
-                    RipeDataBroker.current_parsed.known_asn[res] = data.data.holder;
+                    $this.current_parsed.known_asn[res] = data.data.holder;
                 },
                 error: function(jqXHR, exception){
                     alert("failed ASN lookup for "+res);
@@ -6020,10 +5985,8 @@ define('bgpst.view.broker',[
         };
 
         this.loadCurrentState = function(store, events_range, redraw_minimap) {
-            var $this = this;
-            env.guiManager.changeLoaderText("Drawing the chart!");
             env.guiManager.ip_version_checkbox_enabler();
-            env.guiManager.restoreQuery(this.current_starttime, this.current_endtime, this.current_targets);
+            env.guiManager.restoreQuery();
             var ordering;
             if(env.guiManager.gather_information){
                 console.log("=== RipeBroker Starting gathering CP Info");
@@ -6042,6 +6005,7 @@ define('bgpst.view.broker',[
                 },0);
             }
             /*COMMON*/
+
             this.current_asn_tsv = this.parser.convert_to_streamgraph_tsv(this.current_parsed, env.guiManager.prepending_prevention, env.guiManager.asn_level, env.guiManager.ip_version);
             this.parser.states_cp(this.current_parsed,env.guiManager.asn_level,env.guiManager.prepending_prevention);
             this.parser.cp_composition(this.current_parsed);
@@ -6066,13 +6030,27 @@ define('bgpst.view.broker',[
             //STREAM
             if(env.guiManager.graph_type == "stream") {
                 //ORDERING
-                ordering = this.HeuristicsManager.getCurrentOrdering(this.current_parsed, env.guiManager.graph_type);
-                if(!ordering)
+                ordering = this.heuristicsManager.getCurrentOrdering(this.current_parsed, env.guiManager.graph_type);
+                if(!ordering) {
                     ordering = this.current_parsed.asn_set;
+                }
                 env.guiManager.update_counters(".counter_asn",this.current_parsed.asn_set.length);
                 env.guiManager.update_counters(".counter_events",this.current_parsed.events.length);
-                env.guiManager.drawer.draw_streamgraph(this.current_parsed, env.guiManager.graph_type, this.current_asn_tsv, ordering, env.guiManager.preserve_map, this.current_visibility, this.current_parsed.targets, this.current_parsed.query_id, function(pos){return RipeDataBroker.go_to_bgplay(RipeDataBroker.current_starttime,RipeDataBroker.current_endtime,RipeDataBroker.current_targets,pos)},null,events_range, redraw_minimap);
-                this.HeuristicsManager.MetricsManager.metrics(this.current_parsed, env.guiManager.drawer.keys);
+
+                env.guiManager.drawer.draw_streamgraph(
+                    this.current_parsed,
+                    env.guiManager.graph_type,
+                    this.current_asn_tsv,
+                    ordering,
+                    env.guiManager.preserve_map,
+                    this.current_visibility,
+                    this.current_parsed.targets,
+                    this.current_parsed.query_id,
+                    $this.gotToBgplayFromPosition,
+                    null,
+                    events_range,
+                    redraw_minimap);
+                this.heuristicsManager.MetricsManager.metrics(this.current_parsed, env.guiManager.drawer.keys);
                 env.guiManager.isGraphPresent();
             }
             else
@@ -6080,19 +6058,38 @@ define('bgpst.view.broker',[
             if(env.guiManager.graph_type == "heat") {
                 this.current_cp_tsv = this.parser.convert_to_heatmap_tsv(this.current_parsed, env.guiManager.prepending_prevention, env.guiManager.asn_level, env.guiManager.ip_version);
                 //ORDERING
-                ordering = this.HeuristicsManager.getCurrentOrdering(this.current_parsed, env.guiManager.graph_type);
+                ordering = this.heuristicsManager.getCurrentOrdering(this.current_parsed, env.guiManager.graph_type);
                 if (!ordering) {
                     console.log("ordering non c'è");
                     ordering = this.current_parsed.cp_set;
-                }  else {
+                } else {
                     console.log("ordering c'è");
                 }
-                env.guiManager.drawer.draw_heatmap(this.current_parsed, this.current_cp_tsv, this.current_asn_tsv, ordering, env.guiManager.preserve_map, this.current_visibility, this.current_parsed.targets, this.current_parsed.query_id, function(pos){return RipeDataBroker.go_to_bgplay(RipeDataBroker.current_starttime,RipeDataBroker.current_endtime,RipeDataBroker.current_targets,pos)}, env.guiManager.asn_level, env.guiManager.ip_version, env.guiManager.prepending_prevention, env.guiManager.merge_cp, env.guiManager.merge_events, env.guiManager.events_labels, env.guiManager.cp_labels, env.guiManager.heatmap_time_map, events_range, redraw_minimap);
-                if(env.guiManager.merge_events)
-                    env.guiManager.update_counters(".counter_events",env.guiManager.drawer.event_set.length+"/"+this.current_parsed.events.length);
-                else
-                    env.guiManager.update_counters(".counter_events",this.current_parsed.events.length);
-
+                env.guiManager.drawer.draw_heatmap(
+                    this.current_parsed,
+                    this.current_cp_tsv,
+                    this.current_asn_tsv,
+                    ordering,
+                    env.guiManager.preserve_map,
+                    this.current_visibility,
+                    this.current_parsed.targets,
+                    this.current_parsed.query_id,
+                    $this.gotToBgplayFromPosition,
+                    env.guiManager.asn_level,
+                    env.guiManager.ip_version,
+                    env.guiManager.prepending_prevention,
+                    env.guiManager.merge_cp,
+                    env.guiManager.merge_events,
+                    env.guiManager.events_labels,
+                    env.guiManager.cp_labels,
+                    env.guiManager.heatmap_time_map,
+                    events_range,
+                    redraw_minimap);
+                if (env.guiManager.merge_events) {
+                    env.guiManager.update_counters(".counter_events", env.guiManager.drawer.event_set.length + "/" + this.current_parsed.events.length);
+                } else {
+                    env.guiManager.update_counters(".counter_events", this.current_parsed.events.length);
+                }
                 if(env.guiManager.merge_cp)
                     env.guiManager.update_counters(".counter_asn", env.guiManager.drawer.keys.length+"/"+this.current_parsed.cp_set.length);
                 else
@@ -6105,7 +6102,6 @@ define('bgpst.view.broker',[
             }
             env.guiManager.boolean_checker();
             env.guiManager.draw_functions_btn_enabler();
-            env.guiManager.url_string();
         };
 
         this.go_to_bgplay = function(start, end, targets, pos){
@@ -6114,7 +6110,7 @@ define('bgpst.view.broker',[
             url+="w.resource="+targets;
             url+="&w.starttime="+start;
             url+="&w.endtime="+end;
-            url+="&w.instant="+this.DateConverter.formatUnix(pos);
+            url+="&w.instant="+this.dateConverter.formatUnix(pos);
             url+="&w.type=bgp";
             console.log("con utc"+moment(pos).utc().unix(pos));
             console.log("senza utc"+moment(pos).unix(pos));
@@ -6123,12 +6119,10 @@ define('bgpst.view.broker',[
         };
 
         this.streamgraph_streaming = function(every) {
-            RipeDataBroker = this;
             var interval_id = setInterval(function (){
-                RipeDataBroker.guiManager.toggleLoader();
-                var date = moment(new Date());
-                var formatted = RipeDataBroker.DateConverter.formatRipe(date);
-                RipeDataBroker.getData(RipeDataBroker.current_starttime, formatted, RipeDataBroker.current_targets);
+                // var date = moment(new Date());
+                // var formatted = $this.DateConverter.formatRipe(date);
+                $this.getData();
                 console.log("Streaming got new data!");
             }, every);
             console.log("Streaming started with interval ID: "+interval_id);
@@ -6136,15 +6130,14 @@ define('bgpst.view.broker',[
         };
 
         this.streamgraph_stepped_view = function(every) {
-            var RipeDataBroker = this;
             var max = this.current_asn_tsv.split("\n").length-1;
             var i = 2;
             var interval_id = setInterval(function (){
                 if(i>max){
                     clearInterval(interval_id);
                     console.log("Step view over");
-                    RipeDataBroker.guiManager.steps = false;
-                    RipeDataBroker.guiManager.draw_functions_btn_enabler();
+                    $this.guiManager.steps = false;
+                    $this.guiManager.draw_functions_btn_enabler();
                 }
                 else {
                     core(i);
@@ -6154,10 +6147,14 @@ define('bgpst.view.broker',[
             console.log("Step view started with interval ID: "+interval_id);
 
             function core(i) {
-                RipeDataBroker.drawer.draw_streamgraph(RipeDataBroker.current_parsed, RipeDataBroker.guiManager.graph_type, RipeDataBroker.current_asn_tsv, RipeDataBroker.drawer.keys, RipeDataBroker.guiManager.preserve_map, RipeDataBroker.current_visibility, RipeDataBroker.current_parsed.targets, RipeDataBroker.current_parsed.query_id, function(pos){return RipeDataBroker.go_to_bgplay(RipeDataBroker.current_starttime,RipeDataBroker.current_endtime,RipeDataBroker.current_targets,pos)},i,null,false);
-                RipeDataBroker.guiManager.update_counters(".counter_asn",RipeDataBroker.current_parsed.asn_set.length);
-                RipeDataBroker.guiManager.update_counters(".counter_events",i+"/"+max);
+                $this.drawer.draw_streamgraph($this.current_parsed, $this.guiManager.graph_type, $this.current_asn_tsv, $this.drawer.keys, $this.guiManager.preserve_map, $this.current_visibility, $this.current_parsed.targets, $this.current_parsed.query_id, $this.gotToBgplayFromPosition, i, null, false);
+                $this.guiManager.update_counters(".counter_asn", $this.current_parsed.asn_set.length);
+                $this.guiManager.update_counters(".counter_events", i + "/" + max);
             }
+        };
+
+        this.gotToBgplayFromPosition = function(pos){
+            return $this.go_to_bgplay(env.queryParams.startDate, env.queryParams.stopDate, env.queryParams.targets, pos);
         };
     };
 
@@ -6913,7 +6910,7 @@ define.amd = true;
 }));
 define('bgpst.lib.stache',{load: function(id){throw new Error("Dynamic load not allowed: " + id);}});
 
-define('bgpst.lib.stache!main', ['bgpst.lib.mustache'], function (Mustache) { var template = '<div class="loader_mask on_top_z_index full_screen">\n    <div class="spinner">\n        <div class="loading">Loading&#8230;</div>\n        <div class="loading_text">Loading Sources..</div>\n    </div>\n</div>\n<div class="body_container blur">   \n    <div class="row first_row left_margin container">\n        <div class="col-sm-3" style="padding-right: 0;padding-left: 0; text-anchor: left">\n            <h2 class="title">Global View</h2>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#Events</label>\n                <div class="counter_events" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#ASN</label>\n                <div class="counter_asn" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-7 text-right" style="padding-right: 0;padding-left: 0; text-anchor: right">\n            <div class="btn-group other_command_btn steps_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="steps" value="steps" autocomplete="off">\n                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>\n                    Steps\n                </label>\n            </div>\n            <div class="btn-group other_command_btn streaming_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="streaming" value="streaming" autocomplete="off">\n                    <span class="glyphicon glyphicon-record" aria-hidden="true"></span>\n                    <!--glyphicon glyphicon-stop-->\n                    Streaming\n                </label>\n            </div>\n            <div class="btn-group other_command_btn ip_version" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="4" autocomplete="off">\n                    IPv4\n                </label>\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="6" autocomplete="off"> \n                    IPv6\n                </label>\n            </div>\n            <div class="btn-group other_command_btn graph_type" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="stream" autocomplete="off">\n                    Global\n                </label>\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="heat" autocomplete="off"> \n                    Local\n                </label>\n            </div>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn option_command_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>\n                    <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>\n                    <li>\n                        <a href="#" class="preserve_color_btn">\n                            Preserve Color Map\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="gather_information_btn">\n                            Gather Information (CP Geo, ASN Detail)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="localstorage_enabled_btn">\n                            Enable Local Storage\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="prepending_prevention_btn">\n                            AS-Path Anti-Prepending\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="merge_cp_btn">\n                            Merge CPs with same paths\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option" style="display: inline-flex;">\n                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Merge events with same routing\n\n                        </a>\n                        <input type="number" name="merge_events" min="0" max="500" \n                        style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">\n                    </li>   \n                    <li class="stream_option">\n                        <a href="#" class="global_visibility_btn">\n                            Global visibility (All CPs)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li style="display: inline-flex;">\n                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Upstream Level (AS-path hop)\n\n                        </a>\n                        <input type="number" name="asn_lvl" min="0" max="50" \n                        style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">\n                    </li>\n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn path_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li>\n                        <a href="#" class="draw_path_btn">Draw Path</a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="events_labels_btn">\n                            Events labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="cp_labels_btn">\n                            CP labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="heatmap_time_btn">\n                            Use time mapping\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>       \n                    <li class="heat_option">\n                        <a href="#" class="scrollbars_btn">\n                            Use scrollbars\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>                       \n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn list_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">\n                   <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>\n                </li>\n                <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>\n                </li>\n            </ul>\n        </span>\n        <span class="dropdown">\n            <button type="button" class="dropdown-toggle other_command_btn sort_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>\n                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li>\n\n                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>\n                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>\n                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>\n            </ul>\n        </span>\n    </div>\n</div>\n<div class="container controls_container left_margin">\n    <form class="registrationForm">\n        <div class="row">\n            <div class="col-sm-4">\n                <h4>From</h4>\n            </div>\n            <div class="col-sm-4">\n                <h4>To</h4>\n            </div>\n            <div class="col-sm-3">\n                <h4>Target</h4>\n            </div>\n\n            <div class="col-sm-1">\n                <div class="row left_margin">\n                    <div class="col-sm-1">\n                        <div class="radio">\n                          <label><input type="radio" name="ipversion" value="4" checked/>IPv4</label>\n                      </div>  \n                  </div>\n              </div>\n              <div class="row left_margin">\n                <div class="col-sm-1">          \n                    <div class="radio">\n                      <label><input type="radio" name="ipversion" value="6"/>IPv6</label>\n                  </div>\n              </div>\n          </div>\n      </div>\n\n      <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker date_only start form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter date" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker time_only start form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter time" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-time"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker date_only end form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter date"/>\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker time_only end form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter time" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-time"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-3">\n        <div class="form-group input_add">\n            <input type="text" class="form-control add_address fullsized" data-toggle="tooltip" trigger="focus" data-placement="top" title="Press \'Enter\' to add" name="add_address" />\n        </div>\n    </div>\n\n    <div class="col-sm-1">\n        <div class="row left_margin">\n            <div class="col-sm-1">\n                <div class="radio">\n                  <label><input type="radio" name="ipversion" value="asn"/>ASN</label>\n              </div>              \n          </div>\n      </div>\n      <div class="row left_margin">\n        <div class="col-sm-1">\n            <div class="radio">\n              <label><input type="radio" name="ipversion" value="free"/>Free</label>\n          </div>\n      </div>\n  </div>\n</div>\n</div>\n\n<div class="row">\n    <div class="col-sm-8">\n        <div class="form-group">\n            <input type="text" class="tokenfield form-control" placeholder="Targets">\n        </div>\n    </div>\n    <div class="col-sm-2">  \n        <button type="button" class="btn btn-default clear_targets_button fullsized text_centerd">Clear Targets</button>                    \n    </div>\n    <div class="col-sm-1">  \n        <button type="button" class="btn btn-default my_ip_button fullsized text_centerd">My IP</button>                    \n    </div>\n    <div class="col-sm-1">  \n        <button type="button" class="btn btn-default go_button fullsized text_centerd">Go</button>                  \n    </div>\n</div>\n</form>\n</div>\n<div class="svg_tooltip hidden"></div>\n<div class="container canvas_container left_margin main_svg">\n    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">\n    </svg>\n</div>\n<div class="container canvas_container left_margin mini_svg" style="height: 35vh">\n    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">\n    </svg>\n</div>\n<div class="last_row footer">\n    <nav class="navbar">\n        <div class="container-fluid">\n            <div class="navbar-header">\n                <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>\n                <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>\n                <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>\n            </div>\n        </div>\n    </nav>\n</div>\n</div>'; Mustache.parse( template ); return function( view, partials) { return Mustache.render( template, view, partials); } });
+define('bgpst.lib.stache!main', ['bgpst.lib.mustache'], function (Mustache) { var template = '<div class="body_container">\n    <div class="row first_row left_margin container">\n        <div class="col-sm-3" style="padding-right: 0;padding-left: 0; text-anchor: left">\n            <h2 class="title">Global View</h2>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#Events</label>\n                <div class="counter_events" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-1">\n            <div class="btn-group counter">\n                <label style="margin:0">#ASN</label>\n                <div class="counter_asn" style="text-align: center;"></div>\n            </div>\n        </div>\n        <div class="col-sm-7 text-right" style="padding-right: 0;padding-left: 0; text-anchor: right">\n            <div class="btn-group other_command_btn steps_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="steps" value="steps" autocomplete="off">\n                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>\n                    Steps\n                </label>\n            </div>\n            <div class="btn-group other_command_btn streaming_btn stream_option" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="streaming" value="streaming" autocomplete="off">\n                    <span class="glyphicon glyphicon-record" aria-hidden="true"></span>\n                    <!--glyphicon glyphicon-stop-->\n                    Streaming\n                </label>\n            </div>\n            <div class="btn-group other_command_btn ip_version" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="4" autocomplete="off">\n                    IPv4\n                </label>\n                <label class="btn btn-default">\n                    <input type="checkbox" name="ip_version" value="6" autocomplete="off"> \n                    IPv6\n                </label>\n            </div>\n            <div class="btn-group other_command_btn graph_type" data-toggle="buttons">\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="stream" autocomplete="off">\n                    Global\n                </label>\n                <label class="btn btn-default">\n                    <input type="radio" name="graph_type" value="heat" autocomplete="off"> \n                    Local\n                </label>\n            </div>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn option_command_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>\n                    <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>\n                    <li>\n                        <a href="#" class="preserve_color_btn">\n                            Preserve Color Map\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="gather_information_btn">\n                            Gather Information (CP Geo, ASN Detail)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="localstorage_enabled_btn">\n                            Enable Local Storage\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li>\n                        <a href="#" class="prepending_prevention_btn">\n                            AS-Path Anti-Prepending\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="merge_cp_btn">\n                            Merge CPs with same paths\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option" style="display: inline-flex;">\n                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Merge events with same routing\n\n                        </a>\n                        <input type="number" name="merge_events" min="0" max="500" \n                        style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">\n                    </li>   \n                    <li class="stream_option">\n                        <a href="#" class="global_visibility_btn">\n                            Global visibility (All CPs)\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li style="display: inline-flex;">\n                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                            Upstream Level (AS-path hop)\n\n                        </a>\n                        <input type="number" name="asn_lvl" min="0" max="50" \n                        style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">\n                    </li>\n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn path_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right repositioned">\n                    <li>\n                        <a href="#" class="draw_path_btn">Draw Path</a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="events_labels_btn">\n                            Events labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="cp_labels_btn">\n                            CP labels\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>\n                    <li class="heat_option">\n                        <a href="#" class="heatmap_time_btn">\n                            Use time mapping\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>       \n                    <li class="heat_option">\n                        <a href="#" class="scrollbars_btn">\n                            Use scrollbars\n                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                        </a>\n                    </li>                       \n                </ul>\n            </span>\n            <span class="dropdown">\n                <button type="button" class="dropdown-toggle other_command_btn list_btn btn btn-default text_centerd" data-toggle="dropdown">\n                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>\n                </button>\n                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">\n                   <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>\n                </li>\n                <li class="dropdown-submenu right_arrows">\n                    <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>\n                    <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>\n                </li>\n            </ul>\n        </span>\n        <span class="dropdown">\n            <button type="button" class="dropdown-toggle other_command_btn sort_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>\n                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li>\n\n                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>\n                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>\n                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>\n            </ul>\n        </span>\n    </div>\n</div>\n<div class="container controls_container left_margin">\n    <form class="registrationForm">\n        <div class="row">\n            <div class="col-sm-4">\n                <h4>From</h4>\n            </div>\n            <div class="col-sm-4">\n                <h4>To</h4>\n            </div>\n            <div class="col-sm-3">\n                <h4>Target</h4>\n            </div>\n\n            <div class="col-sm-1">\n                <div class="row left_margin">\n                    <div class="col-sm-1">\n                        <div class="radio">\n                          <label><input type="radio" name="ipversion" value="4" checked/>IPv4</label>\n                      </div>  \n                  </div>\n              </div>\n              <div class="row left_margin">\n                <div class="col-sm-1">          \n                    <div class="radio">\n                      <label><input type="radio" name="ipversion" value="6"/>IPv6</label>\n                  </div>\n              </div>\n          </div>\n      </div>\n\n      <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker date_only start form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter date" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker time_only start form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter time" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-time"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker date_only end form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter date"/>\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-calendar"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-2">\n        <div class=\'input-group date datetimepicker time_only end form-group\'>\n            <input type=\'text\' class="form-control" placeholder="Enter time" />\n            <span class="input-group-addon">\n                <span class="glyphicon glyphicon-time"></span>\n            </span>\n        </div>\n    </div>\n\n    <div class="col-sm-3">\n        <div class="form-group input_add">\n            <input type="text" class="form-control add_address fullsized" data-toggle="tooltip" trigger="focus" data-placement="top" title="Press \'Enter\' to add" name="add_address" />\n        </div>\n    </div>\n\n    <div class="col-sm-1">\n        <div class="row left_margin">\n            <div class="col-sm-1">\n                <div class="radio">\n                  <label><input type="radio" name="ipversion" value="asn"/>ASN</label>\n              </div>              \n          </div>\n      </div>\n      <div class="row left_margin">\n        <div class="col-sm-1">\n            <div class="radio">\n              <label><input type="radio" name="ipversion" value="free"/>Free</label>\n          </div>\n      </div>\n  </div>\n</div>\n</div>\n\n<div class="row">\n    <div class="col-sm-8">\n        <div class="form-group">\n            <input type="text" class="tokenfield form-control" placeholder="Targets">\n        </div>\n    </div>\n    <div class="col-sm-2">  \n        <button type="button" class="btn btn-default clear_targets_button fullsized text_centerd">Clear Targets</button>                    \n    </div>\n    <div class="col-sm-1">  \n        <button type="button" class="btn btn-default my_ip_button fullsized text_centerd">My IP</button>                    \n    </div>\n    <div class="col-sm-1">  \n        <button type="button" class="btn btn-default go_button fullsized text_centerd">Go</button>                  \n    </div>\n</div>\n</form>\n</div>\n<div class="svg_tooltip hidden"></div>\n<div class="container canvas_container left_margin main_svg">\n    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">\n    </svg>\n</div>\n<div class="container canvas_container left_margin mini_svg" style="height: 35vh">\n    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%"; height="100%" style="overflow:visible;">\n    </svg>\n</div>\n<div class="last_row footer">\n    <nav class="navbar">\n        <div class="container-fluid">\n            <div class="navbar-header">\n                <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>\n                <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>\n                <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>\n            </div>\n        </div>\n    </nav>\n</div>\n</div>'; Mustache.parse( template ); return function( view, partials) { return Mustache.render( template, view, partials); } });
 
 define('bgpst.view.gui',[
     "bgpst.view.graphdrawer",
@@ -6964,9 +6961,9 @@ define('bgpst.view.gui',[
         this.url = location.protocol + '//' + location.host + location.pathname;
 
         this.init = function () {
-            this.RipeDataBroker = new RipeDataBroker(env);
+            this.ripeDataBroker = new RipeDataBroker(env);
             this.validator = new Validator();
-            this.DateConverter = new DateConverter();
+            this.dateConverter = new DateConverter();
 
             this.drawer.drawer_init();
             this.get_local_ip();
@@ -6992,10 +6989,10 @@ define('bgpst.view.gui',[
             $(this.loader).html(text);
         };
 
-        this.toggleLoader = function () {
-            $(this.mask).toggleClass("hidden");
-            $(this.container).toggleClass("blur");
-        };
+        // this.toggleLoader = function () {
+        //     $(this.mask).toggleClass("hidden");
+        //     $(this.container).toggleClass("blur");
+        // };
 
         //add tooltip  <-- TO CALL AT SETUP
         this.tooltip_setup = function () {
@@ -7053,11 +7050,11 @@ define('bgpst.view.gui',[
 
             //setting current date
             var cur_date = moment();
-            $('.datetimepicker.date_only.end').data("DateTimePicker").date(this.DateConverter.formatInterface(cur_date));
-            $('.datetimepicker.time_only.end').data("DateTimePicker").date(this.DateConverter.formatInterfaceTime(cur_date));
+            $('.datetimepicker.date_only.end').data("DateTimePicker").date(this.dateConverter.formatInterface(cur_date));
+            $('.datetimepicker.time_only.end').data("DateTimePicker").date(this.dateConverter.formatInterfaceTime(cur_date));
             var day_before = moment().subtract(1, 'days');
-            $('.datetimepicker.date_only.start').data("DateTimePicker").date(this.DateConverter.formatInterface(day_before));
-            $('.datetimepicker.time_only.start').data("DateTimePicker").date(this.DateConverter.formatInterfaceTime(day_before));
+            $('.datetimepicker.date_only.start').data("DateTimePicker").date(this.dateConverter.formatInterface(day_before));
+            $('.datetimepicker.time_only.start').data("DateTimePicker").date(this.dateConverter.formatInterfaceTime(day_before));
         };
 
         //avoid time clipping on hours time pickers
@@ -7456,38 +7453,36 @@ define('bgpst.view.gui',[
                     $("input.add_address").val("");
                     $("input.bar").val("");
                     $("div.input_add").removeClass("has-success");
-                    GuiManager.changeLoaderText("Connecting to RIPEStat");
-                    GuiManager.toggleLoader();
-                    GuiManager.RipeDataBroker.requestBuilderData(date_start, time_start, date_end, time_end, tgs);
-                    GuiManager.RipeDataBroker.getData();
+                    // GuiManager.RipeDataBroker.requestBuilderData(date_start, time_start, date_end, time_end, tgs);
+                    GuiManager.ripeDataBroker.getData();
                 }
             });
         };
 
-        this.url_string = function () {
-            var GuiManager = this;
-            var url_to_push = GuiManager.url + "?";
-            url_to_push += 'w.starttime=' + GuiManager.RipeDataBroker.current_starttime;
-            url_to_push += "&w.endtime=" + GuiManager.RipeDataBroker.current_endtime;
-            url_to_push += "&w.type=" + GuiManager.graph_type;
-            url_to_push += "&w.level=" + GuiManager.asn_level;
-            url_to_push += "&w.prepending=" + GuiManager.prepending_prevention;
-            url_to_push += "&w.merge_cp=" + GuiManager.merge_cp;
-            url_to_push += "&w.merge_events=" + GuiManager.merge_events;
-            url_to_push += "&w.timemap=" + GuiManager.heatmap_time_map;
-            url_to_push += "&w.global=" + GuiManager.global_visibility;
-            url_to_push += "&w.info=" + GuiManager.gather_information;
-            url_to_push += "&w.heu=" + GuiManager.RipeDataBroker.HeuristicsManager.current_heuristic;
-            if (GuiManager.RipeDataBroker.HeuristicsManager.current_sort_type)
-                url_to_push += "&w.sort_type=" + GuiManager.RipeDataBroker.HeuristicsManager.current_sort_type;
-            url_to_push += "&w.colors=" + GuiManager.preserve_map;
-            if (GuiManager.drawer.events_range) {
-                url_to_push += "&w.brush_s=" + GuiManager.DateConverter.formatRipe(GuiManager.drawer.events_range[0]);
-                url_to_push += "&w.brush_e=" + GuiManager.DateConverter.formatRipe(GuiManager.drawer.events_range[1]);
-            }
-            url_to_push += "&w.resources=" + GuiManager.RipeDataBroker.current_targets;
-            history.pushState("", 'BGPStreamgraph', url_to_push);
-        };
+        // this.url_string = function () {
+        //     var GuiManager = this;
+        //     var url_to_push = GuiManager.url + "?";
+        //     url_to_push += 'w.starttime=' + env.queryParams.startDate.;
+        //     url_to_push += "&w.endtime=" + GuiManager.RipeDataBroker.current_endtime;
+        //     url_to_push += "&w.type=" + GuiManager.graph_type;
+        //     url_to_push += "&w.level=" + GuiManager.asn_level;
+        //     url_to_push += "&w.prepending=" + GuiManager.prepending_prevention;
+        //     url_to_push += "&w.merge_cp=" + GuiManager.merge_cp;
+        //     url_to_push += "&w.merge_events=" + GuiManager.merge_events;
+        //     url_to_push += "&w.timemap=" + GuiManager.heatmap_time_map;
+        //     url_to_push += "&w.global=" + GuiManager.global_visibility;
+        //     url_to_push += "&w.info=" + GuiManager.gather_information;
+        //     url_to_push += "&w.heu=" + GuiManager.RipeDataBroker.heuristicsManager.current_heuristic;
+        //     if (GuiManager.RipeDataBroker.heuristicsManager.current_sort_type)
+        //         url_to_push += "&w.sort_type=" + GuiManager.RipeDataBroker.heuristicsManager.current_sort_type;
+        //     url_to_push += "&w.colors=" + GuiManager.preserve_map;
+        //     if (GuiManager.drawer.events_range) {
+        //         url_to_push += "&w.brush_s=" + GuiManager.DateConverter.formatRipe(GuiManager.drawer.events_range[0]);
+        //         url_to_push += "&w.brush_e=" + GuiManager.DateConverter.formatRipe(GuiManager.drawer.events_range[1]);
+        //     }
+        //     url_to_push += "&w.resources=" + GuiManager.RipeDataBroker.current_targets;
+        //     history.pushState("", 'BGPStreamgraph', url_to_push);
+        // };
 
         //cache the current local ip <-- TO CALL AT SETUP FUNCTION
         //return the current pubblic ip of the local machine  <-- TO CALL AT SETUP FUNCTION
@@ -7638,7 +7633,7 @@ define('bgpst.view.gui',[
                     $(".path_btn").removeClass("not-active");
                     $(".list_btn").removeClass("not-active");
                     $(".sort_btn").removeClass("not-active");
-                    if (!this.RipeDataBroker.current_parsed.targets.some(function (e) {
+                    if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
                             return GuiManager.validator.check_ipv4(e);
                         })) {
                         $("input[name='ip_version'][value='4']").parent().addClass("disabled");
@@ -7650,7 +7645,7 @@ define('bgpst.view.gui',[
                         $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
                         $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
                     }
-                    if (!this.RipeDataBroker.current_parsed.targets.some(function (e) {
+                    if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
                             return GuiManager.validator.check_ipv6(e);
                         })) {
                         $("input[name='ip_version'][value='6']").parent().addClass("disabled");
@@ -7808,7 +7803,7 @@ define('bgpst.view.gui',[
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
                 GuiManager.gather_information = !GuiManager.gather_information;
-                GuiManager.url_string();
+                // GuiManager.url_string();
             });
         };
 
@@ -7819,7 +7814,7 @@ define('bgpst.view.gui',[
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
                 GuiManager.preserve_map = !GuiManager.preserve_map;
-                GuiManager.url_string();
+                // GuiManager.url_string();
             });
         };
 
@@ -7842,9 +7837,9 @@ define('bgpst.view.gui',[
                 GuiManager.prepending_prevention = !GuiManager.prepending_prevention;
                 if (GuiManager.isGraphPresent())
                     if (GuiManager.graph_type == "stream")
-                        GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
                     else if (GuiManager.graph_type == "heat")
-                        GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -7856,9 +7851,9 @@ define('bgpst.view.gui',[
                 $(target).parent().toggleClass("active");
                 GuiManager.merge_cp = !GuiManager.merge_cp;
                 if (GuiManager.isGraphPresent()) {
-                    GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
                     if (GuiManager.merge_cp)
-                        GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length + "/" + GuiManager.RipeDataBroker.current_parsed.cp_set.length);
+                        GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length + "/" + GuiManager.ripeDataBroker.current_parsed.cp_set.length);
                     else
                         GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length);
                 }
@@ -7870,11 +7865,11 @@ define('bgpst.view.gui',[
             $("input[name='merge_events']:input").on("change", function (e, ui) {
                 GuiManager.merge_events = $("input[name='merge_events']").spinner("value");
                 if (GuiManager.isGraphPresent()) {
-                    GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
                     if (GuiManager.merge_events)
-                        GuiManager.update_counters(".counter_events", GuiManager.drawer.event_set.length + "/" + GuiManager.RipeDataBroker.current_parsed.events.length);
+                        GuiManager.update_counters(".counter_events", GuiManager.drawer.event_set.length + "/" + GuiManager.ripeDataBroker.current_parsed.events.length);
                     else
-                        GuiManager.update_counters(".counter_events", GuiManager.RipeDataBroker.current_parsed.events.length);
+                        GuiManager.update_counters(".counter_events", GuiManager.ripeDataBroker.current_parsed.events.length);
                 }
             });
         };
@@ -7887,7 +7882,7 @@ define('bgpst.view.gui',[
                 $(target).parent().toggleClass("active");
                 GuiManager.events_labels = !GuiManager.events_labels;
                 if (GuiManager.isGraphPresent())
-                    GuiManager.RipeDataBroker.loadCurrentState(false, null, false);
+                    GuiManager.ripeDataBroker.loadCurrentState(false, null, false);
             });
         };
 
@@ -7899,7 +7894,7 @@ define('bgpst.view.gui',[
                 $(target).parent().toggleClass("active");
                 GuiManager.cp_labels = !GuiManager.cp_labels;
                 if (GuiManager.isGraphPresent())
-                    GuiManager.RipeDataBroker.loadCurrentState(false, null, false);
+                    GuiManager.ripeDataBroker.loadCurrentState(false, null, false);
             });
         };
 
@@ -7911,7 +7906,7 @@ define('bgpst.view.gui',[
                 $(target).parent().toggleClass("active");
                 GuiManager.heatmap_time_map = !GuiManager.heatmap_time_map;
                 if (GuiManager.isGraphPresent())
-                    GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -7941,9 +7936,9 @@ define('bgpst.view.gui',[
                 GuiManager.global_visibility = !GuiManager.global_visibility;
                 if (GuiManager.isGraphPresent())
                     if (GuiManager.graph_type == "stream")
-                        GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
                     else if (GuiManager.graph_type == "heat")
-                        GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -8093,9 +8088,9 @@ define('bgpst.view.gui',[
                     $(".stream_option").addClass("hidden");
                     $(".heat_option").removeClass("hidden");
                 }
-                GuiManager.RipeDataBroker.HeuristicsManager.setDefaultHeuristic(GuiManager.graph_type);
+                GuiManager.ripeDataBroker.heuristicsManager.setDefaultHeuristic(GuiManager.graph_type);
                 if (GuiManager.isGraphPresent())
-                    GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -8108,9 +8103,9 @@ define('bgpst.view.gui',[
                 });
                 if (GuiManager.isGraphPresent()) {
                     if (GuiManager.graph_type == "heat")
-                        GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
                     else if (GuiManager.graph_type == "stream")
-                        GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
                 }
             });
         };
@@ -8118,7 +8113,7 @@ define('bgpst.view.gui',[
         this.ip_version_checkbox_enabler = function () {
             GuiManager = this;
             if (!this.streaming) {
-                if (this.RipeDataBroker.current_parsed.targets.every(function (e) {
+                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
                         return GuiManager.validator.check_ipv4(e);
                     })) {
                     $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
@@ -8131,7 +8126,7 @@ define('bgpst.view.gui',[
                     $("input[name='ip_version'][value='4']").parent().addClass("not-active");
                     $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
                 }
-                if (this.RipeDataBroker.current_parsed.targets.every(function (e) {
+                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
                         return GuiManager.validator.check_ipv6(e);
                     })) {
                     $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
@@ -8144,9 +8139,9 @@ define('bgpst.view.gui',[
                     $("input[name='ip_version'][value='6']").parent().addClass("not-active");
                     $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
                 }
-                if (this.RipeDataBroker.current_parsed.targets.some(function (e) {
+                if (this.ripeDataBroker.current_parsed.targets.some(function (e) {
                         return GuiManager.validator.check_ipv4(e);
-                    }) && this.RipeDataBroker.current_parsed.targets.some(function (e) {
+                    }) && this.ripeDataBroker.current_parsed.targets.some(function (e) {
                         return GuiManager.validator.check_ipv6(e);
                     })) {
                     $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
@@ -8166,7 +8161,7 @@ define('bgpst.view.gui',[
             $("input[name='asn_lvl']:input").on("change", function (e, ui) {
                 GuiManager.asn_level = $("input[name='asn_lvl']").spinner("value");
                 if (GuiManager.isGraphPresent())
-                    GuiManager.RipeDataBroker.loadCurrentState(false, null, true);
+                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -8178,7 +8173,7 @@ define('bgpst.view.gui',[
                 GuiManager.streaming_icon_swap();
                 if (GuiManager.streaming) {
                     GuiManager.lock_all();
-                    interval = GuiManager.RipeDataBroker.streamgraph_streaming(GuiManager.streaming_speed);
+                    interval = GuiManager.ripeDataBroker.streamgraph_streaming(GuiManager.streaming_speed);
                 }
                 else {
                     clearInterval(interval);
@@ -8206,7 +8201,7 @@ define('bgpst.view.gui',[
                 GuiManager.steps = !GuiManager.steps;
                 if (GuiManager.steps) {
                     GuiManager.lock_all();
-                    GuiManager.RipeDataBroker.streamgraph_stepped_view(50);
+                    GuiManager.ripeDataBroker.streamgraph_stepped_view(50);
                 }
             });
         };
@@ -8252,7 +8247,7 @@ define('bgpst.view.gui',[
                     else if (GuiManager.graph_type == 'heat')
                         html += 'onmouseover="d3.selectAll(\'.area\').filter(function(d){return d.asn!=' + asn + ';}).style(\'fill-opacity\',\'0.35\');" onmouseout="d3.selectAll(\'.area\').style(\'fill-opacity\',1);">';
                     html += "<div> ASN: " + asn + "</div>";
-                    var info = GuiManager.RipeDataBroker.current_parsed.known_asn[asn];
+                    var info = GuiManager.ripeDataBroker.current_parsed.known_asn[asn];
                     if (info) {
                         var tokens = info.split(",");
                         html += "<div>" + tokens[0].trim() + "</div>";
@@ -8279,14 +8274,14 @@ define('bgpst.view.gui',[
                 var html = "";
                 var set;
                 if (GuiManager.graph_type == "stream")
-                    set = GuiManager.RipeDataBroker.current_parsed.cp_set;
+                    set = GuiManager.ripeDataBroker.current_parsed.cp_set;
                 else if (GuiManager.graph_type == "heat")
                     set = GuiManager.drawer.keys;
                 for (var i in set) {
                     var cp = set[i];
                     html += "<li>";
                     html += "<div> ID: " + cp + "</div>";
-                    var info = GuiManager.RipeDataBroker.current_parsed.known_cp[cp];
+                    var info = GuiManager.ripeDataBroker.current_parsed.known_cp[cp];
                     if (info) {
                         html += "<div> IP: " + info["ip"] + "</div>";
                         html += "<div> Peering with CP: " + info["cp"] + "</div>";
@@ -8313,24 +8308,18 @@ define('bgpst.view.gui',[
         this.lev_dist_randwalk_cum_btn_setup = function () {
             var manager = this;
             $(".lev_dist_randwalk_cum_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "lev_rnd_cum";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_cum";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.lev_dist_randwalk_max_btn_setup = function () {
             var manager = this;
             $(".lev_dist_randwalk_max_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "lev_rnd_max";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_max";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -8338,24 +8327,18 @@ define('bgpst.view.gui',[
         this.point_dist_by_randwalk_btn_setup = function () {
             var manager = this;
             $(".point_dist_by_randwalk_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "st_rnd_cum";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_rnd_cum";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.point_dist_by_inference_btn_setup = function () {
             var manager = this;
             $(".point_dist_by_inference_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "st_inf_cum";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_inf_cum";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -8363,12 +8346,9 @@ define('bgpst.view.gui',[
         this.point_dist_greedy_btn_setup = function () {
             var manager = this;
             $(".point_dist_greedy_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "st_grdy_cum";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -8376,12 +8356,9 @@ define('bgpst.view.gui',[
         this.exchange_greedy_sort_btn_setup = function () {
             var manager = this;
             $(".exchange_greedy_sort_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "n_f";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "n_f";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -8389,24 +8366,18 @@ define('bgpst.view.gui',[
         this.wiggle_sum_btn_setup = function () {
             var manager = this;
             $(".wiggle_sum_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "w_cum";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "w_cum";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.wiggle_max_btn_setup = function () {
             var manager = this;
             $(".wiggle_max_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "w_max";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "w_max";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -8414,96 +8385,72 @@ define('bgpst.view.gui',[
         this.sort_asn_ascstdev_btn_setup = function () {
             var manager = this;
             $(".sort_asn_ascstdev_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_st";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = "asc";
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_dscstdev_btn_setup = function () {
             var manager = this;
             $(".sort_asn_dscstdev_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_st";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = "dsc";
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_ascvar_btn_setup = function () {
             var manager = this;
             $(".sort_asn_ascvar_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_var";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = "asc";
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_dscvar_btn_setup = function () {
             var manager = this;
             $(".sort_asn_dscvar_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_var";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = "dsc";
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_ascavg_btn_setup = function () {
             var manager = this;
             $(".sort_asn_ascavg_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_avg";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = "asc";
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_dscavg_btn_setup = function () {
             var manager = this;
             $(".sort_asn_dscavg_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_avg";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = "dsc";
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_ascsum_btn_setup = function () {
             var manager = this;
             $(".sort_asn_ascsum_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_cum";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = "asc";
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_dscsum_btn_setup = function () {
             var manager = this;
             $(".sort_asn_dscsum_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "s_cum";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = "dsc";
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -8511,88 +8458,58 @@ define('bgpst.view.gui',[
         this.heat_greedy_sort_1_btn_setup = function () {
             var manager = this;
             $(".heat_greedy_sort_1_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "nf_1";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "nf_1";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.heat_greedy_sort_2_btn_setup = function () {
             var manager = this;
             $(".heat_greedy_sort_2_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "nf_2";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "nf_2";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.heat_stdev_sort_btn_setup = function () {
             var manager = this;
             $(".heat_stdev_sort_btn").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "st_grdy_cum";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.heat_geo_sort_btn_setup = function () {
             var manager = this;
             $(".heat_country_sort").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "geo";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "geo";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.heat_asn_sort_btn_setup = function () {
             var manager = this;
             $(".heat_as_sort").on("click", function (e) {
-                manager.changeLoaderText("Applying Changes");
-                manager.toggleLoader();
-                manager.RipeDataBroker.HeuristicsManager.current_heuristic = "asn";
-                manager.RipeDataBroker.HeuristicsManager.current_sort_type = null;
-                manager.RipeDataBroker.loadCurrentState(false, null, true);
-                manager.toggleLoader();
+                manager.ripeDataBroker.heuristicsManager.current_heuristic = "asn";
+                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                manager.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.set_ordering = function (order) {
-            this.RipeDataBroker.loadCurrentState(order, false, null, true);
+            this.ripeDataBroker.loadCurrentState(order, false, null, true);
         };
 
         this.get_ordering = function () {
             return this.drawer.keys;
         };
 
-        this.restoreQuery = function (q_start, q_end, q_targets) {
-            // var s = moment.unix(q_start).format("YYYY-MM-DDThh:mm:ss");
-            // var e = moment.unix(q_end).format("YYYY-MM-DDThh:mm:ss");
-            var start = q_start.split('T');
-            var q_start_date = this.DateConverter.formatInterfaceDate(this.DateConverter.parseRipeDate(start[0]));
-            var q_start_time = this.DateConverter.formatInterfaceTime(this.DateConverter.parseRipeTime(start[1]));
-            var end = q_end.split('T');
-            var q_end_date = this.DateConverter.formatInterfaceDate(this.DateConverter.parseRipeDate(end[0]));
-            var q_end_time = this.DateConverter.formatInterfaceTime(this.DateConverter.parseRipeTime(end[1]));
-            $('.datetimepicker.date_only.start').data("DateTimePicker").date(q_start_date);
-            $('.datetimepicker.time_only.start').data("DateTimePicker").date(q_start_time);
-            $('.datetimepicker.date_only.end').data("DateTimePicker").date(q_end_date);
-            $('.datetimepicker.time_only.end').data("DateTimePicker").date(q_end_time);
-            $(".clear_targets_button").click();
-            var tgs = q_targets.split(",");
-            for (var t in tgs)
-                $('.tokenfield').tokenfield('createToken', tgs[t]);
+        this.restoreQuery = function () {
+            // Populate UI elements
         };
 
         this.update_counters = function (selector, quantity) {
@@ -8646,140 +8563,140 @@ define('bgpst.controller.main',[
         this.init = function(){
             env.guiManager = new GuiManager(env);
             env.guiManager.init();
-            if(!this.checkRequest()) {
-                env.guiManager.toggleLoader();
-            }
+            // if(!this.checkRequest()) {
+            //     env.guiManager.toggleLoader();
+            // }
         };
 
 
 
-        this.getLocalParameters = function() {
-            var vars = [], hash;
-            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-            for(var i = 0; i < hashes.length; i++) {
-                hash = hashes[i].split('=');
-                vars.push(hash[0]);
-                vars[hash[0]] = hash[1];
-            }
-            return vars;
-        };
+        // this.getLocalParameters = function() {
+        //     var vars = [], hash;
+        //     var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        //     for(var i = 0; i < hashes.length; i++) {
+        //         hash = hashes[i].split('=');
+        //         vars.push(hash[0]);
+        //         vars[hash[0]] = hash[1];
+        //     }
+        //     return vars;
+        // };
 
-        this.checkRequest = function(){
-            var DateConverter = env.guiManager.DateConverter;
-            var validator = env.guiManager.validator;
-            var params = this.getLocalParameters();
-            var start = params["w.starttime"];
-            var end = params["w.endtime"];
-            var tgt = params["w.resources"];
-            var type = params["w.type"];
-            var level = params["w.level"];
-            var prepending = params["w.prepending"];
-            var merge_cp = params["w.merge_cp"];
-            var merge_events = params["w.merge_events"];
-            var timemap = params["w.timemap"];
-            var global_vis = params["w.global"];
-            var colors = params['w.colors'];
-            var info = params["w.info"];
-            var brush_s = params["w.brush_s"];
-            var brush_e = params["w.brush_e"];
-            var heuristic = params["w.heu"];
-            var heuristic_sort_type = params["w.sort_type"];
-            var request_done = false;
-
-            if(start && end && tgt){
-                tgt = tgt.replace(/#$/,"");
-                try{
-                    //dates
-                    start = DateConverter.formatRipe(DateConverter.parseRipe(start));
-                    end = DateConverter.formatRipe(DateConverter.parseRipe(end));
-                    if(env.guiManager.validator.check_date_with_format(start, env.guiManager.DateConverter.ripestat_data_format) && env.guiManager.validator.check_date_with_format(end, env.guiManager.DateConverter.ripestat_data_format)){
-                        env.guiManager.RipeDataBroker.current_starttime = start;
-                        env.guiManager.RipeDataBroker.current_endtime = end;
-                    } else {
-                        throw "wrong dates";
-                    }
-                    //targets
-                    var tgt_list = tgt.split(',');
-                    var validateIps = function(ip){
-                        return validator.check_ipv4(ip) || validator.check_ipv6(ip) || validator.check_asn(ip);
-                    };
-                    
-                    if(tgt_list.every(validateIps)) {
-                        env.guiManager.RipeDataBroker.current_targets = tgt;
-                    } else {
-                        throw "wrong target";
-                    }
-                    //type
-                    if(type && (type == "stream"|| type == "heat")) {
-                        env.guiManager.graph_type = type;
-                    }
-                    //level
-                    if(level){
-                        level = parseInt(level);
-                        if(!isNaN(level)) {
-                            env.guiManager.asn_level = level;
-                        }
-                    }
-                    //merge cp
-                    if(merge_cp && (merge_cp == 'true'|| merge_cp == 'false')) {
-                        env.guiManager.merge_cp = merge_cp == 'true';
-                    }
-                    //merge events
-                    if(merge_events){
-                        merge_events = parseInt(merge_events);
-                        if(!isNaN(merge_events)) {
-                            env.guiManager.merge_events = merge_events;
-                        }
-                    }
-                    //timemap
-                    if(timemap && (timemap == 'true'|| timemap == 'false')) {
-                        env.guiManager.heatmap_time_map = timemap == 'true';
-                    }
-                    //global visibility
-                    if(global_vis && (global_vis == 'true'|| global_vis == 'false')) {
-                        env.guiManager.global_visibility = global_vis == 'true';
-                    }
-                    //gather info
-                    if(info && (info == 'true'|| info == 'false')) {
-                        env.guiManager.gather_information = info == 'true';
-                    }
-                    //preserve colors
-                    if(colors && (colors == 'true'|| colors == 'false')) {
-                        env.guiManager.gather_information = colors == 'true';
-                    }
-                    //gather info
-                    if(info && (info == 'true'|| info == 'false')) {
-                        env.guiManager.gather_information = info == 'true';
-                    }
-
-                    //brusher
-                    brush_s = DateConverter.formatRipe(DateConverter.parseRipe(brush_s));
-                    brush_e = DateConverter.formatRipe(DateConverter.parseRipe(brush_e));
-                    if(env.guiManager.validator.check_date_with_format(brush_s,env.guiManager.DateConverter.ripestat_data_format) && env.guiManager.validator.check_date_with_format(brush_e, env.guiManager.DateConverter.ripestat_data_format)){
-                        env.guiManager.drawer.events_range = [];
-                        env.guiManager.drawer.events_range[0] = moment(brush_s);
-                        env.guiManager.drawer.events_range[1] = moment(brush_e);
-                    }
-                    //heuristic
-                    if(heuristic) {
-                        env.guiManager.RipeDataBroker.HeuristicsManager.current_heuristic = heuristic;
-                    }
-                    //sort_type
-                    if(heuristic_sort_type) {
-                        env.guiManager.RipeDataBroker.HeuristicsManager.current_sort_type = heuristic_sort_type;
-                    }
-                    env.guiManager.RipeDataBroker.getData();
-                    request_done = true;
-                }
-                catch(e){
-                    console.log(e);
-                    env.guiManager.RipeDataBroker.current_starttime = null;
-                    env.guiManager.RipeDataBroker.current_endtime = null;
-                    env.guiManager.RipeDataBroker.current_targets = null;
-                }
-            }
-            return request_done;
-        };
+        // this.checkRequest = function(){
+        //     var dateConverter = env.guiManager.DateConverter;
+        //     var validator = env.guiManager.validator;
+        //     var params = this.getLocalParameters();
+        //     var start = params["w.starttime"];
+        //     var end = params["w.endtime"];
+        //     var tgt = params["w.resources"];
+        //     var type = params["w.type"];
+        //     var level = params["w.level"];
+        //     var prepending = params["w.prepending"];
+        //     var merge_cp = params["w.merge_cp"];
+        //     var merge_events = params["w.merge_events"];
+        //     var timemap = params["w.timemap"];
+        //     var global_vis = params["w.global"];
+        //     var colors = params['w.colors'];
+        //     var info = params["w.info"];
+        //     var brush_s = params["w.brush_s"];
+        //     var brush_e = params["w.brush_e"];
+        //     var heuristic = params["w.heu"];
+        //     var heuristic_sort_type = params["w.sort_type"];
+        //     var request_done = false;
+        //
+        //     if(start && end && tgt){
+        //         tgt = tgt.replace(/#$/,"");
+        //         try{
+        //             //dates
+        //             start = dateConverter.parseRipe(start);
+        //             end = dateConverter.parseRipe(end);
+        //             // if(env.guiManager.validator.check_date_with_format(start, env.guiManager.DateConverter.ripestat_data_format) && env.guiManager.validator.check_date_with_format(end, env.guiManager.DateConverter.ripestat_data_format)){
+        //             env.params.startDate = start;
+        //             env.params.stopDate = end;
+        //             // } else {
+        //             //     throw "wrong dates";
+        //             // }
+        //             //targets
+        //             var tgt_list = tgt.split(',');
+        //             var validateIps = function(ip){
+        //                 return validator.check_ipv4(ip) || validator.check_ipv6(ip) || validator.check_asn(ip);
+        //             };
+        //
+        //             if(tgt_list.every(validateIps)) {
+        //                 env.params.targets = tgt;
+        //             } else {
+        //                 throw "wrong target";
+        //             }
+        //             //type
+        //             if(type && (type == "stream" || type == "heat")) {
+        //                 env.guiManager.graph_type = type;
+        //             }
+        //             //level
+        //             if(level){
+        //                 level = parseInt(level);
+        //                 if(!isNaN(level)) {
+        //                     env.guiManager.asn_level = level;
+        //                 }
+        //             }
+        //             //merge cp
+        //             if(merge_cp && (merge_cp == 'true'|| merge_cp == 'false')) {
+        //                 env.guiManager.merge_cp = merge_cp == 'true';
+        //             }
+        //             //merge events
+        //             if(merge_events){
+        //                 merge_events = parseInt(merge_events);
+        //                 if(!isNaN(merge_events)) {
+        //                     env.guiManager.merge_events = merge_events;
+        //                 }
+        //             }
+        //             //timemap
+        //             if(timemap && (timemap == 'true'|| timemap == 'false')) {
+        //                 env.guiManager.heatmap_time_map = timemap == 'true';
+        //             }
+        //             //global visibility
+        //             if(global_vis && (global_vis == 'true'|| global_vis == 'false')) {
+        //                 env.guiManager.global_visibility = global_vis == 'true';
+        //             }
+        //             //gather info
+        //             if(info && (info == 'true'|| info == 'false')) {
+        //                 env.guiManager.gather_information = info == 'true';
+        //             }
+        //             //preserve colors
+        //             if(colors && (colors == 'true'|| colors == 'false')) {
+        //                 env.guiManager.gather_information = colors == 'true';
+        //             }
+        //             //gather info
+        //             if(info && (info == 'true'|| info == 'false')) {
+        //                 env.guiManager.gather_information = info == 'true';
+        //             }
+        //
+        //             //brusher
+        //             brush_s = dateConverter.formatRipe(dateConverter.parseRipe(brush_s));
+        //             brush_e = dateConverter.formatRipe(dateConverter.parseRipe(brush_e));
+        //             if(env.guiManager.validator.check_date_with_format(brush_s,env.guiManager.DateConverter.ripestat_data_format) && env.guiManager.validator.check_date_with_format(brush_e, env.guiManager.DateConverter.ripestat_data_format)){
+        //                 env.guiManager.drawer.events_range = [];
+        //                 env.guiManager.drawer.events_range[0] = moment(brush_s);
+        //                 env.guiManager.drawer.events_range[1] = moment(brush_e);
+        //             }
+        //             //heuristic
+        //             if(heuristic) {
+        //                 env.guiManager.RipeDataBroker.HeuristicsManager.current_heuristic = heuristic;
+        //             }
+        //             //sort_type
+        //             if(heuristic_sort_type) {
+        //                 env.guiManager.RipeDataBroker.HeuristicsManager.current_sort_type = heuristic_sort_type;
+        //             }
+        //             env.guiManager.RipeDataBroker.getData();
+        //             request_done = true;
+        //         }
+        //         catch(e){
+        //             console.log(e);
+        //             env.params.startDate = null;
+        //             env.params.stopDate = null;
+        //             env.params.targets = null;
+        //         }
+        //     }
+        //     return request_done;
+        // };
     };
 
     return Main;
@@ -8905,12 +8822,15 @@ define('bgpst-loader',[
             "autoStart": instanceParams.autoStart || true,
             "widgetUrl": WIDGET_URL + "dev/",
             "parentDom": $(parentDom),
-            "queryParams": queryParams // { resource: is the ip }
+            "queryParams": queryParams
+            //{ resource: "IP", startDate: new Date(), stopDate: new Date()}
         };
 
         //window.env = env; // TEMP: just for debugging
 
 
+        env.queryParams.startDate = (env.queryParams.startDate) ? moment.utc(env.queryParams.startDate) : null;
+        env.queryParams.stopDate =  (env.queryParams.stopDate) ? moment.utc(env.queryParams.stopDate) : null;
 
         /*
          * Check if parent dom exists
