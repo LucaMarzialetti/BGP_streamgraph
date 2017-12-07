@@ -19,10 +19,7 @@ define([
         this.loader = $(".loading_text");
         this.container = $("div.body_container");
 
-        this.tokenfield = $(".tokenfield");
-
         this.drawer = new GraphDrawer(env);
-
 
         this.preserve_map = true;
         this.localstorage_enabled = true;
@@ -44,8 +41,6 @@ define([
         this.heatmap_time_map = true;
         this.streaming_speed = 10000;
 
-        this.url = location.protocol + '//' + location.host + location.pathname;
-
         this.init = function () {
             this.ripeDataBroker = new RipeDataBroker(env);
             this.validator = new Validator();
@@ -59,38 +54,12 @@ define([
             this.ripeDataBroker.getData();
         };
 
-        this.isGraphPresent = function (text) {
-            //return d3.select("svg").select(".chart").node() != null;
-            return this.drawer.isGraphPresent();
-        };
-
-        //Loader splashscreen managing
-        this.changeLoaderText = function (text) {
-            //console.log("CAMBIA in "+text);
-            $(this.loader).html(text);
-        };
-
-        //add tooltip  <-- TO CALL AT SETUP
-        this.tooltip_setup = function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        };
-
-        this.draggable_setup = function () {
-            $(".drag_sort_list").sortable();
-        };
-
-        this.pickers_setup = function () {
-
-        };
-
-
         //other_command_menu
         this.other_command_button_setup = function () {
             this.shuffle_color_map_btn_setup();
             this.erase_graph_btn_setup();
             this.gather_information_btn_setup();
             this.preserve_color_map_btn_setup();
-            this.local_storage_enabled_btn_setup();
             this.prepending_prevention_btn_setup();
             this.merge_events_btn_setup();
             this.merge_cp_btn_setup();
@@ -106,6 +75,7 @@ define([
             this.steps_btn_setup();
             this.asn_list_btn_setup();
             this.cp_list_btn_setup();
+            /***********************************************/
             this.boolean_checker();
             /***********************************************/
             this.sort_asn_ascstdev_btn_setup();
@@ -137,38 +107,178 @@ define([
             this.embed_btn_setup();
         };
 
-        this.shuffle_color_map_btn_setup = function () {
-            var GuiManager = this;
-            $(".shuffle_color_map_btn").on("click", function (e) {
-                if (GuiManager.isGraphPresent())
-                    GuiManager.drawer.shuffle_color_map(GuiManager.graph_type);
-            });
+
+        this.isGraphPresent = function (text) {
+            //return d3.select("svg").select(".chart").node() != null;
+            return this.drawer.isGraphPresent();
         };
 
+        this.lock_all = function () {
+            $(".path_btn").addClass("disabled");
+            $(".list_btn").addClass("disabled");
+            $(".sort_btn").addClass("disabled");
+            $(".option_command_btn").addClass("disabled");
+            $(".clear_targets_button").addClass("disabled");
+            $(".my_ip_button").addClass("disabled");
+            $(".go_button").addClass("disabled");
+            $(".date").addClass("disabled");
+
+            $(".path_btn").addClass("not-active");
+            $(".list_btn").addClass("not-active");
+            $(".sort_btn").addClass("not-active");
+            $(".option_command_btn").addClass("not-active");
+            $(".clear_targets_button").addClass("not-active");
+            $(".my_ip_button").addClass("not-active");
+            $(".go_button").addClass("not-active");
+            $(".date").addClass("not-active");
+
+            $("input[name='graph_type']").parent().addClass("disabled");
+            $("input[name='graph_type']").parent().addClass("not-active");
+            $("input[name='graph_type']").parent().attr("disabled", true);
+
+            $("input[name='ip_version'][value='6']").parent().addClass("disabled");
+            $("input[name='ip_version'][value='6']").parent().addClass("not-active");
+            $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
+
+            $("input[name='ip_version'][value='4']").parent().addClass("disabled");
+            $("input[name='ip_version'][value='4']").parent().addClass("not-active");
+            $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
+
+            $("input[name='steps'][value='steps']").parent().addClass("disabled");
+            $("input[name='steps'][value='steps']").parent().addClass("not-active");
+            $("input[name='steps'][value='steps']").parent().attr("disabled", true);
+            $(".steps_btn").addClass("not-active");
+
+            if (!this.streaming) {
+                $("input[name='streaming'][value='streaming']").parent().addClass("disabled");
+                $("input[name='streaming'][value='streaming']").parent().addClass("not-active");
+                $("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
+                $(".streaming_btn").addClass("not-active");
+            }
+        };
+    
+        this.boolean_checker = function () {
+            if (!this.gather_information) {
+                $(".gather_information_btn").find("span").addClass("hidden");
+                $(".gather_information_btn").parent().removeClass("active");
+            }
+            else {
+                $(".gather_information_btn").find("span").removeClass("hidden");
+                $(".gather_information_btn").parent().addClass("active");
+            }
+
+            if (!this.preserve_map) {
+                $(".preserve_color_btn").find("span").addClass("hidden");
+                $(".preserve_color_btn").parent().removeClass("active");
+            }
+            else {
+                $(".preserve_color_btn").find("span").removeClass("hidden");
+                $(".preserve_color_btn").parent().addClass("active");
+            }
+
+            if (!this.global_visibility) {
+                $(".global_visibility_btn").find("span").addClass("hidden");
+                $(".global_visibility_btn").parent().removeClass("active");
+            }
+            else {
+                $(".global_visibility_btn").find("span").removeClass("hidden");
+                $(".global_visibility_btn").parent().addClass("active");
+            }
+
+            if (!this.prepending_prevention) {
+                $(".prepending_prevention_btn").find("span").addClass("hidden");
+                $(".prepending_prevention_btn").parent().removeClass("active");
+            }
+            else {
+                $(".prepending_prevention_btn").find("span").removeClass("hidden");
+                $(".prepending_prevention_btn").parent().addClass("active");
+            }
+
+            if (!this.merge_cp) {
+                $(".merge_cp_btn").find("span").addClass("hidden");
+                $(".merge_cp_btn").parent().removeClass("active");
+            }
+            else {
+                $(".merge_cp_btn").find("span").removeClass("hidden");
+                $(".merge_cp_btn").parent().addClass("active");
+            }
+
+            if (!this.events_labels) {
+                $(".events_labels_btn").find("span").addClass("hidden");
+                $(".events_labels_btn").parent().removeClass("active");
+            }
+            else {
+                $(".events_labels_btn").find("span").removeClass("hidden");
+                $(".events_labels_btn").parent().addClass("active");
+            }
+
+            if (!this.cp_labels) {
+                $(".cp_labels_btn").find("span").addClass("hidden");
+                $(".cp_labels_btn").parent().removeClass("active");
+            }
+            else {
+                $(".cp_labels_btn").find("span").removeClass("hidden");
+                $(".cp_labels_btn").parent().addClass("active");
+            }
+
+            if (!this.heatmap_time_map) {
+                $(".heatmap_time_btn").find("span").addClass("hidden");
+                $(".heatmap_time_btn").parent().removeClass("active");
+            }
+            else {
+                $(".heatmap_time_btn").find("span").removeClass("hidden");
+                $(".heatmap_time_btn").parent().addClass("active");
+            }
+
+            if (!this.use_scrollbars) {
+                $(".scrollbars_btn").find("span").addClass("hidden");
+                $(".scrollbars_btn").parent().removeClass("active");
+            }
+            else {
+                $(".scrollbars_btn").find("span").removeClass("hidden");
+                $(".scrollbars_btn").parent().addClass("active");
+            }
+
+            if (this.graph_type == "stream") {
+                $('input[name="graph_type"][value="stream"]').prop('checked', true);
+                $('input[name="graph_type"][value="stream"]').parent().addClass("active");
+                $('input[name="graph_type"][value="heat"]').parent().removeClass("active");
+                $(".stream_option").removeClass("hidden");
+                $(".heat_option").addClass("hidden");
+            }
+            else if (this.graph_type == "heat") {
+                $('input[name="graph_type"][value="heat"]').prop('checked', true);
+                $('input[name="graph_type"][value="heat"]').parent().addClass("active");
+                $('input[name="graph_type"][value="stream"]').parent().removeClass("active");
+                $(".heat_option").removeClass("hidden");
+                $(".stream_option").addClass("hidden");
+            }
+            if (this.ip_version.indexOf(4) != -1) {
+                $('input[name="ip_version"][value="4"]').prop('checked', true);
+                $('input[name="ip_version"][value="4"]').parent().addClass("active");
+            }
+            if (this.ip_version.indexOf(6) != -1) {
+                $('input[name="ip_version"][value="6"]').prop('checked', true);
+                $('input[name="ip_version"][value="6"]').parent().addClass("active");
+            }
+
+            $(".asn_lvl").spinner();
+            $(".asn_lvl").spinner("value", this.asn_level);
+            $(".merge_events").spinner();
+            $(".merge_events").spinner("value", this.merge_events);
+        };
 
         this.draw_functions_btn_enabler = function () {
             if (!this.streaming) {
                 $(".option_command_btn").removeClass("disabled");
-                $(".clear_targets_button").removeClass("disabled");
                 $(".my_ip_button").removeClass("disabled");
                 $(".go_button").removeClass("disabled");
-                $(".input_add").find("input").removeClass("disabled");
                 $(".date").removeClass("disabled");
 
                 $(".option_command_btn").removeClass("not-active");
-                $(".clear_targets_button").removeClass("not-active");
                 $(".my_ip_button").removeClass("not-active");
                 $(".go_button").removeClass("not-active");
-                $(".input_add").find("input").removeClass("not-active");
                 $(".date").removeClass("not-active");
-
-                $(".tokenfield").tokenfield('enable');
-                $(".tokenfield").removeClass('disabled');
-                $(".tokenfield").removeClass('not-active');
-
-                $("input[name='ipversion']").attr("disabled", false);
-                $("input[name='ipversion']").parent().removeClass("disabled");
-                $("input[name='ipversion']").parent().removeClass("not-active");
 
                 $("input[name='graph_type']").parent().removeClass("disabled");
                 $("input[name='graph_type']").parent().removeClass("not-active");
@@ -279,61 +389,68 @@ define([
                     $(".streaming_btn").addClass("not-active");
                 }
             }
-            $("input.token-input").css("width", "auto");
         };
 
-        this.lock_all = function () {
-            $(".path_btn").addClass("disabled");
-            $(".list_btn").addClass("disabled");
-            $(".sort_btn").addClass("disabled");
-            $(".option_command_btn").addClass("disabled");
-            $(".clear_targets_button").addClass("disabled");
-            $(".my_ip_button").addClass("disabled");
-            $(".go_button").addClass("disabled");
-            $(".input_add").find("input").addClass("disabled");
-            $(".date").addClass("disabled");
-
-            $(".path_btn").addClass("not-active");
-            $(".list_btn").addClass("not-active");
-            $(".sort_btn").addClass("not-active");
-            $(".option_command_btn").addClass("not-active");
-            $(".clear_targets_button").addClass("not-active");
-            $(".my_ip_button").addClass("not-active");
-            $(".go_button").addClass("not-active");
-            $(".input_add").find("input").addClass("not-active");
-            $(".date").addClass("not-active");
-
-            $(".tokenfield").tokenfield('disable');
-            $(".tokenfield").addClass('disabled');
-            $(".tokenfield").addClass('not-active');
-
-            $("input[name='graph_type']").parent().addClass("disabled");
-            $("input[name='graph_type']").parent().addClass("not-active");
-            $("input[name='graph_type']").parent().attr("disabled", true);
-
-            $("input[name='ipversion']").parent().addClass("disabled");
-            $("input[name='ipversion']").parent().addClass("not-active");
-            $("input[name='ipversion']").attr("disabled", true);
-
-            $("input[name='ip_version'][value='6']").parent().addClass("disabled");
-            $("input[name='ip_version'][value='6']").parent().addClass("not-active");
-            $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
-
-            $("input[name='ip_version'][value='4']").parent().addClass("disabled");
-            $("input[name='ip_version'][value='4']").parent().addClass("not-active");
-            $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
-
-            $("input[name='steps'][value='steps']").parent().addClass("disabled");
-            $("input[name='steps'][value='steps']").parent().addClass("not-active");
-            $("input[name='steps'][value='steps']").parent().attr("disabled", true);
-            $(".steps_btn").addClass("not-active");
-
+        this.ip_version_checkbox_enabler = function () {
+            GuiManager = this;
             if (!this.streaming) {
-                $("input[name='streaming'][value='streaming']").parent().addClass("disabled");
-                $("input[name='streaming'][value='streaming']").parent().addClass("not-active");
-                $("input[name='streaming'][value='streaming']").parent().attr("disabled", true);
-                $(".streaming_btn").addClass("not-active");
+                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
+                        return GuiManager.validator.check_ipv4(e);
+                    })) {
+                    $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
+                    $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
+                    $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
+                    this.ip_version = [4];
+                }
+                else {
+                    $("input[name='ip_version'][value='4']").parent().addClass("disabled");
+                    $("input[name='ip_version'][value='4']").parent().addClass("not-active");
+                    $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
+                }
+                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
+                        return GuiManager.validator.check_ipv6(e);
+                    })) {
+                    $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
+                    $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
+                    $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
+                    this.ip_version = [6];
+                }
+                else {
+                    $("input[name='ip_version'][value='6']").parent().addClass("disabled");
+                    $("input[name='ip_version'][value='6']").parent().addClass("not-active");
+                    $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
+                }
+                if (this.ripeDataBroker.current_parsed.targets.some(function (e) {
+                        return GuiManager.validator.check_ipv4(e);
+                    }) && this.ripeDataBroker.current_parsed.targets.some(function (e) {
+                        return GuiManager.validator.check_ipv6(e);
+                    })) {
+                    $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
+                    $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
+                    $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
+                    $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
+                    $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
+                    $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
+                    if (this.ip_version.length == 0)
+                        this.ip_version = [4];
+                }
             }
+        };
+
+   
+        /************************** CLICKABLE UI SETUP **************************/
+        //TO CALL AT SETUP
+        
+        this.tooltip_setup = function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        };
+
+        this.shuffle_color_map_btn_setup = function () {
+            var GuiManager = this;
+            $(".shuffle_color_map_btn").on("click", function (e) {
+                if (GuiManager.isGraphPresent())
+                    GuiManager.drawer.shuffle_color_map(GuiManager.graph_type);
+            });
         };
 
         this.erase_graph_btn_setup = function () {
@@ -363,16 +480,6 @@ define([
                 $(target).parent().toggleClass("active");
                 GuiManager.preserve_map = !GuiManager.preserve_map;
                 // GuiManager.url_string();
-            });
-        };
-
-        this.local_storage_enabled_btn_setup = function () {
-            var GuiManager = this;
-            $(".localstorage_enabled_btn").on("click", function (e) {
-                var target = e.target;
-                $(target).find("span").toggleClass("hidden");
-                $(target).parent().toggleClass("active");
-                GuiManager.localstorage_enabled = !GuiManager.localstorage_enabled;
             });
         };
 
@@ -489,126 +596,6 @@ define([
             });
         };
 
-        this.boolean_checker = function () {
-            if (!this.gather_information) {
-                $(".gather_information_btn").find("span").addClass("hidden");
-                $(".gather_information_btn").parent().removeClass("active");
-            }
-            else {
-                $(".gather_information_btn").find("span").removeClass("hidden");
-                $(".gather_information_btn").parent().addClass("active");
-            }
-
-            if (!this.preserve_map) {
-                $(".preserve_color_btn").find("span").addClass("hidden");
-                $(".preserve_color_btn").parent().removeClass("active");
-            }
-            else {
-                $(".preserve_color_btn").find("span").removeClass("hidden");
-                $(".preserve_color_btn").parent().addClass("active");
-            }
-
-            if (!this.localstorage_enabled) {
-                $(".localstorage_enabled_btn").find("span").addClass("hidden");
-                $(".localstorage_enabled_btn").parent().removeClass("active");
-            }
-            else {
-                $(".localstorage_enabled_btn").find("span").removeClass("hidden");
-                $(".localstorage_enabled_btn").parent().addClass("active");
-            }
-
-            if (!this.global_visibility) {
-                $(".global_visibility_btn").find("span").addClass("hidden");
-                $(".global_visibility_btn").parent().removeClass("active");
-            }
-            else {
-                $(".global_visibility_btn").find("span").removeClass("hidden");
-                $(".global_visibility_btn").parent().addClass("active");
-            }
-
-            if (!this.prepending_prevention) {
-                $(".prepending_prevention_btn").find("span").addClass("hidden");
-                $(".prepending_prevention_btn").parent().removeClass("active");
-            }
-            else {
-                $(".prepending_prevention_btn").find("span").removeClass("hidden");
-                $(".prepending_prevention_btn").parent().addClass("active");
-            }
-
-            if (!this.merge_cp) {
-                $(".merge_cp_btn").find("span").addClass("hidden");
-                $(".merge_cp_btn").parent().removeClass("active");
-            }
-            else {
-                $(".merge_cp_btn").find("span").removeClass("hidden");
-                $(".merge_cp_btn").parent().addClass("active");
-            }
-
-            if (!this.events_labels) {
-                $(".events_labels_btn").find("span").addClass("hidden");
-                $(".events_labels_btn").parent().removeClass("active");
-            }
-            else {
-                $(".events_labels_btn").find("span").removeClass("hidden");
-                $(".events_labels_btn").parent().addClass("active");
-            }
-
-            if (!this.cp_labels) {
-                $(".cp_labels_btn").find("span").addClass("hidden");
-                $(".cp_labels_btn").parent().removeClass("active");
-            }
-            else {
-                $(".cp_labels_btn").find("span").removeClass("hidden");
-                $(".cp_labels_btn").parent().addClass("active");
-            }
-
-            if (!this.heatmap_time_map) {
-                $(".heatmap_time_btn").find("span").addClass("hidden");
-                $(".heatmap_time_btn").parent().removeClass("active");
-            }
-            else {
-                $(".heatmap_time_btn").find("span").removeClass("hidden");
-                $(".heatmap_time_btn").parent().addClass("active");
-            }
-
-            if (!this.use_scrollbars) {
-                $(".scrollbars_btn").find("span").addClass("hidden");
-                $(".scrollbars_btn").parent().removeClass("active");
-            }
-            else {
-                $(".scrollbars_btn").find("span").removeClass("hidden");
-                $(".scrollbars_btn").parent().addClass("active");
-            }
-
-            if (this.graph_type == "stream") {
-                $('input[name="graph_type"][value="stream"]').prop('checked', true);
-                $('input[name="graph_type"][value="stream"]').parent().addClass("active");
-                $('input[name="graph_type"][value="heat"]').parent().removeClass("active");
-                $(".stream_option").removeClass("hidden");
-                $(".heat_option").addClass("hidden");
-            }
-            else if (this.graph_type == "heat") {
-                $('input[name="graph_type"][value="heat"]').prop('checked', true);
-                $('input[name="graph_type"][value="heat"]').parent().addClass("active");
-                $('input[name="graph_type"][value="stream"]').parent().removeClass("active");
-                $(".heat_option").removeClass("hidden");
-                $(".stream_option").addClass("hidden");
-            }
-            if (this.ip_version.indexOf(4) != -1) {
-                $('input[name="ip_version"][value="4"]').prop('checked', true);
-                $('input[name="ip_version"][value="4"]').parent().addClass("active");
-            }
-            if (this.ip_version.indexOf(6) != -1) {
-                $('input[name="ip_version"][value="6"]').prop('checked', true);
-                $('input[name="ip_version"][value="6"]').parent().addClass("active");
-            }
-
-            $(".asn_lvl").spinner();
-            $(".asn_lvl").spinner("value", this.asn_level);
-            $(".merge_events").spinner();
-            $(".merge_events").spinner("value", this.merge_events);
-        };
-
         this.graph_type_radio_setup = function () {
             var GuiManager = this;
             $("input[name='graph_type']").on("change", function (e) {
@@ -657,52 +644,6 @@ define([
             });
         };
 
-        this.ip_version_checkbox_enabler = function () {
-            GuiManager = this;
-            if (!this.streaming) {
-                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
-                        return GuiManager.validator.check_ipv4(e);
-                    })) {
-                    $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
-                    $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
-                    $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
-                    this.ip_version = [4];
-                }
-                else {
-                    $("input[name='ip_version'][value='4']").parent().addClass("disabled");
-                    $("input[name='ip_version'][value='4']").parent().addClass("not-active");
-                    $("input[name='ip_version'][value='4']").parent().attr("disabled", true);
-                }
-                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
-                        return GuiManager.validator.check_ipv6(e);
-                    })) {
-                    $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
-                    $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
-                    $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
-                    this.ip_version = [6];
-                }
-                else {
-                    $("input[name='ip_version'][value='6']").parent().addClass("disabled");
-                    $("input[name='ip_version'][value='6']").parent().addClass("not-active");
-                    $("input[name='ip_version'][value='6']").parent().attr("disabled", true);
-                }
-                if (this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                        return GuiManager.validator.check_ipv4(e);
-                    }) && this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                        return GuiManager.validator.check_ipv6(e);
-                    })) {
-                    $("input[name='ip_version'][value='4']").parent().removeClass("disabled");
-                    $("input[name='ip_version'][value='4']").parent().removeClass("not-active");
-                    $("input[name='ip_version'][value='4']").parent().attr("disabled", false);
-                    $("input[name='ip_version'][value='6']").parent().removeClass("disabled");
-                    $("input[name='ip_version'][value='6']").parent().removeClass("not-active");
-                    $("input[name='ip_version'][value='6']").parent().attr("disabled", false);
-                    if (this.ip_version.length == 0)
-                        this.ip_version = [4];
-                }
-            }
-        };
-
         this.asn_level_setup = function () {
             var GuiManager = this;
             $("input[name='asn_lvl']:input").on("change", function (e, ui) {
@@ -717,7 +658,7 @@ define([
             var interval;
             $(".streaming_btn").on("click", function (e, ui) {
                 GuiManager.streaming = !GuiManager.streaming;
-                GuiManager.streaming_icon_swap();
+                streaming_icon_swap();
                 if (GuiManager.streaming) {
                     GuiManager.lock_all();
                     interval = GuiManager.ripeDataBroker.streamgraph_streaming(GuiManager.streaming_speed);
@@ -728,18 +669,18 @@ define([
                     GuiManager.draw_functions_btn_enabler();
                 }
             });
-        };
 
-        this.streaming_icon_swap = function () {
-            var icon = $(".streaming_btn").find("span");
-            if (this.streaming) {
-                icon.removeClass("glyphicon-record");
-                icon.addClass("glyphicon-stop");
-            }
-            else {
-                icon.addClass("glyphicon-record");
-                icon.removeClass("glyphicon-stop");
-            }
+            streaming_icon_swap = function () {
+                var icon = $(".streaming_btn").find("span");
+                if (this.streaming) {
+                    icon.removeClass("glyphicon-record");
+                    icon.addClass("glyphicon-stop");
+                }
+                else {
+                    icon.addClass("glyphicon-record");
+                    icon.removeClass("glyphicon-stop");
+                }
+            };
         };
 
         this.steps_btn_setup = function () {
@@ -850,7 +791,7 @@ define([
             });
         };
 
-        /************************** ORDERING **************************/
+        /************************** ORDERING BUTTONS **************************/
         //levensthein
         this.lev_dist_randwalk_cum_btn_setup = function () {
             var manager = this;
@@ -1047,6 +988,8 @@ define([
             });
         };
 
+
+        /**************************************** OTHERS ************************************************/
         this.set_ordering = function (order) {
             this.ripeDataBroker.loadCurrentState(order, false, null, true);
         };
@@ -1063,7 +1006,7 @@ define([
             $(selector).text(quantity);
         };
 
-        /*******************************************************************************/
+        /*************************************** BOTTOM BUTTONS ****************************************/
         this.docs_btn_setup = function () {
             var GuiManager = this;
             $(".docs_btn").on("click", function (e) {
