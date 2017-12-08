@@ -5,7 +5,7 @@ define([
 ], function(moment, Validator, myUtils){
 
     var RipeDataParser = function(env) {
-        console.log("==== RipeParser Starting");
+        env.logger.log("==== RipeParser Starting");
         this.validator = new Validator();
         this.states = [];
         this.events = [];
@@ -29,7 +29,7 @@ define([
         this.known_asn = {};
         this.known_cp = {};
 
-        console.log("==== RipeParser Ready");
+        env.logger.log("==== RipeParser Ready");
 
         /**manage the events and state of the announcement**/
         //the level of detail is by CP and only later cumulated to ASN view
@@ -43,7 +43,7 @@ define([
         //ripe_response_parse();
         //main function to call for parsing
         this.ripe_response_parse = function (json, start, end) {
-            console.log(start, end);
+            env.logger.log(start, end);
             //on local load from data.json
             //json = require('./data.json');
             //global variables init
@@ -93,11 +93,11 @@ define([
             var log_on = false;
             var print_on = false;
             if (log_on) {
-                console.log(this.states);
-                console.log(this.events);
-                console.log(this.resources);
-                console.log(this.targets);
-                console.log(this.cp_set);
+                env.logger.log(this.states);
+                env.logger.log(this.events);
+                env.logger.log(this.resources);
+                env.logger.log(this.targets);
+                env.logger.log(this.cp_set);
             }
             if (print_on) {
                 this.print_json_to_file(this.states, 'states.json');
@@ -218,14 +218,14 @@ define([
 
             //PATCH EVENT BEFORE AND AFTER
             if (moment(this.events[0]).isAfter(start)) {
-                console.log("ADDED HEAD FAKE EVENT");
+                env.logger.log("ADDED HEAD FAKE EVENT");
                 this.fake_head = true;
                 this.query_starttime = start.format(env.dateConverter.ripestat_data_format);
             }
             else
                 this.fake_head = false;
             if (moment(this.events[this.events.length - 1]).isBefore(end)) {
-                console.log("ADDED TAIL FAKE EVENT");
+                env.logger.log("ADDED TAIL FAKE EVENT");
                 this.fake_tail = true;
                 this.query_endtime = end.format(env.dateConverter.ripestat_data_format);
             }
@@ -388,9 +388,9 @@ define([
             var fs = require('fs');
             fs.writeFile("./" + filename, JSON.stringify(json, null, 4), function (err) {
                 if (err) {
-                    return console.log(err);
+                    return env.logger.log(err);
                 }
-                console.log(filename + " file written");
+                env.logger.log(filename + " file written");
             });
         };
 
@@ -477,7 +477,7 @@ define([
             if (data.fake_head) {
                 real_states = [dummy_state].concat(real_states);
                 real_events = [data.query_starttime].concat(real_events);
-                console.log(real_states)
+                env.logger.log(real_states)
             }
 
             if (data.fake_tail) {
@@ -569,7 +569,7 @@ define([
                 real_events = real_events.concat(data.query_endtime);
             }
 
-            console.log(real_events)
+            env.logger.log(real_events)
             var converted_data = [];
             var header = "date\tcp\tasn_path";
             var cp_set = data.cp_set.sort();

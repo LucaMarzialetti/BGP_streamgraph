@@ -32,10 +32,10 @@ define([
         this.drawer_init = function () {
             console.log("DRAW INIT");
             this.erase_all();
-            var margin = {top: 15, right: 15, bottom: 15, left: 15};
+            var margin = {top: 5, right: 15, bottom: 15, left: 15};
             var width = $("div.main_svg").outerWidth() - margin.left - margin.right;
             var height_main = parseInt($("div.main_svg").outerHeight()) - margin.top;
-            var height_mini = parseInt($("div.main_svg").outerHeight() / 2) - (margin.bottom + margin.top);
+            var height_mini = parseInt($("div.mini_svg").outerHeight()) - margin.bottom;
             this.sizes = {
                 margin: margin,
                 width: width,
@@ -49,7 +49,7 @@ define([
             this.draw_background(this.main_svg, this.sizes);
             this.draw_stream_axis(this.main_svg, this.sizes);
             this.draw_minimap(this.mini_svg, this.sizes);
-            this.draw_over(this.main_svg, this.sizes);
+            // this.draw_over(this.main_svg, this.sizes);
         };
 
         this.draw_over = function (svg, sizes) {
@@ -58,8 +58,7 @@ define([
             if (env.guiManager.graph_type == "heat") {
                 x = 0;
                 y = sizes.margin.top;
-            }
-            else {
+            } else {
                 x = sizes.margin.left + sizes.margin.right * 3;
                 y = sizes.height_main - sizes.margin.top * 2;
             }
@@ -90,13 +89,13 @@ define([
                 y_width = sizes.height_mini - (sizes.margin.top + sizes.margin.bottom);
                 margin_left = sizes.margin.left + sizes.margin.right * 2;
                 margin_top = sizes.margin.top;
-                axis_margin = sizes.height_mini - sizes.margin.top;
+                axis_margin = sizes.height_mini - sizes.margin.bottom;
             } else if (env.guiManager.graph_type == "heat") {
                 x_width = sizes.width - (sizes.margin.left + sizes.margin.right);
                 y_width = sizes.height_mini - (sizes.margin.top + sizes.margin.bottom);
                 margin_left = sizes.margin.left + sizes.margin.right * 2;
                 margin_top = sizes.margin.top;
-                axis_margin = sizes.height_mini - sizes.margin.top;
+                axis_margin = sizes.height_mini - sizes.margin.bottom;
             }
 
             this.mini_x = d3.scaleTime().range([0, x_width]);
@@ -184,7 +183,7 @@ define([
                     .append("g")
                     .attr("class", "mini_axis")
                     .attr("transform", "translate (" + margin_left + "," + margin_top + ")")
-                    .call(d3.axisLeft($this.mini_y).ticks(10, "%"));
+                    .call(d3.axisLeft($this.mini_y).ticks(3, "%"));
 
                 $this.brush = svg
                     .append("g")
@@ -242,13 +241,10 @@ define([
                 var selection = d3.brushSelection(this.brush.node());
                 var i, j;
                 if (selection && selection[0] && selection[1]) {
-                     i = this.mini_x.invert(selection[0]);
-                     j = this.mini_x.invert(selection[1]);
+                    i = this.mini_x.invert(selection[0]);
+                    j = this.mini_x.invert(selection[1]);
                 }
-                console.log(moment(i))
-                console.log(moment(this.events_range[0]))
-                console.log(moment(j))
-                console.log(moment(this.events_range[1]))
+
                 if (!moment(i).isSame(moment(this.events_range[0])) || !moment(j).isSame(moment(this.events_range[1]))) {
                     console.log("RE BRUSH")
                     this.center_brush(moment(this.events_range[0]), moment(this.events_range[1]));
@@ -291,26 +287,22 @@ define([
             this.y = d3.scaleLinear().range([sizes.height_main - (sizes.margin.top + sizes.margin.bottom), 0]);
             // Add the x axis
             this.main_svg.append("g")
-                .attr("class", "axis axis--x")
-                .attr("transform", "translate(" + (sizes.margin.left + sizes.margin.right * 2) + "," + (sizes.height_main - sizes.margin.top) + ")")
+                .attr("class", "axis axis-x")
+                .attr("transform", "translate(" + (sizes.margin.left + sizes.margin.right * 2) + "," + (sizes.height_main - sizes.margin.bottom) + ")")
                 .call(d3.axisBottom(this.x));
+
             // Add the y axis
             this.main_svg.append("g")
                 .attr("transform", "translate(" + (sizes.margin.left + sizes.margin.right * 2) + "," + sizes.margin.top + ")")
                 .attr("class", "axis axis--y")
                 .call(d3.axisLeft(this.y).ticks(10, "%"));
+
             // Add x axis title
             this.main_svg.append("text")
                 .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
                 .attr("transform", "translate(" + sizes.margin.left + "," + (sizes.height_main / 2) + ")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
                 .attr("class", "axe_description")
                 .text("Visibility");
-            // Add y axis title
-            this.main_svg.append("text")
-                .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-                .attr("transform", "translate(" + ((sizes.width / 2) + (sizes.margin.left * 5 / 2)) + "," + (sizes.height_main + sizes.margin.top) + ")")  // centre below axis
-                .attr("class", "axe_description")
-                .text("Timestamp");
         };
 
         this.parseDate = function () {
@@ -363,14 +355,16 @@ define([
             this.y.domain([0, 1]);
             stack.keys(this.keys);
 
-            if (events_range)
+            if (events_range) {
                 this.events_range = events_range;
-            else if (events_range === undefined)
+            } else if (events_range === undefined) {
                 this.events_range = null;
+            }
 
             if (redraw_minimap) {
-                if (this.current_query_id != undefined && this.current_query_id != query_id)
+                if (this.current_query_id != undefined && this.current_query_id != query_id) {
                     this.events_range = null;
+                }
                 this.draw_minimap(this.mini_svg, this.sizes, data, stack);
             }
             /*USING THE BRUSH**/
@@ -406,9 +400,10 @@ define([
                     if (!env.guiManager.steps) mousemove(d, d3.mouse(this))
                 });
 
-            layer.filter(function (d) {
-                return d[d.length - 1][1] - d[d.length - 1][0] > 0.025;
-            })
+            layer
+                .filter(function (d) {
+                    return d[d.length - 1][1] - d[d.length - 1][0] > 0.025;
+                })
                 .append("text")
                 .attr("x", this.sizes.width - this.sizes.margin.right * 2.5)
                 .attr("y", function (d) {
@@ -425,7 +420,7 @@ define([
                     return d.key;
                 });
 
-            this.main_svg.selectAll(".axis--x")
+            this.main_svg.selectAll(".axis-x")
                 .call(d3.axisBottom(this.x));
 
             var bisectDate = d3.bisector(function (d) {
@@ -434,7 +429,7 @@ define([
 
             function mouseover() {
                 $this.tooltip.removeClass("hidden");
-            };
+            }
 
             function mousemove(d_key, pos) {
                 //trova l'interesezione sull'asse X (percentuale) relativamente al mouse X
@@ -473,17 +468,16 @@ define([
                         .style("fill-opacity", 0.35);
                     $this.last_hover = d_key.key;
                 }
-            };
+            }
 
             function mouseout() {
                 d3.selectAll(".area").style("fill-opacity", 1);
                 $this.tooltip.addClass("hidden");
                 $this.last_hover = null;
-            };
+            }
 
             function click(pos, event) {
-                //if(event.ctrlKey||event.altKey||event.shiftKey||event.metaKey) {
-                var confirmed = confirm("Go to BGPlay?");
+                var confirmed = confirm("Do you want to open BGPlay on this instant?");
                 if (confirmed) {
                     var x0 = $this.x.invert(pos[0]),
                         i = bisectDate(data, x0, 1),
@@ -493,10 +487,8 @@ define([
                     var date = data[i]['date'];
                     bgplay_callback(date);
                 }
-                //}
-            };
+            }
 
-            this.draw_over(this.main_svg, this.sizes);
             this.current_query_id = query_id;
         };
 
@@ -901,12 +893,11 @@ define([
             }).left;
 
             if (timemap) {
-                console.log("draw X axis")
                 this.main_svg
                     .append("g")
-                    .attr("class", "axis axis--x")
+                    .attr("class", "axis axis-x")
                     .attr("transform", "translate(" + margin_x + ", " + margin_y + ")")
-                    .call(d3.axisTop(this.x).tickFormat(d3.timeFormat("%Y-%m-%d %H:%M:%S")).tickValues(this.ticks))//.ticks(drawer.event_set.length))
+                    .call(d3.axisTop(this.x).tickFormat(d3.timeFormat("%Y-%m-%d %H:%M:%S")).tickValues(this.ticks))
                     .selectAll("text")
                     .attr("y", 0)
                     .attr("x", 10)
@@ -915,7 +906,7 @@ define([
                     .style("text-anchor", "start");
             }
             this.current_query_id = query_id;
-            this.draw_over(this.main_svg, this.sizes);
+            // this.draw_over(this.main_svg, this.sizes);
 
             function type(d, asn_set, cp_set, event_set, level, prepending) {
                 if (cp_set.indexOf(d.cp) == -1)
@@ -1007,18 +998,17 @@ define([
                     .style("fill-opacity", 1);
                 $this.last_hover = null;
                 $this.tooltip.addClass("hidden");
-            };
+            }
 
             function click(pos, event) {
                 if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey) {
-                    var confirmed = confirm("Go to BGPlay?");
+                    var confirmed = confirm("Do you want to open BGPlay on this instant?");
                     if (confirmed) {
-                        console.log("ASSE X MANCA INTERCETTA")
                         var date = $this.x.invert(pos[0]);
                         bgplay_callback(date);
                     }
                 }
-            };
+            }
 
             function cp_mouse_over(d, pos) {
                 var s = "<strong>CP: </strong>";

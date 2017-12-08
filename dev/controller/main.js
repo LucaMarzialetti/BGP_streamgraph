@@ -1,7 +1,8 @@
 define([
+    "bgpst.env.utils",
     "bgpst.view.graphdrawer",
     "bgpst.view.gui"
-], function(GraphDrawer, GuiManager){
+], function(utils, GraphDrawer, GuiManager){
 
     var Main = function(env) {
         this.exposedMethods = ["getVersion", "on", "init"];

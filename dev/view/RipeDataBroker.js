@@ -11,7 +11,7 @@ define([
 
 
     var RipeDataBroker = function(env) {
-        console.log("=== RipeBroker Starting");
+        env.logger.log("=== RipeBroker Starting");
         var $this = this;
         this.parser = new RipeDataParser(env);
         this.dateConverter = new DateConverter();
@@ -19,7 +19,7 @@ define([
         this.heuristicsManager = new HeuristicsManager(env);
         this.ipv6_peerings = 0;
         this.ipv4_peerings = 0;
-        console.log("=== RipeBroker Ready");
+        env.logger.log("=== RipeBroker Ready");
 
 
         //do the ajax get
@@ -34,8 +34,8 @@ define([
                     endtime: env.queryParams.stopDate.unix()
                 },
                 success: function(data){
-                    console.log("=== RipeBroker Success! Peer count loaded");
-                    console.log(data);
+                    env.logger.log("=== RipeBroker Success! Peer count loaded");
+                    env.logger.log(data);
                     try {
                         $this.ipv4_peerings = myUtils.max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
                         $this.ipv6_peerings = myUtils.max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
@@ -44,7 +44,7 @@ define([
                         if($this.ipv4_peerings == 0 && env.queryParams.targets.some(function(e){return env.guiManager.validator.check_ipv4(e)}))
                             env.guiManager.global_visibility = false;
                     } catch(err) {
-                        console.log("=== RipeBroker Warning: empty peerings size");
+                        env.logger.log("=== RipeBroker Warning: empty peerings size");
                         $this.ipv6_peerings = 0;
                         $this.ipv4_peerings = 0;
                         env.guiManager.global_visibility = false;
@@ -69,12 +69,12 @@ define([
                     endtime: env.queryParams.stopDate.unix()
                 },
                 success: function(data){
-                    console.log("=== RipeBroker Success! Data loaded from:"+url_bgplay);
-                    console.log(data);
+                    env.logger.log("=== RipeBroker Success! Data loaded from:"+url_bgplay);
+                    env.logger.log(data);
                     try {
                         $this.current_parsed = $this.parser.ripe_response_parse(data, env.queryParams.startDate, env.queryParams.stopDate);
                         if(env.guiManager.gather_information){
-                            console.log("=== RipeBroker Starting gathering CP Info");
+                            env.logger.log("=== RipeBroker Starting gathering CP Info");
                             env.guiManager.rrc_info_done=false;
                             setTimeout(function(){
                                 $this.getCPInfo($this.current_parsed.resources,0)
@@ -84,7 +84,7 @@ define([
                         $this.loadCurrentState(true, env.guiManager.drawer.events_range, true);
 
                         if(env.guiManager.gather_information){
-                            console.log("=== RipeBroker Starting gathering ASN Info");
+                            env.logger.log("=== RipeBroker Starting gathering ASN Info");
                             setTimeout(function(){
                                 env.guiManager.asn_info_done=false;
                                 if(env.guiManager.graph_type=="stream")
@@ -96,7 +96,7 @@ define([
                         }
                     }
                     catch(err){
-                        console.log(err);
+                        env.logger.log(err);
                         alert("No data found for this target in the interval of time selected");
                     }
                     finally {
@@ -146,7 +146,7 @@ define([
             }
             else{
                 env.guiManager.cp_info_done = true;
-                console.log("=== RipeBroker CPinfo Completed");
+                env.logger.log("=== RipeBroker CPinfo Completed");
             }
         };
 
@@ -174,7 +174,7 @@ define([
             }
             else{
                 env.guiManager.asn_info_done = true;
-                console.log("=== RipeBroker ASNinfo Completed");
+                env.logger.log("=== RipeBroker ASNinfo Completed");
             }
         };
 
@@ -187,12 +187,12 @@ define([
             env.guiManager.restoreQuery();
             var ordering;
             if(env.guiManager.gather_information){
-                console.log("=== RipeBroker Starting gathering CP Info");
+                env.logger.log("=== RipeBroker Starting gathering CP Info");
                 env.guiManager.cp_info_done = false;
                 setTimeout(function(){
                     $this.getCPInfo($this.current_parsed.resources,0)
                 },0);
-                console.log("=== RipeBroker Starting gathering ASN Info");
+                env.logger.log("=== RipeBroker Starting gathering ASN Info");
                 setTimeout(function(){
                     env.guiManager.asn_info_done = false;
                     if(env.guiManager.graph_type == "stream")
@@ -214,11 +214,11 @@ define([
                 for(var t in this.current_parsed.targets){
                     var tgs = this.current_parsed.targets[t];
                     if(env.guiManager.ip_version.indexOf(4) != -1 && env.guiManager.validator.check_ipv4(tgs)){
-                        console.log("== RipeBroker adding ipv4 peerings");
+                        env.logger.log("== RipeBroker adding ipv4 peerings");
                         this.current_visibility+=this.ipv4_peerings;
                     }
                     if(env.guiManager.ip_version.indexOf(6) != -1 && env.guiManager.validator.check_ipv6(tgs)){
-                        console.log("== RipeBroker adding ipv6 peerings");
+                        env.logger.log("== RipeBroker adding ipv6 peerings");
                         this.current_visibility+=this.ipv6_peerings;
                     }
                 }
@@ -257,10 +257,10 @@ define([
                 //ORDERING
                 ordering = this.heuristicsManager.getCurrentOrdering(this.current_parsed, env.guiManager.graph_type);
                 if (!ordering) {
-                    console.log("ordering non c'è");
+                    env.logger.log("ordering non c'è");
                     ordering = this.current_parsed.cp_set;
                 } else {
-                    console.log("ordering c'è");
+                    env.logger.log("ordering c'è");
                 }
                 env.guiManager.drawer.draw_heatmap(
                     this.current_parsed,
@@ -309,9 +309,9 @@ define([
             url+="&w.endtime="+end;
             url+="&w.instant="+this.dateConverter.formatUnix(pos);
             url+="&w.type=bgp";
-            console.log("con utc"+moment(pos).utc().unix(pos));
-            console.log("senza utc"+moment(pos).unix(pos));
-            console.log("GO TO BGPLAY AT "+url);
+            env.logger.log("con utc"+moment(pos).utc().unix(pos));
+            env.logger.log("senza utc"+moment(pos).unix(pos));
+            env.logger.log("GO TO BGPLAY AT "+url);
             return window.open(url,'_blank');
         };
 
@@ -320,9 +320,9 @@ define([
                 // var date = moment(new Date());
                 // var formatted = $this.DateConverter.formatRipe(date);
                 $this.getData();
-                console.log("Streaming got new data!");
+                env.logger.log("Streaming got new data!");
             }, every);
-            console.log("Streaming started with interval ID: "+interval_id);
+            env.logger.log("Streaming started with interval ID: "+interval_id);
             return interval_id;
         };
 
@@ -340,7 +340,7 @@ define([
                     i+=1;
                 }
             },every);
-            console.log("Step view started with interval ID: "+interval_id);
+            env.logger.log("Step view started with interval ID: "+interval_id);
 
             function core(i) {
                 $this.drawer.draw_streamgraph($this.current_parsed, $this.guiManager.graph_type, $this.current_asn_tsv, $this.drawer.keys, $this.guiManager.preserve_map, $this.current_visibility, $this.current_parsed.targets, $this.current_parsed.query_id, $this.gotToBgplayFromPosition, i, null, false);

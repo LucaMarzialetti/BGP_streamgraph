@@ -57,13 +57,8 @@ requirejs.config({
 
 
         /* model */
-        "bgpst.model.gdbstruct": window.atlas._widgets.bgpst.urls.model + "gdb_structure/GDBStruct",
-
-
-        /* connector */
-        // "bgpst.connector.facade": window.atlas._widgets.bgpst.urls.connector + "ConnectorFacade",
-        // "bgpst.connector.translation": window.atlas._widgets.bgpst.urls.connector + "TranslationConnector",
-        // "bgpst.connector.rest": window.atlas._widgets.bgpst.urls.connector + "RestConnector"
+        "bgpst.model.gdbstruct": window.atlas._widgets.bgpst.urls.model + "gdb_structure/GDBStruct"
+        
 
     },
     shim:{
@@ -97,8 +92,9 @@ define([
     "bgpst.env.config",
     "bgpst.env.languages.en",
     "bgpst.lib.jquery-amd",
-    "bgpst.controller.main"
-], function(utils, config, language, $, Main){
+    "bgpst.controller.main",
+    "bgpst.controller.logger"
+], function(utils, config, language, $, Main, Logger){
 
     return function(instance){
         var env, instanceParams, queryParams, parentDom, styleDownloads, objectToBeEnriched;
@@ -114,8 +110,9 @@ define([
          * Init Dependency Injection Vector
          */
         env = {
-            "version": "17.12.4.0",
+            "version": "17.12.8.0",
             "dev": instanceParams.dev,
+            "logger": new Logger(),
             "autoStart": instanceParams.autoStart || true,
             "widgetUrl": WIDGET_URL + "dev/",
             "parentDom": $(parentDom),
@@ -143,13 +140,7 @@ define([
 
         if (!instanceParams.dev){
             styleDownloads = [
-                // window.atlas._widgets.bgpst.urls.view + "css/style-lib-dist.min.css"
-                window.atlas._widgets.bgpst.urls.view + "css/style.css",
-                window.atlas._widgets.bgpst.urls.libs + "jquery/jquery-ui.min.css",
-                window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap.min.css",
-                window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap-theme.min.css",
-                window.atlas._widgets.bgpst.urls.libs + "bootstrap-slider/css/bootstrap-slider.css",
-                window.atlas._widgets.bgpst.urls.libs + "css/flags/2.8.0/flag-icon.min.css"
+                window.atlas._widgets.bgpst.urls.view + "css/style-lib-dist.min.css"
             ];
         } else {
             styleDownloads = [
@@ -158,7 +149,8 @@ define([
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap.min.css",
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap-theme.min.css",
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap-slider/css/bootstrap-slider.css",
-                window.atlas._widgets.bgpst.urls.view + "css/flags/2.8.0/flag-icon.min.css"
+                window.atlas._widgets.bgpst.urls.view + "css/flags/2.8.0/flag-icon.min.css",
+                window.atlas._widgets.bgpst.urls.libs + "bootstrap-datetimepicker/css/bootstrap-datetimepicker.css"
             ];
 
         }

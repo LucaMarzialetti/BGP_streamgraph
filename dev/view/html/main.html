@@ -1,171 +1,156 @@
 <div class="bgpst_container">
-    <div class="row first_row left_margin">
+    <div class="header">
+        Start: <input size="14" type="text" readonly class="start-date">
+        Stop: <input size="14" type="text" readonly class="stop-date">
+        <button type="button" class="btn btn-default btn-xs">Ok</button>
 
-        <div class="col-sm-11 text-right">
-            <div class="col-sm-2">
-                <div class='input-group other_command_btn date datetimepicker date_only start form-group'>
-                    <input type='text' class="form-control" placeholder="Enter date" />
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-                </div>
 
-            </div>
-
-            <div class="col-sm-2">
-                <div class='input-group other_command_btn date datetimepicker date_only end form-group'>
-                    <input type='text' class="form-control" placeholder="Enter date"/>
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-                </div>
-            </div>
-            <div class="btn-group other_command_btn steps_btn stream_option" data-toggle="buttons">
-                <label class="btn btn-default">
-                    <input type="checkbox" name="steps" value="steps" autocomplete="off">
-                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
-                    Steps
-                </label>
-            </div>
-            <div class="btn-group other_command_btn streaming_btn stream_option" data-toggle="buttons">
-                <label class="btn btn-default">
-                    <input type="checkbox" name="streaming" value="streaming" autocomplete="off">
-                    <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
-                    Streaming
-                </label>
-            </div>
-            <div class="btn-group other_command_btn ip_version" data-toggle="buttons">
-                <label class="btn btn-default">
-                    <input type="checkbox" name="ip_version" value="4" autocomplete="off">
-                    IPv4
-                </label>
-                <label class="btn btn-default">
-                    <input type="checkbox" name="ip_version" value="6" autocomplete="off">
-                    IPv6
-                </label>
-            </div>
-            <div class="btn-group other_command_btn graph_type" data-toggle="buttons">
-                <label class="btn btn-default">
-                    <input type="radio" name="graph_type" value="stream" autocomplete="off">
-                    Global
-                </label>
-                <label class="btn btn-default">
-                    <input type="radio" name="graph_type" value="heat" autocomplete="off">
-                    Local
-                </label>
-            </div>
-            <span class="dropdown">
-                <button type="button" class="dropdown-toggle other_command_btn option_command_btn btn btn-default text_centerd" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right repositioned">
-                    <li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>
-                    <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>
-                    <li>
-                        <a href="#" class="preserve_color_btn">
-                            Preserve Color Map
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="gather_information_btn">
-                            Gather Information (CP Geo, ASN Detail)
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="localstorage_enabled_btn">
-                            Enable Local Storage
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="prepending_prevention_btn">
-                            AS-Path Anti-Prepending
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li class="heat_option">
-                        <a href="#" class="merge_cp_btn">
-                            Merge CPs with same paths
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li class="heat_option" style="display: inline-flex;">
-                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
-                            Merge events with same routing
-
-                        </a>
-                        <input type="number" name="merge_events" min="0" max="500"
-                               style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">
-                    </li>   
-                    <li class="stream_option">
-                        <a href="#" class="global_visibility_btn">
-                            Global visibility (All CPs)
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li style="display: inline-flex;">
-                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
-                            Upstream Level (AS-path hop)
-
-                        </a>
-                        <input type="number" name="asn_lvl" min="0" max="50"
-                               style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">
-                    </li>
-                </ul>
-            </span>
-            <span class="dropdown">
-                <button type="button" class="dropdown-toggle other_command_btn path_btn btn btn-default text_centerd" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right repositioned">
-                    <li>
-                        <a href="#" class="draw_path_btn">Draw Path</a>
-                    </li>
-                    <li class="heat_option">
-                        <a href="#" class="events_labels_btn">
-                            Events labels
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li class="heat_option">
-                        <a href="#" class="cp_labels_btn">
-                            CP labels
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li class="heat_option">
-                        <a href="#" class="heatmap_time_btn">
-                            Use time mapping
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>       
-                    <li class="heat_option">
-                        <a href="#" class="scrollbars_btn">
-                            Use scrollbars
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>                       
-                </ul>
-            </span>
-            <span class="dropdown">
-                <button type="button" class="dropdown-toggle other_command_btn list_btn btn btn-default text_centerd" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">
-                   <li class="dropdown-submenu right_arrows">
-                    <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>
-                    <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>
+        <div class="btn-group steps_btn stream_option" data-toggle="buttons" style="margin-left: 30px;">
+            <label class="btn btn-default btn-xs">
+                <input type="checkbox" name="steps" value="steps" autocomplete="off">
+                <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+                Steps
+            </label>
+        </div>
+        <div class="btn-group streaming_btn stream_option" data-toggle="buttons">
+            <label class="btn btn-default btn-xs">
+                <input type="checkbox" name="streaming" value="streaming" autocomplete="off">
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+                Streaming
+            </label>
+        </div>
+        <div class="btn-group ip_version" data-toggle="buttons">
+            <label class="btn btn-default btn-xs">
+                <input type="checkbox" name="ip_version" value="4" autocomplete="off">
+                IPv4
+            </label>
+            <label class="btn btn-default btn-xs">
+                <input type="checkbox" name="ip_version" value="6" autocomplete="off">
+                IPv6
+            </label>
+        </div>
+        <div class="btn-group graph_type" data-toggle="buttons">
+            <label class="btn btn-default btn-xs">
+                <input type="radio" name="graph_type" value="stream" autocomplete="off">
+                Global
+            </label>
+            <label class="btn btn-default btn-xs">
+                <input type="radio" name="graph_type" value="heat" autocomplete="off">
+                Local
+            </label>
+        </div>
+        <span class="dropdown">
+            <button type="button" class="btn-group btn-xs dropdown-toggle option_command_btn btn btn-default text_centerd" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right repositioned">
+                <li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>
+                <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>
+                <li>
+                    <a href="#" class="preserve_color_btn">
+                        Preserve Color Map
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
                 </li>
-                <li class="dropdown-submenu right_arrows">
-                    <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>
-                    <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>
+                <li>
+                    <a href="#" class="gather_information_btn">
+                        Gather Information (CP Geo, ASN Detail)
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="localstorage_enabled_btn">
+                        Enable Local Storage
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="prepending_prevention_btn">
+                        AS-Path Anti-Prepending
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li class="heat_option">
+                    <a href="#" class="merge_cp_btn">
+                        Merge CPs with same paths
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li class="heat_option" style="display: inline-flex;">
+                    <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
+                        Merge events with same routing
+
+                    </a>
+                    <input type="number" name="merge_events" min="0" max="500"
+                           style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">
+                </li>
+                <li class="stream_option">
+                    <a href="#" class="global_visibility_btn">
+                        Global visibility (All CPs)
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li style="display: inline-flex;">
+                    <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
+                        Upstream Level (AS-path hop)
+
+                    </a>
+                    <input type="number" name="asn_lvl" min="0" max="50"
+                           style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">
                 </li>
             </ul>
         </span>
         <span class="dropdown">
-            <button type="button" class="dropdown-toggle other_command_btn sort_btn btn btn-default text_centerd" data-toggle="dropdown">
+            <button type="button" class="btn-group btn-xs dropdown-toggle path_btn btn btn-default text_centerd" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right repositioned">
+                <li>
+                    <a href="#" class="draw_path_btn">Draw Path</a>
+                </li>
+                <li class="heat_option">
+                    <a href="#" class="events_labels_btn">
+                        Events labels
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li class="heat_option">
+                    <a href="#" class="cp_labels_btn">
+                        CP labels
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li class="heat_option">
+                    <a href="#" class="heatmap_time_btn">
+                        Use time mapping
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li class="heat_option">
+                    <a href="#" class="scrollbars_btn">
+                        Use scrollbars
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </a>
+                </li>
+            </ul>
+        </span>
+        <span class="dropdown">
+            <button type="button" class="btn-xs btn-group dropdown-toggle list_btn btn btn-default text_centerd" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">
+               <li class="dropdown-submenu right_arrows">
+                <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>
+                <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>
+            </li>
+            <li class="dropdown-submenu right_arrows">
+                <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>
+                <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>
+            </li>
+        </ul>
+    </span>
+        <span class="dropdown">
+            <button type="button" class="btn-xs btn-group dropdown-toggle sort_btn btn btn-default text_centerd" data-toggle="dropdown">
                 <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right repositioned">
@@ -197,28 +182,13 @@
                 <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>
             </ul>
         </span>
-            <!--Showing <span class="counter_events" style="text-align: center;"></span> BGP updates from <span class="counter_asn" style="text-align: center;"></span> ASn-->
-        </div>
+    </div>
 
-    </div>
     <div class="svg_tooltip hidden"></div>
-    <div class="canvas_container left_margin main_svg">
-        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">
-        </svg>
+    <div class="canvas_container main_svg">
+        <svg></svg>
     </div>
-    <div class="canvas_container left_margin mini_svg" style="height: 35vh">
-        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" style="overflow:visible;">
-        </svg>
-    </div>
-    <div class="last_row footer">
-        <nav class="navbar">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="btn btn-default navbar-btn docs_btn">Docs</button>
-                    <button type="button" class="btn btn-default navbar-btn about_btn">About BGPStreamGraph</button>
-                    <button type="button" class="btn btn-default navbar-btn embed_btn">Embed</button>
-                </div>
-            </div>
-        </nav>
+    <div class="canvas_container mini_svg">
+        <svg></svg>
     </div>
 </div>

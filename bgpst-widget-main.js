@@ -141,7 +141,7 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
                 $(domElement).addMsg("error", error, true);
             }
         }, {
-            targets: widgetParams.resource,
+            targets: [widgetParams.resource],
             startDate: widgetParams.startDate,
             stopDate: widgetParams.stopDate
         });

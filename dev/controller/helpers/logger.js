@@ -1,33 +1,16 @@
 define([
 ], function(){
 	
-	var Logger = function() {
-		var registred_components = {
-			"context":{
-				"m1":true
-			},
-			"gui":{
-				"m1":true
-			},
-			"broker":{
-				"m1":true
-			},
-			"parser":{
-				"m1":true
-			},
-			"drawer":{
-				"m1":true
-			},
-			"order":{
-				"m1":true
+	return function () {
+		var printErrors = false;
+		var printDebug = false;
+
+		this.log = function (string, type){
+			if ((!type || type == "debug") && printDebug){
+				console.log(string);
+			} else if (type == "error" && printErrors) {
+				console.log(string);
 			}
-		};
-	};
-
-	Logger.prototype.log_to_console = function(string, caller){
-		if(this.registred_components[caller] == true)
-			console.log(string);
-	};
-
-	return Logger;
+		}
+	}
 });

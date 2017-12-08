@@ -4,7 +4,9 @@ define([
     "bgpst.lib.moment"
 ], function(myUtils, moment){
 
-    var MetricsManager = function(env) {};
+    var MetricsManager = function(env) {
+        this.logger = env.logger;
+    };
 
     MetricsManager.prototype.metrics = function(current_parsed, asn_ordering){
         var line_std_devs = Object.values(this.lineDistancesStdDev(current_parsed, asn_ordering));
@@ -12,10 +14,10 @@ define([
         var wiggles_sum = this.sortByWiggleMinSum(wiggles,asn_ordering);
         var wiggles_max = this.sortByWiggleMinMax(wiggles, asn_ordering);
         var disconnections = this.disconnections(current_parsed,asn_ordering);
-        console.log("Line_Stanard_Deviation_Score ["+(this.lineDistanceStdDevScore(line_std_devs)).toFixed(1)+"]");
-        console.log("Wiggle_sum_score ["+(this.wiggleScore(wiggles_sum)).toFixed(1)+"]");
-        console.log("Wiggle_max_score ["+(this.wiggleScore(wiggles_max)).toFixed(1)+"]");
-        console.log("Disconnections_Score ["+this.disconnectionsScore(disconnections)+"]");
+        this.logger.log("Line_Stanard_Deviation_Score ["+(this.lineDistanceStdDevScore(line_std_devs)).toFixed(1)+"]");
+        this.logger.log("Wiggle_sum_score ["+(this.wiggleScore(wiggles_sum)).toFixed(1)+"]");
+        this.logger.log("Wiggle_max_score ["+(this.wiggleScore(wiggles_max)).toFixed(1)+"]");
+        this.logger.log("Disconnections_Score ["+this.disconnectionsScore(disconnections)+"]");
     };
 
     /************************ DISCONNECTIONS ************************/
@@ -51,11 +53,8 @@ define([
                 if(values[v][asn_ordering[a]]>0 && values[v-1][asn_ordering[a]]>0){
                     //previous minimum more than next maximum
                     if(values[v-1][asn_ordering[a-1]] >= values[v][asn_ordering[a]]){
-                        disconnections[asn_ordering[a]]+=1//(values[v-1][asn_ordering[a-1]]-values[v][asn_ordering[a]]);
-                    }
-                    else
-                    //previous maximum less than next minimum
-                    if(values[v][asn_ordering[a-1]] >= values[v-1][asn_ordering[a]]){
+                        disconnections[asn_ordering[a]]+=1;
+                    } else if (values[v][asn_ordering[a-1]] >= values[v-1][asn_ordering[a]]) {//previous maximum less than next minimum
                         disconnections[asn_ordering[a]]+=1;
                     }
                 }
@@ -184,7 +183,7 @@ define([
                 var w = calc_w(fi,g,g_1);
 
                 if(isNaN(w)){
-                    console.log("Wiggle IS NAN!"+xi+" "+xi_1+" "+yi+" "+yi_1+" "+yi1+" "+yi1_1);
+                    this.logger.log("Wiggle IS NAN!"+xi+" "+xi_1+" "+yi+" "+yi_1+" "+yi1+" "+yi1_1);
                     w = 0;
                 }
                 wiggles[(e-1)][as] = w;

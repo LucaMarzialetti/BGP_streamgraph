@@ -50,22 +50,14 @@ define([
             graphTypeStream : env.parentDom.find(".scrollbars_btn"),
             graphTypeHeat : env.parentDom.find(".scrollbars_btn"),
             Ipve : env.parentDom.find(".scrollbars_btn"),
-            scrollbarsButton : env.parentDom.find(".scrollbars_btn"),
 
-
-
-// .heat_option
-// .stream_option
-// .asn_lvl
-// .merge_events
-// input[name="graph_type"][value="stream"]
-// input[name="graph_type"][value="heat"]
-// input[name="ip_version"][value="4"]
-// input[name="ip_version"][value="6"]
+            startDate : env.parentDom.find(".start-date"),
+            stopDate : env.parentDom.find(".stop-date")
 
         };
-        this.drawer = new GraphDrawer(env);
 
+        this.drawer = new GraphDrawer(env);
+        
         this.preserve_map = true;
         this.global_visibility = true;
         this.prepending_prevention = true;
@@ -98,8 +90,41 @@ define([
             this.ripeDataBroker.getData();
         };
 
+        this.checkDatetimepicker = function () {
+            $this.dom.stopDate.datetimepicker('setStartDate', $this.dom.startDate.val());
+            var start = moment($this.dom.startDate.val(), "yyyy-mm-dd hh:ii");
+            var stop = moment($this.dom.stopDate.val(), "yyyy-mm-dd hh:ii");
+
+            if (!stop.isAfter(start)) {
+                $this.dom.startDate.val(env.queryParams.startDate.format("YYYY-mm-DD hh:ss"));
+                $this.dom.stopDate.val(env.queryParams.stopDate.format("YYYY-mm-DD hh:ss"));
+            }
+        };
+
         this.pickers_setup = function () {
-            // nothing for now
+            this.dom.startDate
+                .datetimepicker({
+                    initialDate: env.queryParams.startDate.format("YYYY-mm-DD hh:ss"),
+                    format: 'yyyy-mm-dd hh:ii',
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14 10:00",
+                    stopDate: "2013-02-14 10:00",
+                    minuteStep: 10
+                })
+                .on('changeDate', this.checkDatetimepicker);
+
+            this.dom.stopDate
+                .datetimepicker({
+                    initialDate: env.queryParams.stopDate.format("YYYY-mm-DD hh:ss"),
+                    format: 'yyyy-mm-dd hh:ii',
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14 10:00",
+                    stopDate: "2013-02-14 10:00",
+                    minuteStep: 10
+                })
+                .on('changeDate', this.checkDatetimepicker);
         };
 
         //other_command_menu
@@ -204,7 +229,7 @@ define([
                 this.dom.streaming_Button.addClass("not-active");
             }
         };
-    
+
         this.boolean_checker = function () {
             if (!this.gather_information) {
                 this.dom.gatherInformationButton.find("span").addClass("hidden");
@@ -309,10 +334,10 @@ define([
                 $('input[name="ip_version"][value="6"]').parent().addClass("active");
             }
 
-            $(".asn_lvl").spinner();
-            $(".asn_lvl").spinner("value", this.asn_level);
-            $(".merge_events").spinner();
-            $(".merge_events").spinner("value", this.merge_events);
+            // $(".asn_lvl").spinner();
+            // $(".asn_lvl").spinner("value", this.asn_level);
+            // $(".merge_events").spinner();
+            // $(".merge_events").spinner("value", this.merge_events);
         };
 
         this.draw_functions_btn_enabler = function () {
@@ -483,10 +508,10 @@ define([
             }
         };
 
-   
+
         /************************** CLICKABLE UI SETUP **************************/
         //TO CALL AT SETUP
-        
+
         this.tooltip_setup = function () {
             $('[data-toggle="tooltip"]').tooltip();
         };
@@ -561,7 +586,7 @@ define([
         this.merge_events_btn_setup = function () {
             var GuiManager = this;
             $("input[name='merge_events']:input").on("change", function (e, ui) {
-                GuiManager.merge_events = $("input[name='merge_events']").spinner("value");
+                // GuiManager.merge_events = $("input[name='merge_events']").spinner("value");
                 if (GuiManager.isGraphPresent()) {
                     GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
                     if (GuiManager.merge_events)
@@ -691,9 +716,10 @@ define([
         this.asn_level_setup = function () {
             var GuiManager = this;
             $("input[name='asn_lvl']:input").on("change", function (e, ui) {
-                GuiManager.asn_level = $("input[name='asn_lvl']").spinner("value");
-                if (GuiManager.isGraphPresent())
+                // GuiManager.asn_level = $("input[name='asn_lvl']").spinner("value");
+                if (GuiManager.isGraphPresent()) {
                     GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
+                }
             });
         };
 
@@ -709,7 +735,7 @@ define([
                 }
                 else {
                     clearInterval(interval);
-                    console.log("== GuiManager Streaming stopped");
+                    env.logger.log("== GuiManager Streaming stopped");
                     GuiManager.draw_functions_btn_enabler();
                 }
             });
