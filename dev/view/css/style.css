@@ -273,11 +273,6 @@ ul.dropdown-menu.repositioned span.ui-spinner.ui-corner-all.ui-widget.ui-widget-
     width: auto;
 }
 
-/*input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-	z-index: 999;
-	color: red;
-}*/
 
 /*jquery drag*/
 body.dragging, body.dragging * {

@@ -91,7 +91,7 @@
     },
     stubModules: ["bgpst.lib.text", "bgpst.lib.stache"],
     removeCombined: true,
-    optimize: "uglify2",//uglify2
+    optimize: "none",//uglify2
     wrapShim: true,
     generateSourceMaps: false,
 

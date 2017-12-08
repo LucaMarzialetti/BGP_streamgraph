@@ -1,18 +1,25 @@
 <div class="bgpst_container">
     <div class="row first_row left_margin">
-        <div class="col-sm-1">
-            <div class="btn-group counter">
-                <label style="margin:0">#Events</label>
-                <div class="counter_events" style="text-align: center;"></div>
+
+        <div class="col-sm-11 text-right">
+            <div class="col-sm-2">
+                <div class='input-group other_command_btn date datetimepicker date_only start form-group'>
+                    <input type='text' class="form-control" placeholder="Enter date" />
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+                </div>
+
             </div>
-        </div>
-        <div class="col-sm-1">
-            <div class="btn-group counter">
-                <label style="margin:0">#ASN</label>
-                <div class="counter_asn" style="text-align: center;"></div>
+
+            <div class="col-sm-2">
+                <div class='input-group other_command_btn date datetimepicker date_only end form-group'>
+                    <input type='text' class="form-control" placeholder="Enter date"/>
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+                </div>
             </div>
-        </div>
-        <div class="col-sm-7 text-right" style="padding-right: 0;padding-left: 0; text-anchor: right">
             <div class="btn-group other_command_btn steps_btn stream_option" data-toggle="buttons">
                 <label class="btn btn-default">
                     <input type="checkbox" name="steps" value="steps" autocomplete="off">
@@ -24,7 +31,6 @@
                 <label class="btn btn-default">
                     <input type="checkbox" name="streaming" value="streaming" autocomplete="off">
                     <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
-                    <!--glyphicon glyphicon-stop-->
                     Streaming
                 </label>
             </div>
@@ -191,35 +197,9 @@
                 <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>
             </ul>
         </span>
+            <!--Showing <span class="counter_events" style="text-align: center;"></span> BGP updates from <span class="counter_asn" style="text-align: center;"></span> ASn-->
         </div>
-    </div>
-    <div class="controls_container left_margin">
-        <form class="registrationForm">
-            <div class="row">
-                <div class="col-sm-2">
-                    <div class='input-group date datetimepicker date_only start form-group'>
-                        <input type='text' class="form-control" placeholder="Enter date" />
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-                    </div>
-                </div>
 
-
-                <div class="col-sm-2">
-                    <div class='input-group date datetimepicker date_only end form-group'>
-                        <input type='text' class="form-control" placeholder="Enter date"/>
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-                    </div>
-                </div>
-
-
-
-            </div>
-
-        </form>
     </div>
     <div class="svg_tooltip hidden"></div>
     <div class="canvas_container left_margin main_svg">

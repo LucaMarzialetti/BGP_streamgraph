@@ -149,9 +149,7 @@ define([
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap.min.css",
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap-theme.min.css",
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap-slider/css/bootstrap-slider.css",
-
-                window.atlas._widgets.bgpst.urls.libs + "../../css/flags/2.8.0/flag-icon.min.css"
-
+                window.atlas._widgets.bgpst.urls.libs + "css/flags/2.8.0/flag-icon.min.css"
             ];
         } else {
             styleDownloads = [
@@ -160,8 +158,7 @@ define([
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap.min.css",
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap/css/bootstrap-theme.min.css",
                 window.atlas._widgets.bgpst.urls.libs + "bootstrap-slider/css/bootstrap-slider.css",
-                
-                window.atlas._widgets.bgpst.urls.libs + "../../css/flags/2.8.0/flag-icon.min.css"
+                window.atlas._widgets.bgpst.urls.view + "css/flags/2.8.0/flag-icon.min.css"
             ];
 
         }
