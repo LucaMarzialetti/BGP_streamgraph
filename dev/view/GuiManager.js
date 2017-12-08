@@ -104,25 +104,27 @@ define([
         this.pickers_setup = function () {
             this.dom.startDate
                 .datetimepicker({
-                    initialDate: env.queryParams.startDate.format("YYYY-mm-DD hh:ss"),
+                    initialDate: env.queryParams.startDate,
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
-                    todayBtn: true,
+                    todayBtn: false,
                     startDate: "2013-02-14 10:00",
                     stopDate: "2013-02-14 10:00",
-                    minuteStep: 10
+                    minuteStep: 10,
+                    container: env.parentDom
                 })
                 .on('changeDate', this.checkDatetimepicker);
 
             this.dom.stopDate
                 .datetimepicker({
-                    initialDate: env.queryParams.stopDate.format("YYYY-mm-DD hh:ss"),
+                    initialDate: env.queryParams.stopDate,
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
                     todayBtn: true,
                     startDate: "2013-02-14 10:00",
                     stopDate: "2013-02-14 10:00",
-                    minuteStep: 10
+                    minuteStep: 10,
+                    container: env.parentDom
                 })
                 .on('changeDate', this.checkDatetimepicker);
         };

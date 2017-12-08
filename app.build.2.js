@@ -24,14 +24,6 @@
         "bgpst.lib.d3.legend": "dev/libs/d3.legend",
         "bgpst.lib.moment": "dev/libs/moment-libs",
 
-        "bgpst.lib.bootstrap.datetimepicker": "dev/libs/datetimepicker/4.17.47/bootstrap-datetimepicker.min",
-        "bgpst.lib.bootstrap.validator": "dev/libs/form_validator/0.5.3/bootstrapValidator.min",
-        "bgpst.lib.bootstrap.validator-it": "dev/libs/form_validator/0.5.3/it_IT",
-
-        "bgpst.lib.bootstrap.tokenfield": "dev/libs/tokenfield/0.12.0/bootstrap-tokenfield.min",
-
-
-
         /* view */
         "bgpst.view.main": "dev/view/MainView",
         "bgpst.view.color": "dev/view/ColorManager",
