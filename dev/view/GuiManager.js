@@ -18,7 +18,7 @@ define([
         env.parentDom.append(template());
 
         this.dom = {
-            container: env.parentDom.find("div.body_container"), //unsed?
+            container: env.parentDom.find(".bgpst-container"),
             heatmapTimeButton: env.parentDom.find(".heatmap_time_btn"),
             pathButton: env.parentDom.find(".path_btn"),
             listButton: env.parentDom.find(".list_btn"),
@@ -111,7 +111,7 @@ define([
                     startDate: "2013-02-14 10:00",
                     stopDate: "2013-02-14 10:00",
                     minuteStep: 10,
-                    container: env.parentDom
+                    container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
 
@@ -124,7 +124,7 @@ define([
                     startDate: "2013-02-14 10:00",
                     stopDate: "2013-02-14 10:00",
                     minuteStep: 10,
-                    container: env.parentDom
+                    container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
         };

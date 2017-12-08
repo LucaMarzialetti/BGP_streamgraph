@@ -140,7 +140,8 @@ define([
 
         if (!instanceParams.dev){
             styleDownloads = [
-                window.atlas._widgets.bgpst.urls.view + "css/style-lib-dist.min.css"
+                window.atlas._widgets.bgpst.urls.view + "css/style-lib-dist.min.css",
+                window.atlas._widgets.bgpst.urls.libs + "bootstrap-datetimepicker/css/bootstrap-datetimepicker.css"
             ];
         } else {
             styleDownloads = [
