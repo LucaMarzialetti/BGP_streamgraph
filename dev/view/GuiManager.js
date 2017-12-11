@@ -14,46 +14,106 @@ define([
     var GuiManager = function(env) {
 
         var $this = this;
+        var $env = env;
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
 
         this.dom = {
+            body: env.parentDom.find("body"),
+            svg: env.parentDom.find("svg"),
             container: env.parentDom.find(".bgpst-container"),
-            heatmapTimeButton: env.parentDom.find(".heatmap_time_btn"),
+            canvasContainer: env.parentDom.find(".canvas_container"),
+            mainSvg: env.parentDom.find("div.main_svg"),
+            miniSvg: env.parentDom.find("div.mini_svg"),
+            tooltip: env.parentDom.find("[data-toggle='tooltip']"),
+            title: env.parentDom.find(".title"),
+
             pathButton: env.parentDom.find(".path_btn"),
-            listButton: env.parentDom.find(".list_btn"),
             sortButton: env.parentDom.find(".sort_btn"),
+
+            listButton: env.parentDom.find(".list_btn"),
+            asnList: env.parentDom.find(".asn_list"),
+            asnListButton: env.parentDom.find(".asn_list_btn"),
+            cpList: env.parentDom.find(".cp_list"),
+            cpListButton: env.parentDom.find(".cp_list_btn"),
+
+            docsButton: env.parentDom.find(".docs_btn"),
+            aboutButton: env.parentDom.find(".about_btn"),
+            embedButton: env.parentDom.find(".embed_btn"),
+
+            stepsButton: env.parentDom.find(".steps_btn"),
+            stepsValueButton : env.parentDom.find("input[name='steps'][value='steps']"),
+
+            streamingButton : env.parentDom.find(".streaming_btn"),
+            streamingValueButton : env.parentDom.find("input[name='streaming'][value='streaming']").parent(),
+
+
+            eraseGraphButton: env.parentDom.find(".erase_graph_btn"),
             optionCommandButton: env.parentDom.find(".option_command_btn"),
             clearTargetsButton: env.parentDom.find(".clear_targets_button"),
             myIpButton: env.parentDom.find(".my_ip_button"),
             goButton: env.parentDom.find(".go_button"),
             date: env.parentDom.find(".date"),
+            counter: env.parentDom.find(".counter"),
+            counterAsn: env.parentDom.find(".counter_asn").parent(),
+
             graphType : env.parentDom.find("input[name='graph_type']"),
-            ipVersion6Button : env.parentDom.find("input[name='ip_version'][value='6']").parent(),
-            ipVersion4Button : env.parentDom.find("input[name='ip_version'][value='4']").parent(),
-            stepsButton : env.parentDom.find("input[name='steps'][value='steps']").parent(),
-            streamingButton : env.parentDom.find("input[name='streaming'][value='streaming']").parent(),
-            streaming_Button : env.parentDom.find(".streaming_btn"),
+            graphTypeChecked: env.parentDom.find("input[name='graph_type']:checked"),
+            graphTypeHeat : env.parentDom.find("input[name='graph_type'][value='heat']"),
+            graphTypeStream : env.parentDom.find('input[name="graph_type"][value="stream"]'),
+
+            ipVersion6Button : env.parentDom.find("input[name='ip_version'][value='6']"),
+            ipVersion4Button : env.parentDom.find("input[name='ip_version'][value='4']"),
+            ipVersionButton : env.parentDom.find("input[name='ip_version']"),
+            ipVersionCheckedButton : env.parentDom.find("input[name='ip_version']:checked"),
+
+            heatmapTimeButton: env.parentDom.find(".heatmap_time_btn"),
             gatherInformationButton : env.parentDom.find(".gather_information_btn"),
             preserveColorButton : env.parentDom.find(".preserve_color_btn"),
             globalVisibilityButton : env.parentDom.find(".global_visibility_btn"),
             prependingPreventionButton : env.parentDom.find(".prepending_prevention_btn"),
+            mergeEventsButton : env.parentDom.find(".merge_events"),
+            mergeEventsInput: env.parentDom.find("input[name='merge_events']"),
+            mergeEventsInputInput: env.parentDom.find("input[name='merge_events']:input"),
+
             mergeCPButton : env.parentDom.find(".merge_cp_btn"),
             eventsLabelsButton : env.parentDom.find(".events_labels_btn"),
             cpLabelsButton : env.parentDom.find(".cp_labels_btn"),
             scrollbarsButton : env.parentDom.find(".scrollbars_btn"),
 
-            heatOptionButton : env.parentDom.find(".scrollbars_btn"),
-            streamOptionButton : env.parentDom.find(".scrollbars_btn"),
-            asnLvlButton : env.parentDom.find(".scrollbars_btn"),
-            mergeEventsButton : env.parentDom.find(".scrollbars_btn"),
-            graphTypeStream : env.parentDom.find(".scrollbars_btn"),
-            graphTypeHeat : env.parentDom.find(".scrollbars_btn"),
-            Ipve : env.parentDom.find(".scrollbars_btn"),
+            asnLvlButton : env.parentDom.find(".asn_lvl"),
+            asnLvlInput : env.parentDom.find("input[name='asn_lvl']"),
+            asnLvlInputInput : env.parentDom.find("input[name='asn_lvl']:input"),
+
+            heatOptionButton : env.parentDom.find(".heat_option"),
+            streamOptionButton : env.parentDom.find(".stream_option"),
+
+            //heuristics_buttons
+            shuffleColorButton: env.parentDom.find(".shuffle_color_map_btn"),
+            levDistRandCumButton : env.parentDom.find(".lev_dist_randwalk_cum_btn"),
+            levDistRanMaxButton : env.parentDom.find(".lev_dist_randwalk_max_btn"),
+            pointDistRanButton : env.parentDom.find(".point_dist_by_randwalk_btn"),
+            pointDistInfButton : env.parentDom.find(".point_dist_by_inference_btn"),
+            pointDistGreedyButton : env.parentDom.find(".point_dist_greedy_btn"),
+            exchangeGreedyButton : env.parentDom.find(".exchange_greedy_sort_btn"),
+            wiggleSumButton : env.parentDom.find(".wiggle_sum_btn"),
+            wiggleMaxButton : env.parentDom.find(".wiggle_max_btn"),
+            ascstdevSortButton : env.parentDom.find(".sort_asn_ascstdev_btn"),
+            dscstdevSortButton : env.parentDom.find(".sort_asn_dscstdev_btn"),
+            ascvarSortButton : env.parentDom.find(".sort_asn_ascvar_btn"),
+            dscvarSortButton : env.parentDom.find(".sort_asn_dscvar_btn"),
+            ascavgSortButton : env.parentDom.find(".sort_asn_ascavg_btn"),
+            dscavgSortButton : env.parentDom.find(".sort_asn_dscavg_btn"),
+            ascsumSortButton : env.parentDom.find(".sort_asn_ascsum_btn"),
+            dscsumSortButton : env.parentDom.find(".sort_asn_dscsum_btn"),
+            heatGreedy1SortButton : env.parentDom.find(".heat_greedy_sort_1_btn"),
+            heatGreedy2SortButton : env.parentDom.find(".heat_greedy_sort_2_btn"),
+            heatStdevSortButton : env.parentDom.find(".heat_stdev_sort_btn"),
+            heatCountrySortButton : env.parentDom.find(".heat_country_sort"),
+            heatGeoSortButton : env.parentDom.find(".heat_as_sort"),
 
             startDate : env.parentDom.find(".start-date"),
             stopDate : env.parentDom.find(".stop-date")
-
         };
 
         this.drawer = new GraphDrawer(env);
@@ -219,16 +279,16 @@ define([
             this.dom.ipVersion4Button.addClass("not-active");
             this.dom.ipVersion4Button.attr("disabled", true);
 
-            this.dom.stepsButton.addClass("disabled");
+            this.dom.stepsValueButton.parent().addClass("disabled");
+            this.dom.stepsValueButton.parent().addClass("not-active");
+            this.dom.stepsValueButton.parent().attr("disabled", true);
             this.dom.stepsButton.addClass("not-active");
-            this.dom.stepsButton.attr("disabled", true);
-            $(".steps_btn").addClass("not-active");
 
             if (!this.streaming) {
-                this.dom.streamingButton.addClass("disabled");
+                this.dom.streamingValueButton.addClass("disabled");
+                this.dom.streamingValueButton.addClass("not-active");
+                this.dom.streamingValueButton.attr("disabled", true);
                 this.dom.streamingButton.addClass("not-active");
-                this.dom.streamingButton.attr("disabled", true);
-                this.dom.streaming_Button.addClass("not-active");
             }
         };
 
@@ -277,7 +337,14 @@ define([
                 this.dom.mergeCPButton.find("span").removeClass("hidden");
                 this.dom.mergeCPButton.parent().addClass("active");
             }
-
+            if (!this.merge_events) {
+                this.dom.mergeEventsButton.find("span").addClass("hidden");
+                this.dom.mergeEventsButton.parent().removeClass("active");
+            }
+            else {
+                this.dom.mergeEventsButton.find("span").removeClass("hidden");
+                this.dom.mergeEventsButton.parent().addClass("active");
+            }
             if (!this.events_labels) {
                 this.dom.eventsLabelsButton.find("span").addClass("hidden");
                 this.dom.eventsLabelsButton.parent().removeClass("active");
@@ -314,32 +381,32 @@ define([
                 this.dom.scrollbarsButton.parent().addClass("active");
             }
             if (this.graph_type == "stream") {
-                $('input[name="graph_type"][value="stream"]').prop('checked', true);
-                $('input[name="graph_type"][value="stream"]').parent().addClass("active");
-                $('input[name="graph_type"][value="heat"]').parent().removeClass("active");
-                $(".stream_option").removeClass("hidden");
-                $(".heat_option").addClass("hidden");
+                this.dom.graphTypeStream.prop('checked', true);
+                this.dom.graphTypeStream.parent().addClass("active");
+                this.dom.graphTypeHeat.parent().removeClass("active");
+                this.dom.streamOptionButton.removeClass("hidden");
+                this.dom.heatOptionButton.addClass("hidden");
             }
             else if (this.graph_type == "heat") {
-                $('input[name="graph_type"][value="heat"]').prop('checked', true);
-                $('input[name="graph_type"][value="heat"]').parent().addClass("active");
-                $('input[name="graph_type"][value="stream"]').parent().removeClass("active");
-                $(".heat_option").removeClass("hidden");
-                $(".stream_option").addClass("hidden");
+                this.dom.graphTypeHeat.prop('checked', true);
+                this.dom.graphTypeHeat.parent().addClass("active");
+                this.dom.graphTypeStream.parent().removeClass("active");
+                this.dom.heatOptionButton.removeClass("hidden");
+                this.dom.streamOptionButton.addClass("hidden");
             }
             if (this.ip_version.indexOf(4) != -1) {
-                $('input[name="ip_version"][value="4"]').prop('checked', true);
-                $('input[name="ip_version"][value="4"]').parent().addClass("active");
+                this.dom.ipVersion4Button.prop('checked', true);
+                this.dom.ipVersion4Button.parent().addClass("active");
             }
             if (this.ip_version.indexOf(6) != -1) {
-                $('input[name="ip_version"][value="6"]').prop('checked', true);
-                $('input[name="ip_version"][value="6"]').parent().addClass("active");
+                this.dom.ipVersion6Button.prop('checked', true);
+                this.dom.ipVersion6Button.parent().addClass("active");
             }
 
-            // $(".asn_lvl").spinner();
-            // $(".asn_lvl").spinner("value", this.asn_level);
-            // $(".merge_events").spinner();
-            // $(".merge_events").spinner("value", this.merge_events);
+            // asnLvlButton.spinner();
+            // this.dom.asnLvlButton.spinner("value", this.asn_level);
+            // this.dom.mergeEventsButton.spinner();
+            // this.dom.mergeEventsButton.spinner("value", this.merge_events);
         };
 
         this.draw_functions_btn_enabler = function () {
@@ -390,47 +457,47 @@ define([
                         this.dom.ipVersion6Button.attr("disabled", false);
                     }
                     if (this.ip_version.indexOf(4) != -1) {
-                        $('input[name="ip_version"]').filter('[value="4"]').prop('checked', true);
-                        $('input[name="ip_version"]').filter('[value="4"]').parent().addClass("active");
+                        this.dom.ipVersionButton.filter('[value="4"]').prop('checked', true);
+                        this.dom.ipVersionButton.filter('[value="4"]').parent().addClass("active");
                     }
                     else {
-                        $('input[name="ip_version"]').filter('[value="4"]').prop('checked', false);
-                        $('input[name="ip_version"]').filter('[value="4"]').parent().removeClass("active");
+                        this.dom.ipVersionButton.filter('[value="4"]').prop('checked', false);
+                        this.dom.ipVersionButton.filter('[value="4"]').parent().removeClass("active");
                     }
                     if (this.ip_version.indexOf(6) != -1) {
-                        $('input[name="ip_version"]').filter('[value="6"]').prop('checked', true);
-                        $('input[name="ip_version"]').filter('[value="6"]').parent().addClass("active");
+                        this.dom.ipVersionButton.filter('[value="6"]').prop('checked', true);
+                        this.dom.ipVersionButton.filter('[value="6"]').parent().addClass("active");
                     }
                     else {
-                        $('input[name="ip_version"]').filter('[value="6"]').prop('checked', false);
-                        $('input[name="ip_version"]').filter('[value="6"]').parent().removeClass("active");
+                        this.dom.ipVersionButton.filter('[value="6"]').prop('checked', false);
+                        this.dom.ipVersionButton.filter('[value="6"]').parent().removeClass("active");
                     }
-                    $(".counter").removeClass("hidden");
+                    this.dom.counter.removeClass("hidden");
                     if (this.graph_type == "stream") {
-                        this.dom.stepsButton.removeClass("disabled");
+                        this.dom.stepsValueButton.parent().removeClass("disabled");
+                        this.dom.stepsValueButton.parent().removeClass("not-active");
+                        this.dom.stepsValueButton.parent().attr("disabled", false);
                         this.dom.stepsButton.removeClass("not-active");
-                        this.dom.stepsButton.attr("disabled", false);
-                        $(".steps_btn").removeClass("not-active");
 
-                        this.dom.streamingButton.removeClass("disabled");
+                        this.dom.streamingValueButton.parent().removeClass("disabled");
+                        this.dom.streamingValueButton.parent().removeClass("not-active");
+                        this.dom.streamingValueButton.parent().attr("disabled", false);
                         this.dom.streamingButton.removeClass("not-active");
-                        this.dom.streamingButton.attr("disabled", false);
-                        this.dom.streaming_Button.removeClass("not-active");
                     }
                     if (this.graph_type == "heat") {
-                        this.dom.stepsButton.addClass("disabled");
+                        this.dom.stepsValueButton.parent().addClass("disabled");
+                        this.dom.stepsValueButton.parent().addClass("not-active");
+                        this.dom.stepsValueButton.parent().attr("disabled", true);
                         this.dom.stepsButton.addClass("not-active");
-                        this.dom.stepsButton.attr("disabled", true);
-                        $(".steps_btn").addClass("not-active");
 
-                        this.dom.streamingButton.addClass("disabled");
+                        this.dom.streamingValueButton.parent().addClass("disabled");
+                        this.dom.streamingValueButton.parent().addClass("not-active");
+                        this.dom.streamingValueButton.parent().attr("disabled", true);
                         this.dom.streamingButton.addClass("not-active");
-                        this.dom.streamingButton.attr("disabled", true);
-                        this.dom.streaming_Button.addClass("not-active");
                     }
                     if (!this.steps) {
-                        $('input[name="steps"][value="steps"]').prop('checked', false);
-                        $('input[name="steps"][value="steps"]').parent().removeClass("active");
+                        this.dom.stepsValueButton.prop('checked', false);
+                        this.dom.stepsValueButton.parent().removeClass("active");
                     }
                 }
                 else {
@@ -449,26 +516,25 @@ define([
                     this.dom.ipVersion4Button.addClass("not-active");
                     this.dom.ipVersion4Button.attr("disabled", true);
 
-                    $(".counter").addClass("hidden");
+                    this.dom.counter.addClass("hidden");
 
-                    this.dom.stepsButton.addClass("disabled");
+                    this.dom.stepsValueButton.parent().addClass("disabled");
+                    this.dom.stepsValueButton.parent().addClass("not-active");
+                    this.dom.stepsValueButton.parent().attr("disabled", true);
                     this.dom.stepsButton.addClass("not-active");
-                    this.dom.stepsButton.attr("disabled", true);
-                    $(".steps_btn").addClass("not-active");
 
-                    this.dom.streamingButton.addClass("disabled");
+                    this.dom.streamingValueButton.parent().addClass("disabled");
+                    this.dom.streamingValueButton.parent().addClass("not-active");
+                    this.dom.streamingButton.parent().attr("disabled", true);
                     this.dom.streamingButton.addClass("not-active");
-                    this.dom.streamingButton.attr("disabled", true);
-                    this.dom.streaming_Button.addClass("not-active");
                 }
             }
         };
 
         this.ip_version_checkbox_enabler = function () {
-            GuiManager = this;
             if (!this.streaming) {
                 if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
-                        return GuiManager.validator.check_ipv4(e);
+                        return $this.validator.check_ipv4(e);
                     })) {
                     this.dom.ipVersion4Button.removeClass("disabled");
                     this.dom.ipVersion4Button.removeClass("not-active");
@@ -481,7 +547,7 @@ define([
                     this.dom.ipVersion4Button.attr("disabled", true);
                 }
                 if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
-                        return GuiManager.validator.check_ipv6(e);
+                        return $this.validator.check_ipv6(e);
                     })) {
                     this.dom.ipVersion6Button.removeClass("disabled");
                     this.dom.ipVersion6Button.removeClass("not-active");
@@ -494,9 +560,9 @@ define([
                     this.dom.ipVersion6Button.attr("disabled", true);
                 }
                 if (this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                        return GuiManager.validator.check_ipv4(e);
+                        return $this.validator.check_ipv4(e);
                     }) && this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                        return GuiManager.validator.check_ipv6(e);
+                        return $this.validator.check_ipv6(e);
                     })) {
                     this.dom.ipVersion4Button.removeClass("disabled");
                     this.dom.ipVersion4Button.removeClass("not-active");
@@ -515,22 +581,20 @@ define([
         //TO CALL AT SETUP
 
         this.tooltip_setup = function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            this.dom.tooltip.tooltip();
         };
 
         this.shuffle_color_map_btn_setup = function () {
-            var GuiManager = this;
-            $(".shuffle_color_map_btn").on("click", function (e) {
-                if (GuiManager.isGraphPresent())
-                    GuiManager.drawer.shuffle_color_map(GuiManager.graph_type);
+            this.dom.shuffleColorButton.on("click", function (e) {
+                if ($this.isGraphPresent())
+                    $this.drawer.shuffle_color_map($this.graph_type);
             });
         };
 
         this.erase_graph_btn_setup = function () {
-            var GuiManager = this;
-            $(".erase_graph_btn").on("click", function (e) {
-                GuiManager.drawer.drawer_init();
-                GuiManager.draw_functions_btn_enabler();
+            this.dom.eraseGraphButton.on("click", function (e) {
+                $this.drawer.drawer_init();
+                $this.draw_functions_btn_enabler();
             });
         };
 
@@ -544,12 +608,11 @@ define([
         };
 
         this.preserve_color_map_btn_setup = function () {
-            var GuiManager = this;
             this.dom.preserveColorButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
-                GuiManager.preserve_map = !GuiManager.preserve_map;
+                $this.preserve_map = !$this.preserve_map;
                 // GuiManager.url_string();
             });
         };
@@ -562,189 +625,178 @@ define([
                 $this.prepending_prevention = !$this.prepending_prevention;
                 if ($this.isGraphPresent())
                     if ($this.graph_type == "stream")
-                        $this.ripeDataBroker.loadCurrentState(false, null, true);
+                        env.loadCurrentState(false, null, true);
                     else if ($this.graph_type == "heat")
-                        $this.ripeDataBroker.loadCurrentState(false, null, true);
+                        env.loadCurrentState(false, null, true);
             });
         };
 
         this.merge_cp_btn_setup = function () {
-            var GuiManager = this;
             this.dom.mergeCPButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
-                GuiManager.merge_cp = !GuiManager.merge_cp;
-                if (GuiManager.isGraphPresent()) {
-                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
-                    if (GuiManager.merge_cp)
-                        GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length + "/" + GuiManager.ripeDataBroker.current_parsed.cp_set.length);
+                $this.merge_cp = !$this.merge_cp;
+                if ($this.isGraphPresent()) {
+                    env.loadCurrentState(false, null, true);
+                    if ($this.merge_cp)
+                        $this.update_counters(".counter_asn", $this.drawer.keys.length + "/" + env.current_parsed.cp_set.length);
                     else
-                        GuiManager.update_counters(".counter_asn", GuiManager.drawer.keys.length);
+                        $this.update_counters(".counter_asn", $this.drawer.keys.length);
                 }
             });
         };
 
         this.merge_events_btn_setup = function () {
-            var GuiManager = this;
-            $("input[name='merge_events']:input").on("change", function (e, ui) {
-                // GuiManager.merge_events = $("input[name='merge_events']").spinner("value");
-                if (GuiManager.isGraphPresent()) {
-                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
-                    if (GuiManager.merge_events)
-                        GuiManager.update_counters(".counter_events", GuiManager.drawer.event_set.length + "/" + GuiManager.ripeDataBroker.current_parsed.events.length);
+            this.dom.mergeEventsInputInput.on("change", function (e, ui) {
+                // $this.merge_events = $("input[name='merge_events']").spinner("value");
+                if ($this.isGraphPresent()) {
+                    env.loadCurrentState(false, null, true);
+                    if ($this.merge_events)
+                        $this.update_counters(".counter_events", $this.drawer.event_set.length + "/" + env.current_parsed.events.length);
                     else
-                        GuiManager.update_counters(".counter_events", GuiManager.ripeDataBroker.current_parsed.events.length);
+                        $this.update_counters(".counter_events", env.current_parsed.events.length);
                 }
             });
         };
 
         this.events_labels_btn_setup = function () {
-            var GuiManager = this;
             this.dom.eventsLabelsButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
-                GuiManager.events_labels = !GuiManager.events_labels;
-                if (GuiManager.isGraphPresent())
-                    GuiManager.ripeDataBroker.loadCurrentState(false, null, false);
+                $this.events_labels = !$this.events_labels;
+                if ($this.isGraphPresent())
+                    env.loadCurrentState(false, null, false);
             });
         };
 
         this.cp_labels_btn_setup = function () {
-            var GuiManager = this;
             this.dom.cpLabelsButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
-                GuiManager.cp_labels = !GuiManager.cp_labels;
-                if (GuiManager.isGraphPresent())
-                    GuiManager.ripeDataBroker.loadCurrentState(false, null, false);
+                $this.cp_labels = !$this.cp_labels;
+                if ($this.isGraphPresent())
+                    env.loadCurrentState(false, null, false);
             });
         };
 
         this.heatmap_time_btn_setup = function () {
-            var GuiManager = this;
             this.dom.heatmapTimeButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
-                GuiManager.heatmap_time_map = !GuiManager.heatmap_time_map;
-                if (GuiManager.isGraphPresent())
-                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
+                $this.heatmap_time_map = !$this.heatmap_time_map;
+                if ($this.isGraphPresent())
+                    env.loadCurrentState(false, null, true);
             });
         };
 
         this.scrollbars_btn_setup = function () {
-            var GuiManager = this;
             this.dom.scrollbarsButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
-                GuiManager.use_scrollbars = !GuiManager.use_scrollbars;
-                if (GuiManager.use_scrollbars) {
-                    $("svg").parent().css("overflow", "scroll");
+                $this.use_scrollbars = !$this.use_scrollbars;
+                if ($this.use_scrollbars) {
+                    $this.dom.svg.parent().css("overflow", "scroll");
 
                 }
                 else {
-                    $("svg").parent().css("overflow", "visible");
+                    $this.dom.svg.parent().css("overflow", "visible");
                 }
             });
         };
 
         this.global_visiblity_btn_setup = function () {
-            var GuiManager = this;
             this.dom.globalVisibilityButton.on("click", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
-                GuiManager.global_visibility = !GuiManager.global_visibility;
-                if (GuiManager.isGraphPresent())
-                    if (GuiManager.graph_type == "stream")
-                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
-                    else if (GuiManager.graph_type == "heat")
-                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
+                $this.global_visibility = !$this.global_visibility;
+                if ($this.isGraphPresent())
+                    if ($this.graph_type == "stream")
+                        env.loadCurrentState(false, null, true);
+                    else if ($this.graph_type == "heat")
+                        env.loadCurrentState(false, null, true);
             });
         };
 
         this.graph_type_radio_setup = function () {
-            var GuiManager = this;
             this.dom.graphType.on("change", function (e) {
-                GuiManager.graph_type = $("input[name='graph_type']:checked").val();
-                if (GuiManager.graph_type == "stream") {
-                    $(".title").html("Global View");
-                    $("div.main_svg").css("height", "70vh");
-                    $("div.main_svg").css("width", "auto");
+                $this.graph_type = this.dom.graphTypeChecked.val();
+                if ($this.graph_type == "stream") {
+                    $this.dom.title.html("Global View");
+                    this.dom.mainSvg.css("height", "70vh");
+                    this.dom.mainSvg.css("width", "auto");
                     $(".canvas_container").css("width", "auto");
-                    $("svg").parent().css("overflow", "visible");
-                    $(".counter_asn").parent().find("label").text("#ASN");
-                    $(".stream_option").removeClass("hidden");
-                    $(".heat_option").addClass("hidden");
+                    $this.dom.svg.parent().css("overflow", "visible");
+                    $this.dom.counterAsnfind("label").text("#ASN");
+                    $this.dom.streamOptionButton.removeClass("hidden");
+                    $this.dom.heatOptionButton.addClass("hidden");
                 }
-                if (GuiManager.graph_type == "heat") {
-                    $(".title").html("Local View");
+                if ($this.graph_type == "heat") {
+                    $this.dom.title.html("Local View");
                     $(".canvas_container").css("width", "100%");
-                    if (GuiManager.use_scrollbars) {
-                        $("svg").parent().css("overflow", "scroll");
+                    if ($this.use_scrollbars) {
+                        $this.dom.svg.parent().css("overflow", "scroll");
                     }
                     else
-                        $("body").css("overflow-y", "scroll");
-                    $(".counter_asn").parent().find("label").text("#CP");
-                    $(".stream_option").addClass("hidden");
-                    $(".heat_option").removeClass("hidden");
+                        $this.dom.body.css("overflow-y", "scroll");
+                    $this.dom.counterAsnfind("label").text("#CP");
+                    $this.dom.streamOptionButton.addClass("hidden");
+                    $this.dom.heatOptionButton.removeClass("hidden");
                 }
-                GuiManager.ripeDataBroker.heuristicsManager.setDefaultHeuristic(GuiManager.graph_type);
-                if (GuiManager.isGraphPresent())
-                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
+                $this.ripeDataBroker.heuristicsManager.setDefaultHeuristic($this.graph_type);
+                if ($this.isGraphPresent())
+                    $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.ip_version_checkbox_setup = function () {
-            var GuiManager = this;
-            $("input[name='ip_version']").on("change", function (e) {
-                GuiManager.ip_version = [];
-                $("input[name='ip_version']:checked").each(function () {
-                    GuiManager.ip_version.push(parseInt($(this).val()));
+            this.dom.ipVersionButton.on("change", function (e) {
+                $this.ip_version = [];
+                $this.dom.ipVersionCheckedButton.each(function () {
+                    $this.ip_version.push(parseInt($(this).val()));
                 });
-                if (GuiManager.isGraphPresent()) {
-                    if (GuiManager.graph_type == "heat")
-                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
-                    else if (GuiManager.graph_type == "stream")
-                        GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
+                if ($this.isGraphPresent()) {
+                    if ($this.graph_type == "heat")
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
+                    else if ($this.graph_type == "stream")
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
                 }
             });
         };
 
         this.asn_level_setup = function () {
-            var GuiManager = this;
-            $("input[name='asn_lvl']:input").on("change", function (e, ui) {
-                // GuiManager.asn_level = $("input[name='asn_lvl']").spinner("value");
-                if (GuiManager.isGraphPresent()) {
-                    GuiManager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.asnLvlInputInput.on("change", function (e, ui) {
+                // $this.asn_level = $("input[name='asn_lvl']").spinner("value");
+                if ($this.isGraphPresent()) {
+                    env.loadCurrentState(false, null, true);
                 }
             });
         };
 
         this.streaming_btn_setup = function () {
-            var GuiManager = this;
             var interval;
-            this.dom.streaming_Button.on("click", function (e, ui) {
-                GuiManager.streaming = !GuiManager.streaming;
+            this.dom.streamingButton.on("click", function (e, ui) {
+                $this.streaming = !$this.streaming;
                 streaming_icon_swap();
-                if (GuiManager.streaming) {
-                    GuiManager.lock_all();
-                    interval = GuiManager.ripeDataBroker.streamgraph_streaming(GuiManager.streaming_speed);
+                if ($this.streaming) {
+                    $this.lock_all();
+                    interval = $this.ripeDataBroker.streamgraph_streaming($this.streaming_speed);
                 }
                 else {
                     clearInterval(interval);
                     env.logger.log("== GuiManager Streaming stopped");
-                    GuiManager.draw_functions_btn_enabler();
+                    $this.draw_functions_btn_enabler();
                 }
             });
 
             streaming_icon_swap = function () {
-                var icon = this.dom.streaming_Button.find("span");
-                if (this.streaming) {
+                var icon = $this.dom.streamingButton.find("span");
+                if ($this.streaming) {
                     icon.removeClass("glyphicon-record");
                     icon.addClass("glyphicon-stop");
                 }
@@ -756,58 +808,55 @@ define([
         };
 
         this.steps_btn_setup = function () {
-            var GuiManager = this;
-            $(".steps_btn").on("click", function (e, ui) {
-                GuiManager.steps = !GuiManager.steps;
-                if (GuiManager.steps) {
-                    GuiManager.lock_all();
-                    GuiManager.ripeDataBroker.streamgraph_stepped_view(50);
+            this.dom.stepsButton.on("click", function (e, ui) {
+                $this.steps = !$this.steps;
+                if ($this.steps) {
+                    $this.lock_all();
+                    $this.ripeDataBroker.streamgraph_stepped_view(50);
                 }
             });
         };
 
         this.list_btn_setup = function () {
-            var GuiManager = this;
             this.dom.listButton.on("click", function (e) {
-                if (GuiManager.asn_info_done) {
-                    $(".asn_list_btn").parent().removeClass("not-active");
-                    $(".asn_list_btn").parent().removeClass("disabled");
+                if ($this.asn_info_done) {
+                    $this.dom.asnListButton.parent().removeClass("not-active");
+                    $this.dom.asnListButton.parent().removeClass("disabled");
                 }
                 else {
-                    $(".asn_list_btn").parent().addClass("not-active");
-                    $(".asn_list_btn").parent().addClass("disabled");
+                    $this.dom.asnListButton.parent().addClass("not-active");
+                    $this.dom.asnListButton.parent().addClass("disabled");
                 }
-                if (GuiManager.cp_info_done) {
-                    $(".cp_list_btn").parent().removeClass("not-active");
-                    $(".cp_list_btn").parent().removeClass("disabled");
+                if ($this.cp_info_done) {
+                    $this.dom.cpListButton.parent().removeClass("not-active");
+                    $this.dom.cpListButton.parent().removeClass("disabled");
                 }
                 else {
-                    $(".cp_list_btn").parent().addClass("not-active");
-                    $(".cp_list_btn").parent().addClass("disabled");
+                    $this.dom.cpListButton.parent().addClass("not-active");
+                    $this.dom.cpListButton.parent().addClass("disabled");
                 }
             });
         };
 
         this.asn_list_btn_setup = function () {
-            var GuiManager = this;
-            $(".asn_list_btn").hover(function (event) {
+            this.dom.asnListButton.hover(function (event) {
                 var html = "";
                 var set;
-                if (GuiManager.graph_type == "stream")
-                    set = GuiManager.drawer.keys.slice(0).reverse();
-                else if (GuiManager.graph_type == "heat")
-                    set = GuiManager.drawer.asn_set.slice(0);
+                if ($this.graph_type == "stream")
+                    set = $this.drawer.keys.slice(0).reverse();
+                else if ($this.graph_type == "heat")
+                    set = $this.drawer.asn_set.slice(0);
                 for (var i in set) {
                     var asn = set[i];
-                    var color_background = GuiManager.drawer.z(asn);
-                    var color_text = GuiManager.drawer.colorManager.furthestLabelColor(color_background);
+                    var color_background = $this.drawer.z(asn);
+                    var color_text = $this.drawer.colorManager.furthestLabelColor(color_background);
                     html += '<li class="list-group-item as' + asn + '" style="color:' + color_text + '; background-color:' + color_background + ';"'
-                    if (GuiManager.graph_type == "stream")
+                    if ($this.graph_type == "stream")
                         html += 'onmouseover="d3.selectAll(\'.area\').filter(function(d){return d.key!=' + asn + ';}).style(\'fill-opacity\',\'0.35\');" onmouseout="d3.selectAll(\'.area\').style(\'fill-opacity\',1);">';
-                    else if (GuiManager.graph_type == 'heat')
+                    else if ($this.graph_type == 'heat')
                         html += 'onmouseover="d3.selectAll(\'.area\').filter(function(d){return d.asn!=' + asn + ';}).style(\'fill-opacity\',\'0.35\');" onmouseout="d3.selectAll(\'.area\').style(\'fill-opacity\',1);">';
                     html += "<div> ASN: " + asn + "</div>";
-                    var info = GuiManager.ripeDataBroker.current_parsed.known_asn[asn];
+                    var info = $this.ripeDataBroker.current_parsed.known_asn[asn];
                     if (info) {
                         var tokens = info.split(",");
                         html += "<div>" + tokens[0].trim() + "</div>";
@@ -816,32 +865,31 @@ define([
                     }
                     html += "</li>";
                 }
-                $(".asn_list").html(html);
+                $this.dom.asnList.html(html);
                 if (set.length < 11) {
-                    $(".asn_list").css("height", "auto");
-                    $(".asn_list").css("overflow-y", "visible");
+                    $this.dom.asnList.css("height", "auto");
+                    $this.dom.asnList.css("overflow-y", "visible");
                 }
                 else {
-                    $(".asn_list").css("height", "");
-                    $(".asn_list").css("overflow-y", "");
+                    $this.dom.asnList.css("height", "");
+                    $this.dom.asnList.css("overflow-y", "");
                 }
             });
         };
 
         this.cp_list_btn_setup = function () {
-            var GuiManager = this;
-            $(".cp_list_btn").hover(function (event) {
+            this.dom.cpListButton.hover(function (event) {
                 var html = "";
                 var set;
-                if (GuiManager.graph_type == "stream")
-                    set = GuiManager.ripeDataBroker.current_parsed.cp_set;
-                else if (GuiManager.graph_type == "heat")
-                    set = GuiManager.drawer.keys;
+                if ($this.graph_type == "stream")
+                    set = $this.ripeDataBroker.current_parsed.cp_set;
+                else if ($this.graph_type == "heat")
+                    set = $this.drawer.keys;
                 for (var i in set) {
                     var cp = set[i];
                     html += "<li>";
                     html += "<div> ID: " + cp + "</div>";
-                    var info = GuiManager.ripeDataBroker.current_parsed.known_cp[cp];
+                    var info = $this.ripeDataBroker.current_parsed.known_cp[cp];
                     if (info) {
                         html += "<div> IP: " + info["ip"] + "</div>";
                         html += "<div> Peering with CP: " + info["cp"] + "</div>";
@@ -851,14 +899,14 @@ define([
                     }
                     html += "</li>";
                 }
-                $(".cp_list").html(html);
+                $this.dom.cpList.html(html);
                 if (set.length < 11) {
-                    $(".cp_list").css("height", "auto");
-                    $(".cp_list").css("overflow-y", "visible");
+                    $this.dom.cpList.css("height", "auto");
+                    $this.dom.cpList.css("overflow-y", "visible");
                 }
                 else {
-                    $(".cp_list").css("height", "");
-                    $(".cp_list").css("overflow-y", "");
+                    $this.dom.cpList.css("height", "");
+                    $this.dom.cpList.css("overflow-y", "");
                 }
             });
         };
@@ -866,204 +914,183 @@ define([
         /************************** ORDERING BUTTONS **************************/
         //levensthein
         this.lev_dist_randwalk_cum_btn_setup = function () {
-            var manager = this;
-            $(".lev_dist_randwalk_cum_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_cum";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.levDistRandCumButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_cum";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.lev_dist_randwalk_max_btn_setup = function () {
-            var manager = this;
-            $(".lev_dist_randwalk_max_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_max";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.levDistRanMaxButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_max";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         //best std dev random walking
         this.point_dist_by_randwalk_btn_setup = function () {
-            var manager = this;
-            $(".point_dist_by_randwalk_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_rnd_cum";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.pointDistRanButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "st_rnd_cum";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.point_dist_by_inference_btn_setup = function () {
-            var manager = this;
-            $(".point_dist_by_inference_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_inf_cum";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.pointDistInfButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "st_inf_cum";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         //STD DEV SWAP
         this.point_dist_greedy_btn_setup = function () {
-            var manager = this;
-            $(".point_dist_greedy_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.pointDistGreedyButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         //NEARFLOWS
         this.exchange_greedy_sort_btn_setup = function () {
-            var manager = this;
-            $(".exchange_greedy_sort_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "n_f";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.exchangeGreedyButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "n_f";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         //WIGGLES
         this.wiggle_sum_btn_setup = function () {
-            var manager = this;
-            $(".wiggle_sum_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "w_cum";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.wiggleSumButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "w_cum";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.wiggle_max_btn_setup = function () {
-            var manager = this;
-            $(".wiggle_max_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "w_max";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.wiggleMaxButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "w_max";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         //SORTS
         this.sort_asn_ascstdev_btn_setup = function () {
-            var manager = this;
-            $(".sort_asn_ascstdev_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.ascstdevSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_dscstdev_btn_setup = function () {
-            var manager = this;
-            $(".sort_asn_dscstdev_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.dscstdevSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_ascvar_btn_setup = function () {
-            var manager = this;
-            $(".sort_asn_ascvar_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.ascvarSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_dscvar_btn_setup = function () {
-            var manager = this;
-            $(".sort_asn_dscvar_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.dscvarSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_ascavg_btn_setup = function () {
-            var manager = this;
-            $(".sort_asn_ascavg_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.ascavgSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_dscavg_btn_setup = function () {
-            var manager = this;
-            $(".sort_asn_dscavg_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.dscavgSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_ascsum_btn_setup = function () {
-            var manager = this;
-            $(".sort_asn_ascsum_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.ascsumSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.sort_asn_dscsum_btn_setup = function () {
-            var manager = this;
-            $(".sort_asn_dscsum_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.dscsumSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         /**HEATMAP**/
         this.heat_greedy_sort_1_btn_setup = function () {
-            var manager = this;
-            $(".heat_greedy_sort_1_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "nf_1";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.heatGreedy1SortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "nf_1";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.heat_greedy_sort_2_btn_setup = function () {
-            var manager = this;
-            $(".heat_greedy_sort_2_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "nf_2";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.heatGreedy2SortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "nf_2";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.heat_stdev_sort_btn_setup = function () {
-            var manager = this;
-            $(".heat_stdev_sort_btn").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.heatStdevSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.heat_geo_sort_btn_setup = function () {
-            var manager = this;
-            $(".heat_country_sort").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "geo";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.heatCountrySortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "geo";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
         this.heat_asn_sort_btn_setup = function () {
-            var manager = this;
-            $(".heat_as_sort").on("click", function (e) {
-                manager.ripeDataBroker.heuristicsManager.current_heuristic = "asn";
-                manager.ripeDataBroker.heuristicsManager.current_sort_type = null;
-                manager.ripeDataBroker.loadCurrentState(false, null, true);
+            this.dom.heatGeoSortButton.on("click", function (e) {
+                $this.ripeDataBroker.heuristicsManager.current_heuristic = "asn";
+                $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
 
         /**************************************** OTHERS ************************************************/
         this.set_ordering = function (order) {
-            this.ripeDataBroker.loadCurrentState(order, false, null, true);
+            $this.ripeDataBroker.loadCurrentState(order, false, null, true);
         };
 
         this.get_ordering = function () {
@@ -1080,24 +1107,21 @@ define([
 
         /*************************************** BOTTOM BUTTONS ****************************************/
         this.docs_btn_setup = function () {
-            var GuiManager = this;
-            $(".docs_btn").on("click", function (e) {
+            this.dom.docsButton.on("click", function (e) {
                 var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/', '_blank');
                 thewindow.blur();
             });
         };
 
         this.about_btn_setup = function () {
-            var GuiManager = this;
-            $(".about_btn").on("click", function (e) {
+            this.dom.aboutButton.on("click", function (e) {
                 var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/', '_blank');
                 thewindow.blur();
             });
         };
 
         this.embed_btn_setup = function () {
-            var GuiManager = this;
-            $(".embed_btn").on("click", function (e) {
+            this.dom.embedButton.on("click", function (e) {
                 var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/#embed', '_blank');
                 thewindow.blur();
             });

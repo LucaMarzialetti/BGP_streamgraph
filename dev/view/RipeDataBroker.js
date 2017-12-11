@@ -332,8 +332,8 @@ define([
             var interval_id = setInterval(function (){
                 if(i>max){
                     clearInterval(interval_id);
-                    $this.guiManager.steps = false;
-                    $this.guiManager.draw_functions_btn_enabler();
+                    env.guiManager.steps = false;
+                    env.guiManager.draw_functions_btn_enabler();
                 }
                 else {
                     core(i);
@@ -343,9 +343,9 @@ define([
             env.logger.log("Step view started with interval ID: "+interval_id);
 
             function core(i) {
-                $this.drawer.draw_streamgraph($this.current_parsed, $this.guiManager.graph_type, $this.current_asn_tsv, $this.drawer.keys, $this.guiManager.preserve_map, $this.current_visibility, $this.current_parsed.targets, $this.current_parsed.query_id, $this.gotToBgplayFromPosition, i, null, false);
-                $this.guiManager.update_counters(".counter_asn", $this.current_parsed.asn_set.length);
-                $this.guiManager.update_counters(".counter_events", i + "/" + max);
+                env.guiManager.drawer.draw_streamgraph($this.current_parsed, env.guiManager.graph_type, $this.current_asn_tsv, env.guiManager.drawer.keys, env.guiManager.preserve_map, $this.current_visibility, $this.current_parsed.targets, $this.current_parsed.query_id, $this.gotToBgplayFromPosition, i, null, false);
+                env.guiManager.update_counters(".counter_asn", $this.current_parsed.asn_set.length);
+                env.guiManager.update_counters(".counter_events", i + "/" + max);
             }
         };
 
