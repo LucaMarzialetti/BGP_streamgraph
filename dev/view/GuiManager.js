@@ -13,19 +13,19 @@ define([
     //setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
     var GuiManager = function(env) {
 
-        var $this = this;
-        var $env = env;
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
 
         this.dom = {
-            body: env.parentDom.find("body"),
+            //body: env.parentDom.find("body"),
             svg: env.parentDom.find("svg"),
             container: env.parentDom.find(".bgpst-container"),
             canvasContainer: env.parentDom.find(".canvas_container"),
             mainSvg: env.parentDom.find("div.main_svg"),
             miniSvg: env.parentDom.find("div.mini_svg"),
             tooltip: env.parentDom.find("[data-toggle='tooltip']"),
+			tooltipSvg: env.parentDom.find(".svg_tooltip"),
+
             title: env.parentDom.find(".title"),
 
             pathButton: env.parentDom.find(".path_btn"),
@@ -136,6 +136,8 @@ define([
         this.gather_information = true;
         this.heatmap_time_map = true;
         this.streaming_speed = 10000;
+        var $this = this;
+
 
         this.init = function () {
             this.ripeDataBroker = new RipeDataBroker(env);
@@ -730,7 +732,7 @@ define([
                     $this.dom.title.html("Global View");
                     $this.dom.mainSvg.css("height", "70vh");
                     $this.dom.mainSvg.css("width", "auto");
-                    $(".canvas_container").css("width", "auto");
+                    this.dom.canvasContainer.css("width", "auto");
                     $this.dom.svg.parent().css("overflow", "visible");
                     $this.dom.counterAsnfind("label").text("#ASN");
                     $this.dom.streamOptionButton.removeClass("hidden");
@@ -738,12 +740,12 @@ define([
                 }
                 if ($this.graph_type == "heat") {
                     $this.dom.title.html("Local View");
-                    $(".canvas_container").css("width", "100%");
-                    if ($this.use_scrollbars) {
-                        $this.dom.svg.parent().css("overflow", "scroll");
-                    }
-                    else
-                        $this.dom.body.css("overflow-y", "scroll");
+                    this.dom.canvasContainer.css("width", "100%");
+                    // if ($this.use_scrollbars) {
+                    //     $this.dom.svg.parent().css("overflow", "scroll");
+                    // }
+                    // else
+                    //     $this.dom.body.css("overflow-y", "scroll");
                     $this.dom.counterAsnfind("label").text("#CP");
                     $this.dom.streamOptionButton.addClass("hidden");
                     $this.dom.heatOptionButton.removeClass("hidden");

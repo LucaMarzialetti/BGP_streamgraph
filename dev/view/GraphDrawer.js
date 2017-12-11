@@ -18,14 +18,13 @@ define([
         this.main_svg = d3.select(env.parentDom[0]).select("div.main_svg").select("svg");
         this.mini_svg = d3.select(env.parentDom[0]).select("div.mini_svg").select("svg");
         this.background = d3.select(env.parentDom[0]).select("div.main_svg").select(".background");
-        this.brush = d3.select(".brush");
-        this.tooltip = env.parentDom.find(".svg_tooltip");
+        this.brush = d3.select(env.parentDom[0]).select(".brush");
         this.colors = [];
         this.keys = [];
         this.colorManager = new ColorManager(env);
 
         this.isGraphPresent = function(text) {
-            return d3.select("svg").select(".chart").node() != null;
+            return d3.select(env.parentDom[0]).select("svg").select(".chart").node() != null;
         };
 
         //setup the drawing in the svg  <-- TO CALL AT DOM READY
@@ -33,9 +32,9 @@ define([
             console.log("DRAW INIT");
             this.erase_all();
             var margin = {top: 5, right: 15, bottom: 15, left: 15};
-            var width = $("div.main_svg").outerWidth() - margin.left - margin.right;
-            var height_main = parseInt($("div.main_svg").outerHeight()) - margin.top;
-            var height_mini = parseInt($("div.mini_svg").outerHeight()) - margin.bottom;
+            var width = env.guiManager.dom.mainSvg.outerWidth() - margin.left - margin.right;
+            var height_main = parseInt(env.guiManager.dom.mainSvg.outerHeight()) - margin.top;
+            var height_mini = parseInt(env.guiManager.dom.miniSvg.outerHeight()) - margin.bottom;
             this.sizes = {
                 margin: margin,
                 width: width,
@@ -428,7 +427,7 @@ define([
             }).left;
 
             function mouseover() {
-                $this.tooltip.removeClass("hidden");
+                env.guiManager.dom.tooltipSvg.removeClass("hidden");
             }
 
             function mousemove(d_key, pos) {
@@ -455,7 +454,7 @@ define([
                 s += "<span>" + date + "</span>";
                 s += "<br/><strong>%: </strong>";
                 s += "<span>" + perc + "</span>";
-                $this.tooltip
+                env.guiManager.dom.tooltipSvg
                     .html(s)
                     .css("left", (d3.event.pageX + 10) + "px")
                     .css("top", (d3.event.pageY - 35) + "px");
@@ -472,7 +471,7 @@ define([
 
             function mouseout() {
                 d3.selectAll(".area").style("fill-opacity", 1);
-                $this.tooltip.addClass("hidden");
+                env.guiManager.dom.tooltipSvg.addClass("hidden");
                 $this.last_hover = null;
             }
 
@@ -699,10 +698,10 @@ define([
             else {
                 //svg
                 var svg_width = this.sizes.margin.left + margin_x + this.event_set.length * (gridSize_x + this.sizes.def_cell_margins.x);
-                $("div.main_svg").css("width", svg_width);
+                env.guiManager.dom.mainSvg.css("width", svg_width);
             }
             var svg_height = this.sizes.margin.top + margin_y + this.keys.length * (gridSize_y + this.sizes.def_cell_margins.y);
-            $("div.main_svg").css("height", svg_height);
+            env.guiManager.dom.mainSvg.css("height", svg_height);
 
             //DRAWING
             //chart
@@ -930,7 +929,7 @@ define([
             };
 
             function mouseover() {
-                $this.tooltip.removeClass("hidden");
+                env.guiManager.dom.tooltipSvg.removeClass("hidden");
             };
 
             function mousemove(d_key, pos) {
@@ -973,7 +972,7 @@ define([
                         s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
                     }
                 }
-                $this.tooltip
+                env.guiManager.dom.tooltipSvg
                     .html(s)
                     .css("left", (d3.event.pageX + 10) + "px")
                     .css("top", (d3.event.pageY - 30) + "px");
@@ -997,7 +996,7 @@ define([
                 d3.selectAll(".area")
                     .style("fill-opacity", 1);
                 $this.last_hover = null;
-                $this.tooltip.addClass("hidden");
+                env.guiManager.dom.tooltipSvg.addClass("hidden");
             }
 
             function click(pos, event) {
@@ -1027,7 +1026,7 @@ define([
                 else {
                     s += d;
                 }
-                $this.tooltip
+                env.guiManager.dom.tooltipSvg
                     .html(s)
                     .css("left", (d3.event.pageX + 10) + "px")
                     .css("top", (d3.event.pageY - 30) + "px");
@@ -1131,10 +1130,10 @@ define([
                 }), this.asn_set.length);
                 this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
                 this.z.domain(this.asn_set);
-                d3.select(".main_svg").selectAll(".area").each(function (d, i) {
+                d3.select(env.parentDom[0]).select(".main_svg").selectAll(".area").each(function (d, i) {
                     d3.select(this).style("fill", (d.asn && d.asn != null) ? $this.z(d.asn) : "#ffffff");
                 });
-                d3.select(".mini_svg").selectAll(".area").each(function (d, i) {
+                d3.select(env.parentDom[0]).select(".mini_svg").selectAll(".area").each(function (d, i) {
                     d3.select(this).style("fill", $this.z(d.key));
                 });
             }
