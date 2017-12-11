@@ -17,8 +17,8 @@ define([
         env.parentDom.append(template());
 
         this.dom = {
-            //body: env.parentDom.find("body"),
             svg: env.parentDom.find("svg"),
+            applyTime: env.parentDom.find(".apply-time"),
             container: env.parentDom.find(".bgpst-container"),
             canvasContainer: env.parentDom.find(".canvas_container"),
             mainSvg: env.parentDom.find("div.main_svg"),
@@ -153,46 +153,50 @@ define([
         };
 
         this.checkDatetimepicker = function () {
-            $this.dom.stopDate.datetimepicker('setStartDate', $this.dom.startDate.val());
-            var start = moment($this.dom.startDate.val(), "yyyy-mm-dd hh:ii");
-            var stop = moment($this.dom.stopDate.val(), "yyyy-mm-dd hh:ii");
+            //$this.dom.stopDate.datetimepicker('setStartDate', env.queryParams.stopDate);
+            var start = moment($this.dom.startDate.datetimepicker("getDate"));
+            var stop = moment($this.dom.stopDate.datetimepicker("getDate"));
 
             if (!stop.isAfter(start)) {
-                $this.dom.startDate.val(env.queryParams.startDate.format("YYYY-mm-DD hh:ss"));
-                $this.dom.stopDate.val(env.queryParams.stopDate.format("YYYY-mm-DD hh:ss"));
+                $this.dom.stopDate.datetimepicker("setDate", moment.utc().toDate());
             }
         };
 
         this.pickers_setup = function () {
             this.dom.startDate
                 .datetimepicker({
-                    initialDate: env.queryParams.startDate,
+                    initialDate: env.queryParams.startDate.format("YYYY-MM-DD hh:ss"),
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
-                    todayBtn: false,
-                    startDate: "2013-02-14 10:00",
-                    stopDate: "2013-02-14 10:00",
-                    minuteStep: 10,
+                    startDate: "2004-01-01 00:00",
+                    endDate: moment.utc().format("YYYY-MM-DD hh:ss"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
 
             this.dom.stopDate
                 .datetimepicker({
-                    initialDate: env.queryParams.stopDate,
+                    initialDate: env.queryParams.stopDate.format("YYYY-MM-DD hh:ss"),
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
-                    todayBtn: true,
-                    startDate: "2013-02-14 10:00",
-                    stopDate: "2013-02-14 10:00",
-                    minuteStep: 10,
+                    startDate: "2004-01-01 00:00",
+                    endDate: moment.utc().format("YYYY-MM-DD hh:ss"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
         };
 
+        this.setTimeFrameButton = function () {
+            this.dom.applyTime.on("mousedown", function () {
+                env.startDate = moment($this.dom.startDate.datetimepicker("getDate"));
+                env.stopDate = moment($this.dom.stopDate.datetimepicker("getDate"));
+                $this.ripeDataBroker.loadCurrentState(false, null, true);
+            });
+        };
+
         //other_command_menu
         this.other_command_button_setup = function () {
+            this.setTimeFrameButton();
             this.shuffle_color_map_btn_setup();
             this.erase_graph_btn_setup();
             this.gather_information_btn_setup();
@@ -627,9 +631,9 @@ define([
                 $this.prepending_prevention = !$this.prepending_prevention;
                 if ($this.isGraphPresent())
                     if ($this.graph_type == "stream")
-                        env.loadCurrentState(false, null, true);
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
                     else if ($this.graph_type == "heat")
-                        env.loadCurrentState(false, null, true);
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -640,7 +644,7 @@ define([
                 $(target).parent().toggleClass("active");
                 $this.merge_cp = !$this.merge_cp;
                 if ($this.isGraphPresent()) {
-                    env.loadCurrentState(false, null, true);
+                    $this.ripeDataBroker.loadCurrentState(false, null, true);
                     if ($this.merge_cp)
                         $this.update_counters(".counter_asn", $this.drawer.keys.length + "/" + env.current_parsed.cp_set.length);
                     else
@@ -653,7 +657,7 @@ define([
             this.dom.mergeEventsInputInput.on("change", function (e, ui) {
                 // $this.merge_events = $("input[name='merge_events']").spinner("value");
                 if ($this.isGraphPresent()) {
-                    env.loadCurrentState(false, null, true);
+                    $this.ripeDataBroker.loadCurrentState(false, null, true);
                     if ($this.merge_events)
                         $this.update_counters(".counter_events", $this.drawer.event_set.length + "/" + env.current_parsed.events.length);
                     else
@@ -669,7 +673,7 @@ define([
                 $(target).parent().toggleClass("active");
                 $this.events_labels = !$this.events_labels;
                 if ($this.isGraphPresent())
-                    env.loadCurrentState(false, null, false);
+                    $this.ripeDataBroker.loadCurrentState(false, null, false);
             });
         };
 
@@ -680,7 +684,7 @@ define([
                 $(target).parent().toggleClass("active");
                 $this.cp_labels = !$this.cp_labels;
                 if ($this.isGraphPresent())
-                    env.loadCurrentState(false, null, false);
+                    $this.ripeDataBroker.loadCurrentState(false, null, false);
             });
         };
 
@@ -691,7 +695,7 @@ define([
                 $(target).parent().toggleClass("active");
                 $this.heatmap_time_map = !$this.heatmap_time_map;
                 if ($this.isGraphPresent())
-                    env.loadCurrentState(false, null, true);
+                    $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -719,9 +723,9 @@ define([
                 $this.global_visibility = !$this.global_visibility;
                 if ($this.isGraphPresent())
                     if ($this.graph_type == "stream")
-                        env.loadCurrentState(false, null, true);
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
                     else if ($this.graph_type == "heat")
-                        env.loadCurrentState(false, null, true);
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -775,7 +779,7 @@ define([
             this.dom.asnLvlInputInput.on("change", function (e, ui) {
                 // $this.asn_level = $("input[name='asn_lvl']").spinner("value");
                 if ($this.isGraphPresent()) {
-                    env.loadCurrentState(false, null, true);
+                    $this.ripeDataBroker.loadCurrentState(false, null, true);
                 }
             });
         };
