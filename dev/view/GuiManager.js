@@ -725,11 +725,11 @@ define([
 
         this.graph_type_radio_setup = function () {
             this.dom.graphType.on("change", function (e) {
-                $this.graph_type = this.dom.graphTypeChecked.val();
+                $this.graph_type = $this.dom.graphTypeChecked.val();
                 if ($this.graph_type == "stream") {
                     $this.dom.title.html("Global View");
-                    this.dom.mainSvg.css("height", "70vh");
-                    this.dom.mainSvg.css("width", "auto");
+                    $this.dom.mainSvg.css("height", "70vh");
+                    $this.dom.mainSvg.css("width", "auto");
                     $(".canvas_container").css("width", "auto");
                     $this.dom.svg.parent().css("overflow", "visible");
                     $this.dom.counterAsnfind("label").text("#ASN");

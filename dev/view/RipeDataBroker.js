@@ -295,7 +295,6 @@ define([
             else {
                 alert("nè heat nè stream, problema!");
                 env.guiManager.drawer.drawer_init();
-                env.guiManager.isGraphPresent = false;
             }
             env.guiManager.boolean_checker();
             env.guiManager.draw_functions_btn_enabler();
