@@ -202,6 +202,7 @@ define([
 
         //other_command_menu
         this.other_command_button_setup = function () {
+            env.parentDom.find('.dropdown-toggle').dropdown();
             this.setTimeFrameButton();
             this.shuffle_color_map_btn_setup();
             this.erase_graph_btn_setup();
@@ -738,7 +739,6 @@ define([
         this.graph_type_radio_setup = function () {
             this.dom.graphType.on("change", function (e) {
                 $this.graph_type = $this.dom.graphType.filter(":checked").val();
-                console.log($this.graph_type);
                 if ($this.graph_type == "stream") {
                     $this.dom.title.html("Global View");
                     $this.dom.mainSvg.css("height", "70vh");

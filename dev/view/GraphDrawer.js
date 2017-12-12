@@ -29,7 +29,6 @@ define([
 
         //setup the drawing in the svg  <-- TO CALL AT DOM READY
         this.drawer_init = function () {
-            console.log("DRAW INIT");
             this.erase_all();
             var margin = {top: 5, right: 15, bottom: 15, left: 15};
             var width = env.guiManager.dom.mainSvg.outerWidth() - margin.left - margin.right;
@@ -124,9 +123,6 @@ define([
                     var start = $this.events[s_1];
                     var end = $this.events[e_1];
 
-                    console.log("DISCRETE START" + raw_start + " is " + start + " (" + s_1 + ")");
-                    console.log("DISCRETE END" + raw_end + " is " + end + " (" + e_1 + ")");
-                    console.log("brush selection: " + start + ", " + end);
                     if (!$this.events_range || !(moment(start).isSame($this.events_range[0]) && moment(end).isSame($this.events_range[1]))) {
                         $this.events_range = [moment(start), moment(end)];
                         $this.check_brush();
@@ -245,7 +241,6 @@ define([
                 }
 
                 if (!moment(i).isSame(moment(this.events_range[0])) || !moment(j).isSame(moment(this.events_range[1]))) {
-                    console.log("RE BRUSH")
                     this.center_brush(moment(this.events_range[0]), moment(this.events_range[1]));
                 }
             }
@@ -869,7 +864,7 @@ define([
                     .attr("height", 8)
                     .attr("width", 8)
                     .attr("xlink:href", function (d) {
-                        var s = "/css/flags/2.8.0/flags/4x3/";
+                        var s = "dev/view/css/flags/2.8.0/flags/4x3/";
                         try {
                             var geo = current_parsed.known_cp[d]['geo'].split("-")[0];
                             s += geo.toLowerCase() + ".svg";

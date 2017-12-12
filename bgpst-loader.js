@@ -193,7 +193,6 @@ define([
 
             callbackReady = window.atlas._widgets.bgpst.instances.callback[parentDom];
 
-            console.log(callbackReady);
             /* bgp stream script to ben run */
             if (callbackReady){
                 callbackReady(objectToBeEnriched);

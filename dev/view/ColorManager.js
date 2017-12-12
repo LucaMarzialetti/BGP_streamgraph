@@ -3,9 +3,7 @@ define([
 ], function(d3){
 
     var ColorManager = function (env) {
-        console.log("=== ColorManager Starting");
         setTimeout(this.initcolors(), 0);
-        console.log("=== ColorManager Ready");
     };
 
 
@@ -21,9 +19,7 @@ define([
         this.d_sorteds = [];
         this.mindist = 0;
         // the world's slowest loop:
-        console.log("=== ColorManager initialize colors");
         this.innerloop(100); //100
-        console.log("=== ColorManager "+this.ds.length+" colors loaded!");
     };
 
     ColorManager.prototype.constraint = function(lab) {
@@ -33,8 +29,8 @@ define([
 // should probably use a web worker here but don't want a separate file. Use SetTimeout instead.
     ColorManager.prototype.innerloop = function(L) {
         if (L > 0) {
-            for (b = -110; b < 100; b+=1) {
-                for (a = -100; a < 100; a+=1) {
+            for (var b = -110; b < 100; b+=1) {
+                for (var a = -100; a < 100; a+=1) {
                     var lab = d3.lab(L, a, b);
                     if (this.validcolor(lab)) {
                         if (this.constraint(lab)) {

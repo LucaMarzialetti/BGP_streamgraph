@@ -185,7 +185,6 @@ define([
         };
 
         this.loadCurrentState = function(store, events_range, redraw_minimap) {
-            console.log("update");
             env.guiManager.ip_version_checkbox_enabler();
             env.guiManager.restoreQuery();
             var ordering;
