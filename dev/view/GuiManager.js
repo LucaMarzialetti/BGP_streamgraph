@@ -57,7 +57,7 @@ define([
             counter: env.parentDom.find(".counter"),
             counterAsn: env.parentDom.find(".counter_asn").parent(),
 
-            graphType : env.parentDom.find("input[name='graph_type']"),
+            graphType : env.parentDom.find("input[name=\"graph_type\"]"),
             graphTypeHeat : env.parentDom.find("input[name='graph_type'][value='heat']"),
             graphTypeStream : env.parentDom.find('input[name="graph_type"][value="stream"]'),
 
@@ -203,6 +203,7 @@ define([
         //other_command_menu
         this.other_command_button_setup = function () {
             env.parentDom.find('.dropdown-toggle').dropdown();
+            env.parentDom.find('.graph_type').button('toggle');
             this.setTimeFrameButton();
             this.shuffle_color_map_btn_setup();
             this.erase_graph_btn_setup();
@@ -257,7 +258,6 @@ define([
 
 
         this.isGraphPresent = function (text) {
-            //return d3.select("svg").select(".chart").node() != null;
             return this.drawer.isGraphPresent();
         };
 
@@ -737,7 +737,8 @@ define([
         };
 
         this.graph_type_radio_setup = function () {
-            this.dom.graphType.on("change", function (e) {
+            env.parentDom.on("mousedown", ".graph_type", function (e) {
+
                 $this.graph_type = $this.dom.graphType.filter(":checked").val();
                 if ($this.graph_type == "stream") {
                     $this.dom.title.html("Global View");

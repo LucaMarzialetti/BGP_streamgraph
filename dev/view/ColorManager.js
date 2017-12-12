@@ -83,7 +83,7 @@ define([
         this.ds.splice(index, 1);
 
         // update the "nearest" value for all the other (nearby) nodes
-        var sq = function(x) { return x * x; }
+        var sq = function(x) { return x * x; };
 
         // each candidate node knows how far away the nearest selected node is.
         // if the newly-selected node is closer, we need to update this distance.

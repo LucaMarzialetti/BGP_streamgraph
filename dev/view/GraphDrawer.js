@@ -863,8 +863,8 @@ define([
                     .append("image")
                     .attr("height", 8)
                     .attr("width", 8)
-                    .attr("xlink:href", function (d) {
-                        var s = "dev/view/css/flags/2.8.0/flags/4x3/";
+                    .attr("src", function (d) {
+                        var s = WIDGET_URL + "dev/view/css/flags/2.8.0/flags/4x3/";
                         try {
                             var geo = current_parsed.known_cp[d]['geo'].split("-")[0];
                             s += geo.toLowerCase() + ".svg";
