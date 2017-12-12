@@ -3,7 +3,7 @@
 # Set your directories here:
 css_location='dev/view/css/'
 css_dist_location='dev/view/css/'
-deployment_dir='/Volumes/PersonalDisk/work/git-workspace/RIPEstat/static/js/bgpst/'
+deployment_dir='/Volumes/PersonalDisk/work/git-workspace/RIPEstat/static/js/interdomain-landscape/'
 
 rm ${css_dist_location}style-lib-dist.min.css
 rm ${css_dist_location}style-lib-dist.css

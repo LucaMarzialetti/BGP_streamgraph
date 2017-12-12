@@ -89,12 +89,13 @@ requirejs.config({
 
 define([
     "bgpst.env.utils",
+    "bgpst.lib.moment",
     "bgpst.env.config",
     "bgpst.env.languages.en",
     "bgpst.lib.jquery-amd",
     "bgpst.controller.main",
     "bgpst.controller.logger"
-], function(utils, config, language, $, Main, Logger){
+], function(utils, moment, config, language, $, Main, Logger){
 
     return function(instance){
         var env, instanceParams, queryParams, parentDom, styleDownloads, objectToBeEnriched;
@@ -110,7 +111,7 @@ define([
          * Init Dependency Injection Vector
          */
         env = {
-            "version": "17.12.8.0",
+            "version": "17.12.12.0",
             "dev": instanceParams.dev,
             "logger": new Logger(),
             "autoStart": instanceParams.autoStart || true,
@@ -120,11 +121,21 @@ define([
             //{ resource: "IP", startDate: new Date(), stopDate: new Date()}
         };
 
-        //window.env = env; // TEMP: just for debugging
+        if (env.queryParams.stopDate) {
+            env.queryParams.stopDate = (typeof env.queryParams.stopDate == "string") ?
+                moment(env.queryParams.stopDate).utc() : // parse string
+                moment.unix(env.queryParams.stopDate).utc(); // parse unix timestamp
+        } else {
+            env.queryParams.stopDate = moment().utc(); // now
+        }
 
-
-        env.queryParams.startDate = (env.queryParams.startDate) ? moment.utc(env.queryParams.startDate) : null;
-        env.queryParams.stopDate =  (env.queryParams.stopDate) ? moment.utc(env.queryParams.stopDate) : null;
+        if (env.queryParams.startDate) {
+            env.queryParams.startDate = (typeof env.queryParams.startDate == "string") ?
+                moment(env.queryParams.startDate).utc() :
+                moment.unix(env.queryParams.startDate).utc();
+        } else {
+            env.queryParams.startDate = env.queryParams.stopDate.subtract(config.defaultTimeWindowMinutes, "minutes"); // default time window
+        }
 
         /*
          * Check if parent dom exists
@@ -140,8 +151,7 @@ define([
 
         if (!instanceParams.dev){
             styleDownloads = [
-                window.atlas._widgets.bgpst.urls.view + "css/style-lib-dist.min.css",
-                window.atlas._widgets.bgpst.urls.libs + "bootstrap-datetimepicker/css/bootstrap-datetimepicker.css"
+                window.atlas._widgets.bgpst.urls.view + "css/style-lib-dist.min.css"
             ];
         } else {
             styleDownloads = [

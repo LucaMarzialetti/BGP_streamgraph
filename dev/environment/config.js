@@ -10,6 +10,7 @@ define([], function(){
 
     return {
         widgetPrefix: "ic",
+        defaultTimeWindowMinutes: 60 * 24 * 2, // 2 days
 
         dataAPIs:{
             main: "https://stat.ripe.net/data/bgplay/data.json",

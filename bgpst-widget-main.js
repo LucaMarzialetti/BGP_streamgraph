@@ -1,7 +1,10 @@
 /**
  * The location of the widget
  */
-WIDGET_URL = ((typeof EXTERNAL_WIDGET_URL == 'undefined') ? "" : EXTERNAL_WIDGET_URL) ;
+if (typeof STAT_WIDGET_API_URL == 'undefined') {
+    STAT_WIDGET_API_URL = "https://stat.ripe.net/widgets/";  // Default repo
+}
+WIDGET_URL = ((typeof EXTERNAL_WIDGET_URL == 'undefined') ? STAT_WIDGET_API_URL + 'js/interdomain-landscape/' : EXTERNAL_WIDGET_URL) ;
 
 /**
  * Name space configuration
@@ -26,14 +29,19 @@ window.atlas._widgets.bgpst.instances = window.atlas._widgets.bgpst.instances ||
 
 
 if (!window.atlas._widgets.widgetInjectorRequested) { // Only one injector
-    window.atlas._widgets.widgetInjectorLoaded = false;
     window.atlas._widgets.widgetInjectorRequested = true;
-    window.atlas._widgets.bgpst.tmp_scripts = document.getElementsByTagName('script');
-    window.atlas._widgets.bgpst.tmp_scrip = window.atlas._widgets.bgpst.tmp_scripts[window.atlas._widgets.bgpst.tmp_scripts.length - 1];
-    window.atlas._widgets.injectorScript = document.createElement('script');
-    window.atlas._widgets.injectorScript.async = false;
-    window.atlas._widgets.injectorScript.src = window.atlas._widgets.bgpst.urls.libs + 'require.min.js';
-    window.atlas._widgets.bgpst.tmp_scrip.parentNode.appendChild(window.atlas._widgets.injectorScript);
+    if (!requirejs){
+        window.atlas._widgets.widgetInjectorLoaded = false;
+        window.atlas._widgets.bgpst.tmp_scripts = document.getElementsByTagName('script');
+        window.atlas._widgets.bgpst.tmp_scrip = window.atlas._widgets.bgpst.tmp_scripts[window.atlas._widgets.bgpst.tmp_scripts.length - 1];
+        window.atlas._widgets.injectorScript = document.createElement('script');
+        window.atlas._widgets.injectorScript.async = false;
+        window.atlas._widgets.injectorScript.src = window.atlas._widgets.bgpst.urls.libs + 'require.min.js';
+        window.atlas._widgets.injectorScript.type = 'text/javascript';
+        window.atlas._widgets.bgpst.tmp_scrip.parentNode.appendChild(window.atlas._widgets.injectorScript);
+    } else {
+        window.atlas._widgets.widgetInjectorLoaded = true;
+    }
 }
 
 /**
@@ -119,7 +127,7 @@ function initBGPst(domElement, instanceParams, queryParams){
 
 if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
 
-    jQuery.fn.bgpst = function (data, widget_width, mark_loaded) {
+    jQuery.fn.interdomainLandscape = function (data, widget_width, mark_loaded) {
         var thisWidget, widgetParams, domElement, oldReadyFunction, instance;
 
         thisWidget = this.statWidget();
