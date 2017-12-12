@@ -16,6 +16,9 @@ define([
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
 
+        console.log($.fn);
+        $('.time-popup').modal({});
+
         this.dom = {
             svg: env.parentDom.find("svg"),
             applyTime: env.parentDom.find(".apply-time"),
