@@ -123,7 +123,6 @@ define([
 
 
         if (env.queryParams.stopDate) {
-            console.log(env.queryParams.startDate.format("yyyy"), env.queryParams.stopDate.format("yyyy"));
             env.queryParams.stopDate = (typeof env.queryParams.stopDate == "string") ?
                 moment(env.queryParams.stopDate).utc() : // parse string
                 moment.unix(env.queryParams.stopDate).utc(); // parse unix timestamp
@@ -194,11 +193,8 @@ define([
 
             callbackReady = window.atlas._widgets.bgpst.instances.callback[parentDom];
 
+            console.log(callbackReady);
             /* bgp stream script to ben run */
-
-            // $(".jquery_ui_spinner").spinner();
-            // $("button").button();
-
             if (callbackReady){
                 callbackReady(objectToBeEnriched);
             }

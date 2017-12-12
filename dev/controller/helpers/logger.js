@@ -2,8 +2,8 @@ define([
 ], function(){
 	
 	return function () {
-		var printErrors = true;
-		var printDebug = true;
+		var printErrors = false;
+		var printDebug = false;
 
 		this.log = function (string, type){
 			if ((!type || type == "debug") && printDebug){
