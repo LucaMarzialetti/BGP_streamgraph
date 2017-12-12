@@ -3,6 +3,12 @@
     height: 400px;
 }
 
+.cp_list {
+    cursor: pointer;
+}
+.asn_list {
+    cursor: pointer;
+}
 .bgpst-header {
     padding: 10px;
     height: 40px;

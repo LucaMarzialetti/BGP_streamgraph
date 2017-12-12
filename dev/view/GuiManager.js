@@ -864,7 +864,7 @@ define([
                     var asn = set[i];
                     var color_background = $this.drawer.z(asn);
                     var color_text = $this.drawer.colorManager.furthestLabelColor(color_background);
-                    html += '<li class="list-group-item as' + asn + '" style="color:' + color_text + '; background-color:' + color_background + ';"'
+                    html += '<li class="list-group-item as' + asn + '" style="color:' + color_text + '; background-color:' + color_background + ';"';
                     if ($this.graph_type == "stream")
                         html += 'onmouseover="d3.selectAll(\'.area\').filter(function(d){return d.key!=' + asn + ';}).style(\'fill-opacity\',\'0.35\');" onmouseout="d3.selectAll(\'.area\').style(\'fill-opacity\',1);">';
                     else if ($this.graph_type == 'heat')
@@ -895,10 +895,11 @@ define([
             this.dom.cpListButton.hover(function (event) {
                 var html = "";
                 var set;
-                if ($this.graph_type == "stream")
+                if ($this.graph_type == "stream") {
                     set = $this.ripeDataBroker.current_parsed.cp_set;
-                else if ($this.graph_type == "heat")
+                } else if ($this.graph_type == "heat"){
                     set = $this.drawer.keys;
+                }
                 for (var i in set) {
                     var cp = set[i];
                     html += "<li>";

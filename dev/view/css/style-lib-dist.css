@@ -37,6 +37,12 @@
   position: relative;
   height: 400px;
 }
+.bgpst-container .cp_list {
+  cursor: pointer;
+}
+.bgpst-container .asn_list {
+  cursor: pointer;
+}
 .bgpst-container .bgpst-header {
   padding: 10px;
   height: 40px;
