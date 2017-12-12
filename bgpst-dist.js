@@ -7476,6 +7476,7 @@ define('bgpst.view.broker',[
         };
 
         this.loadCurrentState = function(store, events_range, redraw_minimap) {
+            console.log("update");
             env.guiManager.ip_version_checkbox_enabler();
             env.guiManager.restoreQuery();
             var ordering;
@@ -8398,7 +8399,7 @@ define.amd = true;
 }));
 define('bgpst.lib.stache',{load: function(id){throw new Error("Dynamic load not allowed: " + id);}});
 
-define('bgpst.lib.stache!main', ['bgpst.lib.mustache'], function (Mustache) { var template = '<div class="bgpst-container">\n    <div class="header">\n        Start: <input size="14" type="text" readonly class="start-date">\n        Stop: <input size="14" type="text" readonly class="stop-date">\n        <button type="button" class="btn btn-default btn-xs">Ok</button>\n\n\n        <div class="btn-group steps_btn stream_option" data-toggle="buttons" style="margin-left: 30px;">\n            <label class="btn btn-default btn-xs">\n                <input type="checkbox" name="steps" value="steps" autocomplete="off">\n                <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>\n                Steps\n            </label>\n        </div>\n        <div class="btn-group streaming_btn stream_option" data-toggle="buttons">\n            <label class="btn btn-default btn-xs">\n                <input type="checkbox" name="streaming" value="streaming" autocomplete="off">\n                <span class="glyphicon glyphicon-record" aria-hidden="true"></span>\n                Streaming\n            </label>\n        </div>\n        <div class="btn-group ip_version" data-toggle="buttons">\n            <label class="btn btn-default btn-xs">\n                <input type="checkbox" name="ip_version" value="4" autocomplete="off">\n                IPv4\n            </label>\n            <label class="btn btn-default btn-xs">\n                <input type="checkbox" name="ip_version" value="6" autocomplete="off">\n                IPv6\n            </label>\n        </div>\n        <div class="btn-group graph_type" data-toggle="buttons">\n            <label class="btn btn-default btn-xs">\n                <input type="radio" name="graph_type" value="stream" autocomplete="off">\n                Global\n            </label>\n            <label class="btn btn-default btn-xs">\n                <input type="radio" name="graph_type" value="heat" autocomplete="off">\n                Local\n            </label>\n        </div>\n        <span class="dropdown">\n            <button type="button" class="btn-group btn-xs dropdown-toggle option_command_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <!--<li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>\n                <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>\n                <li>\n                    <a href="#" class="preserve_color_btn">\n                        Preserve Color Map\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li>\n                    <a href="#" class="gather_information_btn">\n                        Gather Information (CP Geo, ASN Detail)\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li>\n                    <a href="#" class="localstorage_enabled_btn">\n                        Enable Local Storage\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li> -->\n\n                <!-- SHARED OPTIONS -->\n                <li>\n                    <a href="#" class="prepending_prevention_btn">\n                        AS-Path Anti-Prepending\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li style="display: inline-flex;">\n                    <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                        Upstream Level (AS-path hop)\n\n                    </a>\n                    <input type="number" name="asn_lvl" min="0" max="50"\n                           style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">\n                </li>\n\n                <!-- STREAMGRAPH OPTIONS -->\n                <li class="stream_option">\n                    <a href="#" class="global_visibility_btn">\n                        Global visibility (All CPs)\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                \n                <!-- HEATMAP OPTIONS -->\n                <li class="heat_option">\n                    <a href="#" class="merge_cp_btn">\n                        Merge CPs with same paths\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li class="heat_option" style="display: inline-flex;">\n                    <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                        Merge events with same routing\n\n                    </a>\n                    <input type="number" name="merge_events" min="0" max="500"\n                           style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">\n                </li>\n                <li class="heat_option">\n                    <a href="#" class="events_labels_btn">\n                        Events labels\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li class="heat_option">\n                    <a href="#" class="cp_labels_btn">\n                        CP labels\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li class="heat_option">\n                    <a href="#" class="heatmap_time_btn">\n                        Use time mapping\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n            </ul>\n        </span>\n        <!-- <span class="dropdown">\n            <button type="button" class="btn-group btn-xs dropdown-toggle path_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li>\n                    <a href="#" class="draw_path_btn">Draw Path</a>\n                </li>\n\n                <li class="heat_option">\n                    <a href="#" class="scrollbars_btn">\n                        Use scrollbars\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n            </ul>\n        </span> -->\n        <span class="dropdown">\n            <button type="button" class="btn-xs btn-group dropdown-toggle list_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">\n               <li class="dropdown-submenu right_arrows">\n                <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>\n                <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>\n            </li>\n            <li class="dropdown-submenu right_arrows">\n                <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>\n                <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>\n            </li>\n        </ul>\n    </span>\n        <span class="dropdown">\n            <button type="button" class="btn-xs btn-group dropdown-toggle sort_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>\n                <li class="divider stream_option"></li>\n\n                <!-- STREAMGRAPH OPTIONS -->\n                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>\n                <!-- <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>\n                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li> -->\n                \n                <!-- HEATMAP OPTIONS -->\n                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>\n                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>\n                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>\n            </ul>\n        </span>\n    </div>\n\n    <div class="svg_tooltip hidden"></div>\n    <div class="canvas_container main_svg">\n        <svg></svg>\n    </div>\n    <div class="canvas_container mini_svg">\n        <svg></svg>\n    </div>\n</div>'; Mustache.parse( template ); return function( view, partials) { return Mustache.render( template, view, partials); } });
+define('bgpst.lib.stache!main', ['bgpst.lib.mustache'], function (Mustache) { var template = '<div class="bgpst-container">\n\n    <div class="header">\n        Start: <input size="14" type="text" readonly class="start-date">\n        Stop: <input size="14" type="text" readonly class="stop-date">\n        <button type="button" class="btn btn-default btn-xs apply-time">Ok</button>\n\n\n        <div class="btn-group steps_btn stream_option" data-toggle="buttons" style="margin-left: 30px;">\n            <label class="btn btn-default btn-xs">\n                <input type="checkbox" name="steps" value="steps" autocomplete="off">\n                <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>\n                Steps\n            </label>\n        </div>\n        <div class="btn-group streaming_btn stream_option" data-toggle="buttons">\n            <label class="btn btn-default btn-xs">\n                <input type="checkbox" name="streaming" value="streaming" autocomplete="off">\n                <span class="glyphicon glyphicon-record" aria-hidden="true"></span>\n                Streaming\n            </label>\n        </div>\n        <div class="btn-group ip_version" data-toggle="buttons">\n            <label class="btn btn-default btn-xs">\n                <input type="checkbox" name="ip_version" value="4" autocomplete="off">\n                IPv4\n            </label>\n            <label class="btn btn-default btn-xs">\n                <input type="checkbox" name="ip_version" value="6" autocomplete="off">\n                IPv6\n            </label>\n        </div>\n        <div class="btn-group graph_type" data-toggle="buttons">\n            <label class="btn btn-default btn-xs">\n                <input type="radio" name="graph_type" value="stream" autocomplete="off">\n                Global\n            </label>\n            <label class="btn btn-default btn-xs">\n                <input type="radio" name="graph_type" value="heat" autocomplete="off">\n                Local\n            </label>\n        </div>\n        <span class="dropdown">\n            <button type="button" class="btn-group btn-xs dropdown-toggle option_command_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <!--<li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>\n                <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>\n                <li>\n                    <a href="#" class="preserve_color_btn">\n                        Preserve Color Map\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li>\n                    <a href="#" class="gather_information_btn">\n                        Gather Information (CP Geo, ASN Detail)\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li>\n                    <a href="#" class="localstorage_enabled_btn">\n                        Enable Local Storage\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li> -->\n\n                <!-- SHARED OPTIONS -->\n                <li>\n                    <a href="#" class="prepending_prevention_btn">\n                        AS-Path Anti-Prepending\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li style="display: inline-flex;">\n                    <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                        Upstream Level (AS-path hop)\n\n                    </a>\n                    <input type="number" name="asn_lvl" min="0" max="50"\n                           style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">\n                </li>\n\n                <!-- STREAMGRAPH OPTIONS -->\n                <li class="stream_option">\n                    <a href="#" class="global_visibility_btn">\n                        Global visibility (All CPs)\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                \n                <!-- HEATMAP OPTIONS -->\n                <li class="heat_option">\n                    <a href="#" class="merge_cp_btn">\n                        Merge CPs with same paths\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li class="heat_option" style="display: inline-flex;">\n                    <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find(\'input\').focus();">\n                        Merge events with same routing\n\n                    </a>\n                    <input type="number" name="merge_events" min="0" max="500"\n                           style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">\n                </li>\n                <li class="heat_option">\n                    <a href="#" class="events_labels_btn">\n                        Events labels\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li class="heat_option">\n                    <a href="#" class="cp_labels_btn">\n                        CP labels\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n                <li class="heat_option">\n                    <a href="#" class="heatmap_time_btn">\n                        Use time mapping\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n            </ul>\n        </span>\n        <!-- <span class="dropdown">\n            <button type="button" class="btn-group btn-xs dropdown-toggle path_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li>\n                    <a href="#" class="draw_path_btn">Draw Path</a>\n                </li>\n\n                <li class="heat_option">\n                    <a href="#" class="scrollbars_btn">\n                        Use scrollbars\n                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>\n                    </a>\n                </li>\n            </ul>\n        </span> -->\n        <span class="dropdown">\n            <button type="button" class="btn-xs btn-group dropdown-toggle list_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">\n               <li class="dropdown-submenu right_arrows">\n                <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>\n                <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>\n            </li>\n            <li class="dropdown-submenu right_arrows">\n                <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>\n                <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>\n            </li>\n        </ul>\n    </span>\n        <span class="dropdown">\n            <button type="button" class="btn-xs btn-group dropdown-toggle sort_btn btn btn-default text_centerd" data-toggle="dropdown">\n                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>\n            </button>\n            <ul class="dropdown-menu dropdown-menu-right repositioned">\n                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>\n                <li class="divider stream_option"></li>\n\n                <!-- STREAMGRAPH OPTIONS -->\n                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>\n                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>\n                <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>\n                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>\n                <!-- <li class="divider stream_option"></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>\n                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>\n                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li> -->\n                \n                <!-- HEATMAP OPTIONS -->\n                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>\n                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>\n                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>\n                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>\n            </ul>\n        </span>\n    </div>\n\n    <div class="svg_tooltip hidden"></div>\n    <div class="canvas_container main_svg">\n        <svg></svg>\n    </div>\n    <div class="canvas_container mini_svg">\n        <svg></svg>\n    </div>\n</div>'; Mustache.parse( template ); return function( view, partials) { return Mustache.render( template, view, partials); } });
 
 define('bgpst.view.gui',[
     "bgpst.view.graphdrawer",
@@ -8419,8 +8420,8 @@ define('bgpst.view.gui',[
         env.parentDom.append(template());
 
         this.dom = {
-            //body: env.parentDom.find("body"),
             svg: env.parentDom.find("svg"),
+            applyTime: env.parentDom.find(".apply-time"),
             container: env.parentDom.find(".bgpst-container"),
             canvasContainer: env.parentDom.find(".canvas_container"),
             mainSvg: env.parentDom.find("div.main_svg"),
@@ -8555,46 +8556,49 @@ define('bgpst.view.gui',[
         };
 
         this.checkDatetimepicker = function () {
-            $this.dom.stopDate.datetimepicker('setStartDate', $this.dom.startDate.val());
-            var start = moment($this.dom.startDate.val(), "yyyy-mm-dd hh:ii");
-            var stop = moment($this.dom.stopDate.val(), "yyyy-mm-dd hh:ii");
+            var start = moment($this.dom.startDate.datetimepicker("getDate"));
+            var stop = moment($this.dom.stopDate.datetimepicker("getDate"));
 
             if (!stop.isAfter(start)) {
-                $this.dom.startDate.val(env.queryParams.startDate.format("YYYY-mm-DD hh:ss"));
-                $this.dom.stopDate.val(env.queryParams.stopDate.format("YYYY-mm-DD hh:ss"));
+                $this.dom.stopDate.datetimepicker("setDate", moment.utc().toDate());
             }
         };
 
         this.pickers_setup = function () {
             this.dom.startDate
                 .datetimepicker({
-                    initialDate: env.queryParams.startDate,
+                    initialDate: env.queryParams.startDate.format("YYYY-MM-DD hh:ss"),
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
-                    todayBtn: false,
-                    startDate: "2013-02-14 10:00",
-                    stopDate: "2013-02-14 10:00",
-                    minuteStep: 10,
+                    startDate: "2004-01-01 00:00",
+                    endDate: moment.utc().format("YYYY-MM-DD hh:ss"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
 
             this.dom.stopDate
                 .datetimepicker({
-                    initialDate: env.queryParams.stopDate,
+                    initialDate: env.queryParams.stopDate.format("YYYY-MM-DD hh:ss"),
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
-                    todayBtn: true,
-                    startDate: "2013-02-14 10:00",
-                    stopDate: "2013-02-14 10:00",
-                    minuteStep: 10,
+                    startDate: "2004-01-01 00:00",
+                    endDate: moment.utc().format("YYYY-MM-DD hh:ss"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
         };
 
+        this.setTimeFrameButton = function () {
+            this.dom.applyTime.on("mousedown", function () {
+                env.queryParams.startDate = moment($this.dom.startDate.datetimepicker("getDate"));
+                env.queryParams.stopDate = moment($this.dom.stopDate.datetimepicker("getDate"));
+                $this.ripeDataBroker.getData();
+            });
+        };
+
         //other_command_menu
         this.other_command_button_setup = function () {
+            this.setTimeFrameButton();
             this.shuffle_color_map_btn_setup();
             this.erase_graph_btn_setup();
             this.gather_information_btn_setup();
@@ -9029,9 +9033,9 @@ define('bgpst.view.gui',[
                 $this.prepending_prevention = !$this.prepending_prevention;
                 if ($this.isGraphPresent())
                     if ($this.graph_type == "stream")
-                        env.loadCurrentState(false, null, true);
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
                     else if ($this.graph_type == "heat")
-                        env.loadCurrentState(false, null, true);
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -9042,7 +9046,7 @@ define('bgpst.view.gui',[
                 $(target).parent().toggleClass("active");
                 $this.merge_cp = !$this.merge_cp;
                 if ($this.isGraphPresent()) {
-                    env.loadCurrentState(false, null, true);
+                    $this.ripeDataBroker.loadCurrentState(false, null, true);
                     if ($this.merge_cp)
                         $this.update_counters(".counter_asn", $this.drawer.keys.length + "/" + env.current_parsed.cp_set.length);
                     else
@@ -9055,7 +9059,7 @@ define('bgpst.view.gui',[
             this.dom.mergeEventsInputInput.on("change", function (e, ui) {
                 // $this.merge_events = $("input[name='merge_events']").spinner("value");
                 if ($this.isGraphPresent()) {
-                    env.loadCurrentState(false, null, true);
+                    $this.ripeDataBroker.loadCurrentState(false, null, true);
                     if ($this.merge_events)
                         $this.update_counters(".counter_events", $this.drawer.event_set.length + "/" + env.current_parsed.events.length);
                     else
@@ -9071,7 +9075,7 @@ define('bgpst.view.gui',[
                 $(target).parent().toggleClass("active");
                 $this.events_labels = !$this.events_labels;
                 if ($this.isGraphPresent())
-                    env.loadCurrentState(false, null, false);
+                    $this.ripeDataBroker.loadCurrentState(false, null, false);
             });
         };
 
@@ -9082,7 +9086,7 @@ define('bgpst.view.gui',[
                 $(target).parent().toggleClass("active");
                 $this.cp_labels = !$this.cp_labels;
                 if ($this.isGraphPresent())
-                    env.loadCurrentState(false, null, false);
+                    $this.ripeDataBroker.loadCurrentState(false, null, false);
             });
         };
 
@@ -9093,7 +9097,7 @@ define('bgpst.view.gui',[
                 $(target).parent().toggleClass("active");
                 $this.heatmap_time_map = !$this.heatmap_time_map;
                 if ($this.isGraphPresent())
-                    env.loadCurrentState(false, null, true);
+                    $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -9121,9 +9125,9 @@ define('bgpst.view.gui',[
                 $this.global_visibility = !$this.global_visibility;
                 if ($this.isGraphPresent())
                     if ($this.graph_type == "stream")
-                        env.loadCurrentState(false, null, true);
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
                     else if ($this.graph_type == "heat")
-                        env.loadCurrentState(false, null, true);
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -9177,7 +9181,7 @@ define('bgpst.view.gui',[
             this.dom.asnLvlInputInput.on("change", function (e, ui) {
                 // $this.asn_level = $("input[name='asn_lvl']").spinner("value");
                 if ($this.isGraphPresent()) {
-                    env.loadCurrentState(false, null, true);
+                    $this.ripeDataBroker.loadCurrentState(false, null, true);
                 }
             });
         };
@@ -9696,8 +9700,8 @@ define('bgpst.controller.logger',[
 ], function(){
 	
 	return function () {
-		var printErrors = false;
-		var printDebug = false;
+		var printErrors = true;
+		var printDebug = true;
 
 		this.log = function (string, type){
 			if ((!type || type == "debug") && printDebug){
@@ -9831,12 +9835,14 @@ define('bgpst-loader',[
             //{ resource: "IP", startDate: new Date(), stopDate: new Date()}
         };
 
+
         if (env.queryParams.stopDate) {
+            console.log(env.queryParams.startDate.format("yyyy"), env.queryParams.stopDate.format("yyyy"));
             env.queryParams.stopDate = (typeof env.queryParams.stopDate == "string") ?
                 moment(env.queryParams.stopDate).utc() : // parse string
                 moment.unix(env.queryParams.stopDate).utc(); // parse unix timestamp
         } else {
-            env.queryParams.stopDate = moment().utc(); // now
+            env.queryParams.stopDate = moment.utc(); // now
         }
 
         if (env.queryParams.startDate) {
@@ -9844,8 +9850,9 @@ define('bgpst-loader',[
                 moment(env.queryParams.startDate).utc() :
                 moment.unix(env.queryParams.startDate).utc();
         } else {
-            env.queryParams.startDate = env.queryParams.stopDate.subtract(config.defaultTimeWindowMinutes, "minutes"); // default time window
+            env.queryParams.startDate = moment(env.queryParams.stopDate).subtract(config.defaultTimeWindowMinutes, "minute"); // default time window
         }
+
 
         /*
          * Check if parent dom exists

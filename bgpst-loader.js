@@ -121,12 +121,14 @@ define([
             //{ resource: "IP", startDate: new Date(), stopDate: new Date()}
         };
 
+
         if (env.queryParams.stopDate) {
+            console.log(env.queryParams.startDate.format("yyyy"), env.queryParams.stopDate.format("yyyy"));
             env.queryParams.stopDate = (typeof env.queryParams.stopDate == "string") ?
                 moment(env.queryParams.stopDate).utc() : // parse string
                 moment.unix(env.queryParams.stopDate).utc(); // parse unix timestamp
         } else {
-            env.queryParams.stopDate = moment().utc(); // now
+            env.queryParams.stopDate = moment.utc(); // now
         }
 
         if (env.queryParams.startDate) {
@@ -134,8 +136,9 @@ define([
                 moment(env.queryParams.startDate).utc() :
                 moment.unix(env.queryParams.startDate).utc();
         } else {
-            env.queryParams.startDate = env.queryParams.stopDate.subtract(config.defaultTimeWindowMinutes, "minutes"); // default time window
+            env.queryParams.startDate = moment(env.queryParams.stopDate).subtract(config.defaultTimeWindowMinutes, "minute"); // default time window
         }
+
 
         /*
          * Check if parent dom exists

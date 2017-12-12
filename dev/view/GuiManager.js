@@ -153,7 +153,6 @@ define([
         };
 
         this.checkDatetimepicker = function () {
-            //$this.dom.stopDate.datetimepicker('setStartDate', env.queryParams.stopDate);
             var start = moment($this.dom.startDate.datetimepicker("getDate"));
             var stop = moment($this.dom.stopDate.datetimepicker("getDate"));
 
@@ -188,9 +187,9 @@ define([
 
         this.setTimeFrameButton = function () {
             this.dom.applyTime.on("mousedown", function () {
-                env.startDate = moment($this.dom.startDate.datetimepicker("getDate"));
-                env.stopDate = moment($this.dom.stopDate.datetimepicker("getDate"));
-                $this.ripeDataBroker.loadCurrentState(false, null, true);
+                env.queryParams.startDate = moment($this.dom.startDate.datetimepicker("getDate"));
+                env.queryParams.stopDate = moment($this.dom.stopDate.datetimepicker("getDate"));
+                $this.ripeDataBroker.getData();
             });
         };
 
