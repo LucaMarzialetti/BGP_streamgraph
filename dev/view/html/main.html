@@ -1,33 +1,32 @@
 <div class="bgpst-container">
 
-    <div class="header">
-        <button type="button" class="btn btn-primary time-popup" data-toggle="modal" data-target="#exampleModal">
-            Time
-        </button>
-
-        <div class="modal fade">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Select Time range</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Start: <input size="14" type="text" readonly class="start-date">
-                        Stop: <input size="14" type="text" readonly class="stop-date">
-                        <button type="button" class="btn btn-default btn-xs apply-time">Ok</button>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Ok</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
+    <div class="modal fade time-modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Time range</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Start: <input size="14" type="text" readonly class="start-date">
+                    Stop: <input size="14" type="text" readonly class="stop-date">
+                    <button type="button" class="btn btn-default btn-xs apply-time">Ok</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Ok</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
+    </div>
 
 
+    <div class="bgpst-header">
+        <button type="button" class="btn btn-primary time-modal-button" data-toggle="modal" data-target="#exampleModal">
+            Time
+        </button>
 
         <div class="btn-group steps_btn stream_option" data-toggle="buttons" style="margin-left: 30px;">
             <label class="btn btn-default btn-xs">

@@ -1,13 +1,14 @@
 
 
 define([
+    "bgpst.env.utils",
     "bgpst.lib.jquery-amd",
     "bgpst.view.parser",
     "bgpst.controller.dateconverter",
     "bgpst.view.heuristics",
     "bgpst.lib.moment",
     "bgpst.controller.functions"
-], function($, RipeDataParser, DateConverter, HeuristicsManager, moment, myUtils){
+], function(utils, $, RipeDataParser, DateConverter, HeuristicsManager, moment, myUtils){
 
 
     var RipeDataBroker = function(env) {
@@ -26,6 +27,7 @@ define([
         this.getData = function() {
             var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
 
+            utils.observer.publish("updated", env.queryParams);
             $.ajax({
                 url: url_ris_peer_count,
                 dataType: "json",

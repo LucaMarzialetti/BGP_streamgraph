@@ -16,9 +16,6 @@ define([
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
 
-        console.log($.fn);
-        $('.time-popup').modal({});
-
         this.dom = {
             svg: env.parentDom.find("svg"),
             applyTime: env.parentDom.find(".apply-time"),
@@ -61,7 +58,6 @@ define([
             counterAsn: env.parentDom.find(".counter_asn").parent(),
 
             graphType : env.parentDom.find("input[name='graph_type']"),
-            graphTypeChecked: env.parentDom.find("input[name='graph_type']:checked"),
             graphTypeHeat : env.parentDom.find("input[name='graph_type'][value='heat']"),
             graphTypeStream : env.parentDom.find('input[name="graph_type"][value="stream"]'),
 
@@ -116,7 +112,10 @@ define([
             heatGeoSortButton : env.parentDom.find(".heat_as_sort"),
 
             startDate : env.parentDom.find(".start-date"),
-            stopDate : env.parentDom.find(".stop-date")
+            stopDate : env.parentDom.find(".stop-date"),
+
+            timeModal: env.parentDom.find(".time-modal"),
+            timeModalButton: env.parentDom.find(".time-modal-button")
         };
 
         this.drawer = new GraphDrawer(env);
@@ -165,6 +164,11 @@ define([
         };
 
         this.pickers_setup = function () {
+
+            this.dom.timeModalButton.on("mousedown", function () {
+                env.logger.log("time modal open");
+                $this.dom.timeModal.modal("show");
+            });
             this.dom.startDate
                 .datetimepicker({
                     initialDate: env.queryParams.startDate.format("YYYY-MM-DD hh:ss"),
@@ -733,26 +737,27 @@ define([
 
         this.graph_type_radio_setup = function () {
             this.dom.graphType.on("change", function (e) {
-                $this.graph_type = $this.dom.graphTypeChecked.val();
+                $this.graph_type = $this.dom.graphType.filter(":checked").val();
+                console.log($this.graph_type);
                 if ($this.graph_type == "stream") {
                     $this.dom.title.html("Global View");
                     $this.dom.mainSvg.css("height", "70vh");
                     $this.dom.mainSvg.css("width", "auto");
-                    this.dom.canvasContainer.css("width", "auto");
+                    $this.dom.canvasContainer.css("width", "auto");
                     $this.dom.svg.parent().css("overflow", "visible");
-                    $this.dom.counterAsnfind("label").text("#ASN");
+                    $this.dom.counterAsn.find("label").text("#ASN");
                     $this.dom.streamOptionButton.removeClass("hidden");
                     $this.dom.heatOptionButton.addClass("hidden");
                 }
                 if ($this.graph_type == "heat") {
                     $this.dom.title.html("Local View");
-                    this.dom.canvasContainer.css("width", "100%");
+                    $this.dom.canvasContainer.css("width", "100%");
                     // if ($this.use_scrollbars) {
                     //     $this.dom.svg.parent().css("overflow", "scroll");
                     // }
                     // else
                     //     $this.dom.body.css("overflow-y", "scroll");
-                    $this.dom.counterAsnfind("label").text("#CP");
+                    $this.dom.counterAsn.find("label").text("#CP");
                     $this.dom.streamOptionButton.addClass("hidden");
                     $this.dom.heatOptionButton.removeClass("hidden");
                 }

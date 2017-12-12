@@ -19,8 +19,8 @@
     paths: {
         "bgpst.lib.jquery": "dev/libs/jquery/jquery-1.11.1.min",
         "bgpst.lib.jquery-ui": "dev/libs/jquery_ui/1.12.1/jquery-ui.min",
-        // "bgpst.lib.bootstrap": "dev/libs/bootstrap/js/bootstrap.min",
-        "bgpst.lib.bootstrap": "dev/libs/bootstrap/js/bootstrap_3.3.7.min",
+        "bgpst.lib.bootstrap": "dev/libs/bootstrap/js/bootstrap.min",
+        // "bgpst.lib.bootstrap": "dev/libs/bootstrap/js/bootstrap_3.3.7.min",
         "bgpst.lib.bootstrap.datetimepicker": "dev/libs/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min",
     },
 

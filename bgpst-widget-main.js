@@ -158,12 +158,12 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
         instance.ready(function(){
 
             instance.shell().on("updated", function(params){
-                var out = {
-                    resource: [params.resource]
-                };
 
-                // DO SOMETHING HERE TO UPDATE RIPESTAT
-                thisWidget.set_params(out);
+                thisWidget.set_params({
+                    resource: [params.resource],
+                    starttime: params.startDate.format("YYYY-MM-DDTHH:mm:ss"),
+                    endtime: params.stopDate.format("YYYY-MM-DDTHH:mm:ss")
+                });
                 thisWidget.update_permalinks();
 
                 $(domElement).find(".messages").remove();
