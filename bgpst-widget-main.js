@@ -151,23 +151,25 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
             }
         }, {
             targets: [widgetParams.resource],
-            startDate: widgetParams.startDate,
-            stopDate: widgetParams.stopDate
+            startDate: widgetParams.starttime,
+            stopDate: widgetParams.endtime
         });
 
         instance.ready(function(){
 
-            instance.shell().on("updated", function(params){
+            instance.shell()
+                .on("updated", function(params){
+                    var newParams = {
+                        resource: [params.resource],
+                        starttime: params.startDate.unix(),
+                        endtime: params.stopDate.unix()
+                    };
+                    thisWidget.set_params(newParams);
+                    thisWidget.navigate(newParams);
+                    thisWidget.update_permalinks();
 
-                thisWidget.set_params({
-                    resource: [params.resource],
-                    starttime: params.startDate.unix(),
-                    endtime: params.stopDate.unix()
+                    $(domElement).find(".messages").remove();
                 });
-                thisWidget.update_permalinks();
-
-                $(domElement).find(".messages").remove();
-            });
         });
     };
 }

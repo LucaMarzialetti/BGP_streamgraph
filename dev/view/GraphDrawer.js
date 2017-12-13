@@ -1,16 +1,12 @@
 
 define([
-    /*color manager*
-     /*moment*/
-    /*jquery QUALE ?*/
-    /*d3 QUALE ?*/
-    /*chiamate sul DOM dalla root DOM*/
+    "bgpst.env.utils",
     "bgpst.view.color",
     "bgpst.lib.moment",
     "bgpst.lib.jquery-amd",
     "bgpst.lib.d3-amd",
     "bgpst.controller.functions"
-], function(ColorManager, moment, $, d3, myUtils) {
+], function(utils, ColorManager, moment, $, d3, myUtils) {
 
 
     var GraphDrawer = function(env) {
@@ -311,6 +307,8 @@ define([
         this.draw_streamgraph = function (current_parsed, graph_type, tsv_incoming_data, keys_order, preserve_color_map, global_visibility, targets, query_id, bgplay_callback, events_limit, events_range, redraw_minimap) {
             this.erase_all();
             this.draw_stream_axis(this.main_svg, this.sizes);
+            utils.observer.publish("updated", env.queryParams);
+
             var parseDate = this.parseDate();
             var formatDate = this.formatDate();
             var tsv_data = d3.tsvParse(tsv_incoming_data);
@@ -484,6 +482,7 @@ define([
             }
 
             this.current_query_id = query_id;
+
         };
 
         this.draw_heat_axis = function (events, margin_x) {
@@ -638,11 +637,6 @@ define([
             else
                 this.keys = this.cp_set;
 
-            //data filter
-            // if(this.events_range){
-            //        this.event_set = this.event_set.filter(function(e){return moment(e).isSameOrAfter(drawer.events_range[0]) && moment(e).isSameOrBefore(drawer.events_range[1]);})
-            //        data = data.filter(function(e){return moment(e.date).isSameOrAfter(drawer.events_range[0]) && moment(e.date).isSameOrBefore(drawer.events_range[1]);});
-            //    }
 
             /****************************************************  DRAWING ***************************************/
 
@@ -1102,7 +1096,10 @@ define([
                 flat.push(moments[pos]);
                 //return only the events buckets
                 return flat;
-            };
+            }
+
+            utils.observer.publish("updated", env.queryParams);
+
         };
 
         //extra functions

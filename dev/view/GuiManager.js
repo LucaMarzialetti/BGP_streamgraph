@@ -25,7 +25,7 @@ define([
             miniSvg: env.parentDom.find("div.mini_svg"),
             tooltip: env.parentDom.find("[data-toggle='tooltip']"),
             tooltipSvg: env.parentDom.find(".svg_tooltip"),
-            
+
             title: env.parentDom.find(".title"),
 
             pathButton: env.parentDom.find(".path_btn"),
@@ -61,6 +61,7 @@ define([
             graphTypeHeat : env.parentDom.find("input[name='graph_type'][value='heat']"),
             graphTypeStream : env.parentDom.find('input[name="graph_type"][value="stream"]'),
 
+            ipVersion : env.parentDom.find(".ip_version"),
             ipVersion6Button : env.parentDom.find("input[name='ip_version'][value='6']"),
             ipVersion4Button : env.parentDom.find("input[name='ip_version'][value='4']"),
             ipVersionButton : env.parentDom.find("input[name='ip_version']"),
@@ -167,7 +168,7 @@ define([
 
             this.dom.timeModal.modal({
                 show: false,
-                backdrop : false, 
+                backdrop : false,
                 keyboard : false
             });
 
@@ -439,43 +440,53 @@ define([
                     this.dom.pathButton.removeClass("not-active");
                     this.dom.listButton.removeClass("not-active");
                     this.dom.sortButton.removeClass("not-active");
-                    if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
+
+                    var containsIpv6, containsIpv4;
+
+                    containsIpv4 = this.ripeDataBroker.current_parsed.targets
+                        .some(function (e) {
                             return $this.validator.check_ipv4(e);
-                        })) {
-                        this.dom.ipVersion4Button.addClass("disabled");
-                        this.dom.ipVersion4Button.addClass("not-active");
-                        this.dom.ipVersion4Button.attr("disabled", true);
-                    }
-                    else {
-                        this.dom.ipVersion4Button.removeClass("disabled");
-                        this.dom.ipVersion4Button.removeClass("not-active");
-                        this.dom.ipVersion4Button.attr("disabled", false);
-                    }
-                    if (!this.ripeDataBroker.current_parsed.targets.some(function (e) {
+                        });
+                    containsIpv6 = this.ripeDataBroker.current_parsed.targets
+                        .some(function (e) {
                             return $this.validator.check_ipv6(e);
-                        })) {
-                        this.dom.ipVersion6Button.addClass("disabled");
-                        this.dom.ipVersion6Button.addClass("not-active");
-                        this.dom.ipVersion6Button.attr("disabled", true);
+                        });
+
+
+                        if (!containsIpv4) {
+                            this.dom.ipVersion4Button.addClass("disabled");
+                            this.dom.ipVersion4Button.addClass("not-active");
+                            this.dom.ipVersion4Button.attr("disabled", true);
+                        } else {
+                            this.dom.ipVersion4Button.removeClass("disabled");
+                            this.dom.ipVersion4Button.removeClass("not-active");
+                            this.dom.ipVersion4Button.attr("disabled", false);
+                        }
+
+                        if (!containsIpv6) {
+                            this.dom.ipVersion6Button.addClass("disabled");
+                            this.dom.ipVersion6Button.addClass("not-active");
+                            this.dom.ipVersion6Button.attr("disabled", true);
+                        } else {
+                            this.dom.ipVersion6Button.removeClass("disabled");
+                            this.dom.ipVersion6Button.removeClass("not-active");
+                            this.dom.ipVersion6Button.attr("disabled", false);
+                        }
+                    if ((containsIpv4 && !containsIpv6) || (!containsIpv4 && containsIpv6)) {
+                        this.dom.ipVersion.hide();
                     }
-                    else {
-                        this.dom.ipVersion6Button.removeClass("disabled");
-                        this.dom.ipVersion6Button.removeClass("not-active");
-                        this.dom.ipVersion6Button.attr("disabled", false);
-                    }
+
                     if (this.ip_version.indexOf(4) != -1) {
                         this.dom.ipVersionButton.filter('[value="4"]').prop('checked', true);
                         this.dom.ipVersionButton.filter('[value="4"]').parent().addClass("active");
-                    }
-                    else {
+                    } else {
                         this.dom.ipVersionButton.filter('[value="4"]').prop('checked', false);
                         this.dom.ipVersionButton.filter('[value="4"]').parent().removeClass("active");
                     }
                     if (this.ip_version.indexOf(6) != -1) {
                         this.dom.ipVersionButton.filter('[value="6"]').prop('checked', true);
                         this.dom.ipVersionButton.filter('[value="6"]').parent().addClass("active");
-                    }
-                    else {
+                    } else {
                         this.dom.ipVersionButton.filter('[value="6"]').prop('checked', false);
                         this.dom.ipVersionButton.filter('[value="6"]').parent().removeClass("active");
                     }
@@ -754,6 +765,7 @@ define([
         };
 
         this.ip_version_checkbox_setup = function () {
+
             this.dom.ipVersionButton.on("change", function (e) {
                 $this.ip_version = [];
                 $this.dom.ipVersionCheckedButton.each(function () {

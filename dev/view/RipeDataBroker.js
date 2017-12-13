@@ -27,7 +27,6 @@ define([
         this.getData = function() {
             var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
 
-            utils.observer.publish("updated", env.queryParams);
             $.ajax({
                 url: url_ris_peer_count,
                 dataType: "json",
