@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Widget</title>
     <script>
-        EXTERNAL_WIDGET_URL = "/BGP_streamgraph/";
+        EXTERNAL_WIDGET_URL = ""; ///BGP_streamgraph/
     </script>
     <script src="bgpst-widget-main.js"></script>
 </head>
@@ -13,14 +13,20 @@
 <div id="place-here"></div>
 
 <script>
+    var start = new Date();
+    var stop = new Date();
+    stop.setDate(start.getDate() -1);
+    start.toISOString().slice(0,19).replace("T", " ");
+    stop.toISOString().slice(0,19).replace("T", " ");
+
     var widget = initBGPst(
             '#place-here',
             {
                 dev: true
             }, // Tool options, see table below for more info
             {
-                stopDate: new Date(),
-                startDate: new Date(1512217321 * 1000),
+                stopDate: start , //new Date(),
+                startDate: stop,//new Date(1512217321 * 1000),
                 targets: ["193.0.10.220"]
             } // Query options, see table below for more info
     );

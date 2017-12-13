@@ -23,46 +23,46 @@
 
 
     <div class="bgpst-header">
-        <button type="button" class="btn-group btn btn-xs btn-default time-modal-button" data-toggle="modal" data-target=".time-modal">
+        <button type="button" class="btn-group btn btn-xs btn-default time-modal-button" data-toggle="modal" data-target=".time-modal" title="Time range">
             <span class="glyphicon glyphicon-calendar"></span>
         </button>
 
-        <div class="btn-group steps_btn stream_option" data-toggle="buttons">
+        <div class="btn-group steps_btn stream_option" data-toggle="buttons" title="Play animation">
             <label class="btn btn-default btn-xs">
                 <input type="checkbox" name="steps" value="steps" autocomplete="off">
-                <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
-                Steps
+                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                Play
             </label>
         </div>
-        <div class="btn-group streaming_btn stream_option" data-toggle="buttons">
+        <div class="btn-group streaming_btn stream_option" data-toggle="buttons" title="Data streaming">
             <label class="btn btn-default btn-xs">
                 <input type="checkbox" name="streaming" value="streaming" autocomplete="off">
                 <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
                 Streaming
             </label>
         </div>
-        <div class="btn-group ip_version" data-toggle="buttons">
-            <label class="btn btn-default btn-xs">
+        <div class="btn-group ip_version" data-toggle="buttons" >
+            <label class="btn btn-default btn-xs" title="IPv4 source">
                 <input type="checkbox" name="ip_version" value="4" autocomplete="off">
                 IPv4
             </label>
-            <label class="btn btn-default btn-xs">
+            <label class="btn btn-default btn-xs" title="IPv6 source">
                 <input type="checkbox" name="ip_version" value="6" autocomplete="off">
                 IPv6
             </label>
         </div>
-        <div class="btn-group graph_type" data-toggle="buttons">
-            <label class="btn btn-default btn-xs">
+        <div class="btn-group graph_type" data-toggle="buttons" >
+            <label class="btn btn-default btn-xs" title="Global View">
                 <input class="graph-type-view" type="radio" name="graph_type" value="stream" checked="checked" autocomplete="off">
                 Global
             </label>
-            <label class="btn btn-default btn-xs">
+            <label class="btn btn-default btn-xs" title="Local View">
                 <input class="graph-type-view" type="radio" name="graph_type" value="heat" autocomplete="off">
                 Local
             </label>
         </div>
         <span class="dropdown">
-            <button type="button" class="btn-group btn-xs dropdown-toggle option_command_btn btn btn-default text_centerd" data-toggle="dropdown">
+            <button type="button" class="btn-group btn-xs dropdown-toggle option_command_btn btn btn-default text_centerd" data-toggle="dropdown" title="Configurations">
                 <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right repositioned">
@@ -164,8 +164,8 @@
             </ul>
         </span> -->
         <span class="dropdown">
-            <button type="button" class="btn-xs btn-group dropdown-toggle list_btn btn btn-default text_centerd" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
+            <button type="button" class="btn-xs btn-group dropdown-toggle list_btn btn btn-default text_centerd" data-toggle="dropdown" title="Resources">
+                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">
                <li class="dropdown-submenu right_arrows">
@@ -179,8 +179,8 @@
         </ul>
     </span>
         <span class="dropdown">
-            <button type="button" class="btn-xs btn-group dropdown-toggle sort_btn btn btn-default text_centerd" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
+            <button type="button" class="btn-xs btn-group dropdown-toggle sort_btn btn btn-default text_centerd" data-toggle="dropdown" title="Optimizations">
+                <span class="glyphicon glyphicon-signal" aria-hidden="true"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right repositioned">
                 <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>

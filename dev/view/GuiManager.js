@@ -129,7 +129,7 @@ define([
         this.streaming = false;
         this.steps = false;
         this.merge_cp = false;
-        this.merge_events = 1;
+        this.merge_events = 0;
         this.events_labels = false;
         this.cp_labels = false;
         this.use_scrollbars = false;
@@ -171,22 +171,22 @@ define([
             });
             this.dom.startDate
                 .datetimepicker({
-                    initialDate: env.queryParams.startDate.format("YYYY-MM-DD hh:ss"),
+                    initialDate: env.queryParams.startDate.format("YYYY-MM-DD hh:mm:ss"),
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
                     startDate: "2004-01-01 00:00",
-                    endDate: moment.utc().format("YYYY-MM-DD hh:ss"),
+                    endDate: moment.utc().format("YYYY-MM-DD hh:mm:ss"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
 
             this.dom.stopDate
                 .datetimepicker({
-                    initialDate: env.queryParams.stopDate.format("YYYY-MM-DD hh:ss"),
+                    initialDate: env.queryParams.stopDate.format("YYYY-MM-DD hh:mm:ss"),
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
                     startDate: "2004-01-01 00:00",
-                    endDate: moment.utc().format("YYYY-MM-DD hh:ss"),
+                    endDate: moment.utc().format("YYYY-MM-DD hh:mm:ss"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
@@ -661,8 +661,9 @@ define([
         };
 
         this.merge_events_btn_setup = function () {
+            this.dom.mergeEventsInputInput.val(this.merge_events);
             this.dom.mergeEventsInputInput.on("change", function (e, ui) {
-                // $this.merge_events = $("input[name='merge_events']").spinner("value");
+                $this.merge_events = parseInt($this.dom.mergeEventsInput.val());
                 if ($this.isGraphPresent()) {
                     $this.ripeDataBroker.loadCurrentState(false, null, true);
                     if ($this.merge_events)
@@ -742,17 +743,17 @@ define([
                 $this.graph_type = $this.dom.graphType.filter(":checked").val();
                 if ($this.graph_type == "stream") {
                     $this.dom.title.html("Global View");
-                    $this.dom.mainSvg.css("height", "70vh");
-                    $this.dom.mainSvg.css("width", "auto");
-                    $this.dom.canvasContainer.css("width", "auto");
-                    $this.dom.svg.parent().css("overflow", "visible");
+                    //$this.dom.mainSvg.css("height", "70vh");
+                    //$this.dom.mainSvg.css("width", "auto");
+                    //$this.dom.canvasContainer.css("width", "auto");
+                    //$this.dom.svg.parent().css("overflow", "visible");
                     $this.dom.counterAsn.find("label").text("#ASN");
                     $this.dom.streamOptionButton.removeClass("hidden");
                     $this.dom.heatOptionButton.addClass("hidden");
                 }
                 if ($this.graph_type == "heat") {
                     $this.dom.title.html("Local View");
-                    $this.dom.canvasContainer.css("width", "100%");
+                    //$this.dom.canvasContainer.css("width", "100%");
                     // if ($this.use_scrollbars) {
                     //     $this.dom.svg.parent().css("overflow", "scroll");
                     // }
@@ -784,8 +785,9 @@ define([
         };
 
         this.asn_level_setup = function () {
+            this.dom.asnLvlInput.val(this.asn_level)
             this.dom.asnLvlInputInput.on("change", function (e, ui) {
-                // $this.asn_level = $("input[name='asn_lvl']").spinner("value");
+                $this.asn_level = parseInt($this.dom.asnLvlInput.val());
                 if ($this.isGraphPresent()) {
                     $this.ripeDataBroker.loadCurrentState(false, null, true);
                 }
