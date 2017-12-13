@@ -364,7 +364,7 @@ define([
                 var node = data.sources[a];
                 var id = node["id"];
                 var ip = node["ip"];
-                var cp = node["rrc"];
+                var rrc = node["rrc"];
                 var as_number = node["as_number"];
                 var geo_of_as = this.known_asn[as_number];
                 if (geo_of_as) {
@@ -375,7 +375,7 @@ define([
                     this.known_cp[id] = {
                         "ip": ip,
                         "id": id,
-                        "rrc": cp,
+                        "rrc": rrc,
                         "as_number": as_number,
                         "geo": geo
                     }

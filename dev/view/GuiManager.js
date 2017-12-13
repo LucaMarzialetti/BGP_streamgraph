@@ -452,7 +452,7 @@ define([
                             return $this.validator.check_ipv6(e);
                         });
 
-
+                    if (containsIpv4 || containsIpv6) {
                         if (!containsIpv4) {
                             this.dom.ipVersion4Button.addClass("disabled");
                             this.dom.ipVersion4Button.addClass("not-active");
@@ -472,7 +472,7 @@ define([
                             this.dom.ipVersion6Button.removeClass("not-active");
                             this.dom.ipVersion6Button.attr("disabled", false);
                         }
-                    if ((containsIpv4 && !containsIpv6) || (!containsIpv4 && containsIpv6)) {
+                    } else {
                         this.dom.ipVersion.hide();
                     }
 
