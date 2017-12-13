@@ -304,14 +304,14 @@ define([
         this.go_to_bgplay = function(start, end, targets, pos){
 
             var url = "https://stat.ripe.net/widget/bgplay#";
-            url+="w.resource="+targets;
-            url+="&w.starttime="+start;
-            url+="&w.endtime="+end;
-            url+="&w.instant="+this.dateConverter.formatUnix(pos);
+            url+="w.resource=" + targets;
+            url+="&w.starttime=" + start;
+            url+="&w.endtime=" + end;
+            url+="&w.instant=" + this.dateConverter.formatUnix(pos);
             url+="&w.type=bgp";
-            env.logger.log("con utc"+moment(pos).utc().unix(pos));
-            env.logger.log("senza utc"+moment(pos).unix(pos));
-            env.logger.log("GO TO BGPLAY AT "+url);
+            env.logger.log("con utc" + moment(pos).utc().unix(pos));
+            env.logger.log("senza utc" + moment(pos).unix(pos));
+            env.logger.log("GO TO BGPLAY AT " + url);
             return window.open(url,'_blank');
         };
 
@@ -340,8 +340,7 @@ define([
                     clearInterval(interval_id);
                     env.guiManager.steps = false;
                     env.guiManager.draw_functions_btn_enabler();
-                }
-                else {
+                } else {
                     core(i);
                     i+=1;
                 }

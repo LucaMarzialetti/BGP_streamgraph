@@ -25,7 +25,7 @@ define([
             miniSvg: env.parentDom.find("div.mini_svg"),
             tooltip: env.parentDom.find("[data-toggle='tooltip']"),
             tooltipSvg: env.parentDom.find(".svg_tooltip"),
-
+            
             title: env.parentDom.find(".title"),
 
             pathButton: env.parentDom.find(".path_btn"),
@@ -165,9 +165,15 @@ define([
 
         this.pickers_setup = function () {
 
-            this.dom.timeModalButton.on("mousedown", function () {
-                env.logger.log("time modal open");
-                $this.dom.timeModal.modal("show");
+            this.dom.timeModal.modal({
+                show: false,
+                backdrop : false, 
+                keyboard : false
+            });
+
+            this.dom.timeModalButton.on("mousedown, mouseup", function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
             });
             this.dom.startDate
                 .datetimepicker({
