@@ -295,7 +295,6 @@ define([
                     env.guiManager.update_counters(".counter_asn", env.guiManager.drawer.keys.length);
             }
             else {
-                alert("nè heat nè stream, problema!");
                 env.guiManager.drawer.drawer_init();
             }
             env.guiManager.boolean_checker();
@@ -317,13 +316,19 @@ define([
         };
 
         this.streamgraph_streaming = function(every) {
-            var interval_id = setInterval(function (){
-                // var date = moment(new Date());
-                // var formatted = $this.DateConverter.formatRipe(date);
+            var call = function (){
+
+                var timeWindow = env.queryParams.stopDate.diff(env.queryParams.startDate, "seconds");
+                env.queryParams.stopDate = moment.utc();
+                env.queryParams.startDate = moment(env.queryParams.stopDate).subtract(timeWindow, "seconds");
+
                 $this.getData();
                 env.logger.log("Streaming got new data!");
-            }, every);
-            env.logger.log("Streaming started with interval ID: "+interval_id);
+            };
+
+            call();
+            var interval_id = setInterval(call, every);
+            env.logger.log("Streaming started with interval ID: " + interval_id);
             return interval_id;
         };
 

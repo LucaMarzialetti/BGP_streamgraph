@@ -161,8 +161,8 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
 
                 thisWidget.set_params({
                     resource: [params.resource],
-                    starttime: params.startDate.format("YYYY-MM-DDTHH:mm:ss"),
-                    endtime: params.stopDate.format("YYYY-MM-DDTHH:mm:ss")
+                    starttime: params.startDate.unix(),
+                    endtime: params.stopDate.unix()
                 });
                 thisWidget.update_permalinks();
 

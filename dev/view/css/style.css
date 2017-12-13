@@ -439,3 +439,7 @@ ol.drag_sort_list li.placeholder:before {
     fill-opacity: .125;
     shape-rendering: crispEdges;
 }
+
+.datetimepicker{
+    z-index: 100000!important;
+}

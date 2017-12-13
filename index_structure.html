@@ -13,11 +13,6 @@
 <div id="place-here"></div>
 
 <script>
-    var start = new Date();
-    var stop = new Date();
-    stop.setDate(start.getDate() -1);
-    start.toISOString().slice(0,19).replace("T", " ");
-    stop.toISOString().slice(0,19).replace("T", " ");
 
     var widget = initBGPst(
             '#place-here',
@@ -25,9 +20,9 @@
                 dev: true
             }, // Tool options, see table below for more info
             {
-                stopDate: start , //new Date(),
-                startDate: stop,//new Date(1512217321 * 1000),
-                targets: ["193.0.10.220"]
+                startDate: "2017-12-04 04:00",
+                stopDate: "2017-12-04 08:00" ,
+                targets: ["66.232.224.0/24"]
             } // Query options, see table below for more info
     );
 

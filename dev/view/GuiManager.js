@@ -24,7 +24,7 @@ define([
             mainSvg: env.parentDom.find("div.main_svg"),
             miniSvg: env.parentDom.find("div.mini_svg"),
             tooltip: env.parentDom.find("[data-toggle='tooltip']"),
-			tooltipSvg: env.parentDom.find(".svg_tooltip"),
+            tooltipSvg: env.parentDom.find(".svg_tooltip"),
 
             title: env.parentDom.find(".title"),
 
@@ -57,7 +57,7 @@ define([
             counter: env.parentDom.find(".counter"),
             counterAsn: env.parentDom.find(".counter_asn").parent(),
 
-            graphType : env.parentDom.find("input[name=\"graph_type\"]"),
+            graphType : env.parentDom.find("input[name='graph_type']"),
             graphTypeHeat : env.parentDom.find("input[name='graph_type'][value='heat']"),
             graphTypeStream : env.parentDom.find('input[name="graph_type"][value="stream"]'),
 
@@ -119,7 +119,7 @@ define([
         };
 
         this.drawer = new GraphDrawer(env);
-        
+
         this.preserve_map = true;
         this.global_visibility = true;
         this.prepending_prevention = true;
@@ -137,7 +137,7 @@ define([
         this.asn_info_done = false;
         this.gather_information = true;
         this.heatmap_time_map = true;
-        this.streaming_speed = 10000;
+        this.streaming_speed = 60000;
         var $this = this;
 
 
@@ -171,22 +171,22 @@ define([
             });
             this.dom.startDate
                 .datetimepicker({
-                    initialDate: env.queryParams.startDate.format("YYYY-MM-DD hh:mm:ss"),
+                    initialDate: env.queryParams.startDate.format("YYYY-MM-DD HH:mm"),
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
                     startDate: "2004-01-01 00:00",
-                    endDate: moment.utc().format("YYYY-MM-DD hh:mm:ss"),
+                    endDate: moment.utc().format("YYYY-MM-DD HH:mm"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
 
             this.dom.stopDate
                 .datetimepicker({
-                    initialDate: env.queryParams.stopDate.format("YYYY-MM-DD hh:mm:ss"),
+                    initialDate: env.queryParams.stopDate.format("YYYY-MM-DD HH:mm"),
                     format: 'yyyy-mm-dd hh:ii',
                     autoclose: true,
                     startDate: "2004-01-01 00:00",
-                    endDate: moment.utc().format("YYYY-MM-DD hh:mm:ss"),
+                    endDate: moment.utc().format("YYYY-MM-DD HH:mm"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker);
@@ -250,10 +250,6 @@ define([
             this.heat_geo_sort_btn_setup();
             this.heat_asn_sort_btn_setup();
             this.draw_functions_btn_enabler();
-            /**********************************************/
-            this.docs_btn_setup();
-            this.about_btn_setup();
-            this.embed_btn_setup();
         };
 
 
@@ -370,8 +366,7 @@ define([
             if (!this.cp_labels) {
                 this.dom.cpLabelsButton.find("span").addClass("hidden");
                 this.dom.cpLabelsButton.parent().removeClass("active");
-            }
-            else {
+            } else {
                 this.dom.cpLabelsButton.find("span").removeClass("hidden");
                 this.dom.cpLabelsButton.parent().addClass("active");
             }
@@ -379,8 +374,7 @@ define([
             if (!this.heatmap_time_map) {
                 this.dom.heatmapTimeButton.find("span").addClass("hidden");
                 this.dom.heatmapTimeButton.parent().removeClass("active");
-            }
-            else {
+            } else {
                 this.dom.heatmapTimeButton.find("span").removeClass("hidden");
                 this.dom.heatmapTimeButton.parent().addClass("active");
             }
@@ -388,8 +382,7 @@ define([
             if (!this.use_scrollbars) {
                 this.dom.scrollbarsButton.find("span").addClass("hidden");
                 this.dom.scrollbarsButton.parent().removeClass("active");
-            }
-            else {
+            } else {
                 this.dom.scrollbarsButton.find("span").removeClass("hidden");
                 this.dom.scrollbarsButton.parent().addClass("active");
             }
@@ -399,8 +392,7 @@ define([
                 this.dom.graphTypeHeat.parent().removeClass("active");
                 this.dom.streamOptionButton.removeClass("hidden");
                 this.dom.heatOptionButton.addClass("hidden");
-            }
-            else if (this.graph_type == "heat") {
+            }  else if (this.graph_type == "heat") {
                 this.dom.graphTypeHeat.prop('checked', true);
                 this.dom.graphTypeHeat.parent().addClass("active");
                 this.dom.graphTypeStream.parent().removeClass("active");
@@ -416,10 +408,6 @@ define([
                 this.dom.ipVersion6Button.parent().addClass("active");
             }
 
-            // asnLvlButton.spinner();
-            // this.dom.asnLvlButton.spinner("value", this.asn_level);
-            // this.dom.mergeEventsButton.spinner();
-            // this.dom.mergeEventsButton.spinner("value", this.merge_events);
         };
 
         this.draw_functions_btn_enabler = function () {
@@ -626,7 +614,6 @@ define([
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
                 $this.preserve_map = !$this.preserve_map;
-                // GuiManager.url_string();
             });
         };
 
@@ -708,7 +695,7 @@ define([
         };
 
         this.scrollbars_btn_setup = function () {
-            this.dom.scrollbarsButton.on("click", function (e) {
+            this.dom.scrollbarsButton.on("mousedown", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -724,7 +711,7 @@ define([
         };
 
         this.global_visiblity_btn_setup = function () {
-            this.dom.globalVisibilityButton.on("click", function (e) {
+            this.dom.globalVisibilityButton.on("mousedown", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
@@ -738,27 +725,16 @@ define([
         };
 
         this.graph_type_radio_setup = function () {
-            env.parentDom.on("mousedown", ".graph_type", function (e) {
+            env.parentDom.on("change", ".graph-type-view", function (e) {
 
                 $this.graph_type = $this.dom.graphType.filter(":checked").val();
+
+                console.log($this.graph_type);
                 if ($this.graph_type == "stream") {
-                    $this.dom.title.html("Global View");
-                    //$this.dom.mainSvg.css("height", "70vh");
-                    //$this.dom.mainSvg.css("width", "auto");
-                    //$this.dom.canvasContainer.css("width", "auto");
-                    //$this.dom.svg.parent().css("overflow", "visible");
                     $this.dom.counterAsn.find("label").text("#ASN");
                     $this.dom.streamOptionButton.removeClass("hidden");
                     $this.dom.heatOptionButton.addClass("hidden");
-                }
-                if ($this.graph_type == "heat") {
-                    $this.dom.title.html("Local View");
-                    //$this.dom.canvasContainer.css("width", "100%");
-                    // if ($this.use_scrollbars) {
-                    //     $this.dom.svg.parent().css("overflow", "scroll");
-                    // }
-                    // else
-                    //     $this.dom.body.css("overflow-y", "scroll");
+                } else if ($this.graph_type == "heat") {
                     $this.dom.counterAsn.find("label").text("#CP");
                     $this.dom.streamOptionButton.addClass("hidden");
                     $this.dom.heatOptionButton.removeClass("hidden");
@@ -785,18 +761,39 @@ define([
         };
 
         this.asn_level_setup = function () {
-            this.dom.asnLvlInput.val(this.asn_level)
-            this.dom.asnLvlInputInput.on("change", function (e, ui) {
-                $this.asn_level = parseInt($this.dom.asnLvlInput.val());
-                if ($this.isGraphPresent()) {
-                    $this.ripeDataBroker.loadCurrentState(false, null, true);
-                }
-            });
+            this.dom.asnLvlInput.val(this.asn_level);
+            this.dom.asnLvlInputInput
+                .on("change", function (e, ui) {
+                    if ($this.timerLevelSetup){
+                        clearTimeout($this.timerLevelSetup);
+                    }
+                    $this.timerLevelSetup = setTimeout(function () {
+                        $this.asn_level = parseInt($this.dom.asnLvlInput.val());
+                        if ($this.isGraphPresent()) {
+                            $this.ripeDataBroker.loadCurrentState(false, null, true);
+                        }
+                    }, 3000);
+
+                });
         };
 
         this.streaming_btn_setup = function () {
-            var interval;
-            this.dom.streamingButton.on("click", function (e, ui) {
+            var interval, streaming_icon_swap;
+
+            streaming_icon_swap = function () {
+                var icon = $this.dom.streamingButton.find("span");
+                if ($this.streaming) {
+                    icon.removeClass("glyphicon-record");
+                    icon.addClass("glyphicon-stop");
+                }
+                else {
+                    icon.addClass("glyphicon-record");
+                    icon.removeClass("glyphicon-stop");
+                }
+            };
+
+
+            this.dom.streamingButton.on("mousedown", function (e, ui) {
                 $this.streaming = !$this.streaming;
                 streaming_icon_swap();
                 if ($this.streaming) {
@@ -810,21 +807,10 @@ define([
                 }
             });
 
-            streaming_icon_swap = function () {
-                var icon = $this.dom.streamingButton.find("span");
-                if ($this.streaming) {
-                    icon.removeClass("glyphicon-record");
-                    icon.addClass("glyphicon-stop");
-                }
-                else {
-                    icon.addClass("glyphicon-record");
-                    icon.removeClass("glyphicon-stop");
-                }
-            };
         };
 
         this.steps_btn_setup = function () {
-            this.dom.stepsButton.on("click", function (e, ui) {
+            this.dom.stepsButton.on("mousedown", function (e, ui) {
                 $this.steps = !$this.steps;
                 if ($this.steps) {
                     $this.lock_all();
@@ -834,7 +820,7 @@ define([
         };
 
         this.list_btn_setup = function () {
-            this.dom.listButton.on("click", function (e) {
+            this.dom.listButton.on("mousedown", function (e) {
                 if ($this.asn_info_done) {
                     $this.dom.asnListButton.parent().removeClass("not-active");
                     $this.dom.asnListButton.parent().removeClass("disabled");
@@ -931,7 +917,7 @@ define([
         /************************** ORDERING BUTTONS **************************/
         //levensthein
         this.lev_dist_randwalk_cum_btn_setup = function () {
-            this.dom.levDistRandCumButton.on("click", function (e) {
+            this.dom.levDistRandCumButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_cum";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -939,7 +925,7 @@ define([
         };
 
         this.lev_dist_randwalk_max_btn_setup = function () {
-            this.dom.levDistRanMaxButton.on("click", function (e) {
+            this.dom.levDistRanMaxButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "lev_rnd_max";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -948,7 +934,7 @@ define([
 
         //best std dev random walking
         this.point_dist_by_randwalk_btn_setup = function () {
-            this.dom.pointDistRanButton.on("click", function (e) {
+            this.dom.pointDistRanButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "st_rnd_cum";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -956,7 +942,7 @@ define([
         };
 
         this.point_dist_by_inference_btn_setup = function () {
-            this.dom.pointDistInfButton.on("click", function (e) {
+            this.dom.pointDistInfButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "st_inf_cum";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -965,7 +951,7 @@ define([
 
         //STD DEV SWAP
         this.point_dist_greedy_btn_setup = function () {
-            this.dom.pointDistGreedyButton.on("click", function (e) {
+            this.dom.pointDistGreedyButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -974,7 +960,7 @@ define([
 
         //NEARFLOWS
         this.exchange_greedy_sort_btn_setup = function () {
-            this.dom.exchangeGreedyButton.on("click", function (e) {
+            this.dom.exchangeGreedyButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "n_f";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -983,7 +969,7 @@ define([
 
         //WIGGLES
         this.wiggle_sum_btn_setup = function () {
-            this.dom.wiggleSumButton.on("click", function (e) {
+            this.dom.wiggleSumButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "w_cum";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -991,7 +977,7 @@ define([
         };
 
         this.wiggle_max_btn_setup = function () {
-            this.dom.wiggleMaxButton.on("click", function (e) {
+            this.dom.wiggleMaxButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "w_max";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1000,7 +986,7 @@ define([
 
         //SORTS
         this.sort_asn_ascstdev_btn_setup = function () {
-            this.dom.ascstdevSortButton.on("click", function (e) {
+            this.dom.ascstdevSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1008,7 +994,7 @@ define([
         };
 
         this.sort_asn_dscstdev_btn_setup = function () {
-            this.dom.dscstdevSortButton.on("click", function (e) {
+            this.dom.dscstdevSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_st";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1016,7 +1002,7 @@ define([
         };
 
         this.sort_asn_ascvar_btn_setup = function () {
-            this.dom.ascvarSortButton.on("click", function (e) {
+            this.dom.ascvarSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1024,7 +1010,7 @@ define([
         };
 
         this.sort_asn_dscvar_btn_setup = function () {
-            this.dom.dscvarSortButton.on("click", function (e) {
+            this.dom.dscvarSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_var";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1032,7 +1018,7 @@ define([
         };
 
         this.sort_asn_ascavg_btn_setup = function () {
-            this.dom.ascavgSortButton.on("click", function (e) {
+            this.dom.ascavgSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1040,7 +1026,7 @@ define([
         };
 
         this.sort_asn_dscavg_btn_setup = function () {
-            this.dom.dscavgSortButton.on("click", function (e) {
+            this.dom.dscavgSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_avg";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1048,7 +1034,7 @@ define([
         };
 
         this.sort_asn_ascsum_btn_setup = function () {
-            this.dom.ascsumSortButton.on("click", function (e) {
+            this.dom.ascsumSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = "asc";
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1056,7 +1042,7 @@ define([
         };
 
         this.sort_asn_dscsum_btn_setup = function () {
-            this.dom.dscsumSortButton.on("click", function (e) {
+            this.dom.dscsumSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "s_cum";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = "dsc";
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1065,7 +1051,7 @@ define([
 
         /**HEATMAP**/
         this.heat_greedy_sort_1_btn_setup = function () {
-            this.dom.heatGreedy1SortButton.on("click", function (e) {
+            this.dom.heatGreedy1SortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "nf_1";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1073,7 +1059,7 @@ define([
         };
 
         this.heat_greedy_sort_2_btn_setup = function () {
-            this.dom.heatGreedy2SortButton.on("click", function (e) {
+            this.dom.heatGreedy2SortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "nf_2";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1081,7 +1067,7 @@ define([
         };
 
         this.heat_stdev_sort_btn_setup = function () {
-            this.dom.heatStdevSortButton.on("click", function (e) {
+            this.dom.heatStdevSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "st_grdy_cum";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1089,7 +1075,7 @@ define([
         };
 
         this.heat_geo_sort_btn_setup = function () {
-            this.dom.heatCountrySortButton.on("click", function (e) {
+            this.dom.heatCountrySortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "geo";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1097,7 +1083,7 @@ define([
         };
 
         this.heat_asn_sort_btn_setup = function () {
-            this.dom.heatGeoSortButton.on("click", function (e) {
+            this.dom.heatGeoSortButton.on("mousedown", function (e) {
                 $this.ripeDataBroker.heuristicsManager.current_heuristic = "asn";
                 $this.ripeDataBroker.heuristicsManager.current_sort_type = null;
                 $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1122,27 +1108,6 @@ define([
             $(selector).text(quantity);
         };
 
-        /*************************************** BOTTOM BUTTONS ****************************************/
-        this.docs_btn_setup = function () {
-            this.dom.docsButton.on("click", function (e) {
-                var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/', '_blank');
-                thewindow.blur();
-            });
-        };
-
-        this.about_btn_setup = function () {
-            this.dom.aboutButton.on("click", function (e) {
-                var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/', '_blank');
-                thewindow.blur();
-            });
-        };
-
-        this.embed_btn_setup = function () {
-            this.dom.embedButton.on("click", function (e) {
-                var thewindow = window.open('https://massimo.ripe.net/bgpstreamgraph/#embed', '_blank');
-                thewindow.blur();
-            });
-        };
     };
 
     return GuiManager;

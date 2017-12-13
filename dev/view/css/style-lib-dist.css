@@ -400,6 +400,9 @@
   fill-opacity: .125;
   shape-rendering: crispEdges;
 }
+.bgpst-container .datetimepicker {
+  z-index: 100000!important;
+}
 .bgpst-container .ui-helper-hidden {
   display: none;
 }
