@@ -9286,7 +9286,7 @@ define('bgpst.view.gui',[
                     var info = $this.ripeDataBroker.current_parsed.known_cp[cp];
                     if (info) {
                         html += "<div> IP: " + info["ip"] + "</div>";
-                        html += "<div> Peering with CP: " + info["cp"] + "</div>";
+                        html += "<div> Peering with CP: " + info["rrc"] + "</div>";
                         html += "<div> From AS: " + info["as_number"] + "</div>";
                         var country = info["geo"].trim().split("-")[0];
                         html += '<div> Country: (' + country + ') <span class="flag-icon flag-icon-' + country.toLowerCase() + '" alt="' + country + '" title="' + country + '"></span></div>';
