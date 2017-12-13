@@ -1,6 +1,19 @@
 .bgpst-container {
     position: relative;
     height: 400px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif!important;
+}
+
+.bgpst-container h5 {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif!important;
+}
+
+.bgpst-container div {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif!important;
+}
+
+.bgpst-container span {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif!important;
 }
 
 .cp_list {
@@ -108,7 +121,6 @@ input.bar {
 .svg_tooltip {
     position: absolute;
     text-align: center;
-    width: auto;
     height: auto;
     padding: 8px;
     opacity: 1;
@@ -118,6 +130,7 @@ input.bar {
     pointer-events: none;
     border-radius: 5px;
     z-index: 1000;
+    width: 150px;
 }
 
 svg > .area, .layer {
@@ -239,7 +252,6 @@ rect.bordered {
 
 text.mono {
     font-size: 9pt;
-    font-family: Consolas, courier;
     fill: #aaa;
 }
 

@@ -805,7 +805,7 @@ define([
                 .attr("width", function (d) {
                     if (timemap) {
                         /*console.log(d);*/
-                        return $this.width_axis($this.diff_ranges[$this.event_set.indexOf(d.date)] - $this.sizes.def_cell_margins.x);
+                        return Math.max(0, $this.width_axis($this.diff_ranges[$this.event_set.indexOf(d.date)] - $this.sizes.def_cell_margins.x));
                     }
                     else
                         return gridSize_x;

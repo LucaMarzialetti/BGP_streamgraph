@@ -731,23 +731,25 @@ define([
         };
 
         this.graph_type_radio_setup = function () {
-            env.parentDom.on("change", ".graph-type-view", function (e) {
+            env.parentDom.on("mousedown", ".graph_type", function (e) {
 
-                $this.graph_type = $this.dom.graphType.filter(":checked").val();
+                setTimeout(function () {
+                    $this.graph_type = $this.dom.graphType.filter(":checked").val();
+                    if ($this.graph_type == "stream") {
+                        $this.dom.counterAsn.find("label").text("#ASN");
+                        $this.dom.streamOptionButton.removeClass("hidden");
+                        $this.dom.heatOptionButton.addClass("hidden");
+                    } else if ($this.graph_type == "heat") {
+                        $this.dom.counterAsn.find("label").text("#CP");
+                        $this.dom.streamOptionButton.addClass("hidden");
+                        $this.dom.heatOptionButton.removeClass("hidden");
+                    }
+                    $this.ripeDataBroker.heuristicsManager.setDefaultHeuristic($this.graph_type);
+                    if ($this.isGraphPresent()) {
+                        $this.ripeDataBroker.loadCurrentState(false, null, true);
+                    }
+                }, 200);
 
-                console.log($this.graph_type);
-                if ($this.graph_type == "stream") {
-                    $this.dom.counterAsn.find("label").text("#ASN");
-                    $this.dom.streamOptionButton.removeClass("hidden");
-                    $this.dom.heatOptionButton.addClass("hidden");
-                } else if ($this.graph_type == "heat") {
-                    $this.dom.counterAsn.find("label").text("#CP");
-                    $this.dom.streamOptionButton.addClass("hidden");
-                    $this.dom.heatOptionButton.removeClass("hidden");
-                }
-                $this.ripeDataBroker.heuristicsManager.setDefaultHeuristic($this.graph_type);
-                if ($this.isGraphPresent())
-                    $this.ripeDataBroker.loadCurrentState(false, null, true);
             });
         };
 
@@ -770,6 +772,8 @@ define([
             this.dom.asnLvlInput.val(this.asn_level);
             this.dom.asnLvlInputInput
                 .on("change", function (e, ui) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     if ($this.timerLevelSetup){
                         clearTimeout($this.timerLevelSetup);
                     }
