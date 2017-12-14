@@ -32,13 +32,6 @@
     padding-bottom: 3px;
 }
 
-.tokenfield.form-control{
-    height: 34px;
-    min-height: 34px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-
 small.help-block {
     display: none !important;
 }
@@ -455,4 +448,5 @@ ol.drag_sort_list li.placeholder:before {
 
 .datetimepicker{
     z-index: 100000!important;
+    position: fixed!important;
 }

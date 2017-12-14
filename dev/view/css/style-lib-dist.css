@@ -9662,12 +9662,6 @@
 .bgpst-container .btn-group {
   padding-bottom: 3px;
 }
-.bgpst-container .tokenfield.form-control {
-  height: 34px;
-  min-height: 34px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
 .bgpst-container small.help-block {
   display: none !important;
 }
@@ -10013,4 +10007,5 @@
 }
 .bgpst-container .datetimepicker {
   z-index: 100000!important;
+  position: fixed!important;
 }
