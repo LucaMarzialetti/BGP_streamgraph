@@ -129,7 +129,10 @@ define([
                     env.guiManager.ripeDataBroker.brush();
                 }
             };
+
             var draw_stream = function(data, stack) {
+                env.guiManager.dom.mainSvg.css("width", $this.sizes.width+$this.sizes.margin.left+$this.sizes.margin.right);
+                env.guiManager.dom.mainSvg.css("height", $this.sizes.height_main+$this.sizes.margin.top);
                 $this.erase_minimap();
                 $this.mini_y.domain([0, 1]);
                 $this.mini_x.domain(d3.extent(data, function (d) {
@@ -648,7 +651,8 @@ define([
 
             //IGNORA I MARGINI
             var time_axis_margin = {x: 30, y: 110};
-            var margin_y = 0, margin_x = 0;
+            var margin_y = 0;
+            var margin_x = 0;
             if (events_labels)
                 margin_y += this.sizes.def_labels_margins.y;
 
@@ -660,7 +664,7 @@ define([
                 margin_y += time_axis_margin.y + this.sizes.margin.top;
             }
             else {
-                margin_x = this.sizes.margin.left * 3;
+                margin_x = this.sizes.margin.left * 4;
             }
             //CALCOLO DELLE PROPORZIONI E DEI MARGINI
             //approfondire come poter fare una cosa fatta bene sul resize
@@ -682,11 +686,12 @@ define([
 
             //time map axis
             if (timemap) {
+                env.guiManager.dom.mainSvg.css("width", $this.sizes.width+$this.sizes.margin.left+$this.sizes.margin.right);
                 this.draw_heat_axis(this.event_set, margin_x);
             }
             else {
                 //svg
-                var svg_width = this.sizes.margin.left + margin_x + this.event_set.length * (gridSize_x + this.sizes.def_cell_margins.x);
+                var svg_width = 4*this.sizes.margin.left + margin_x + this.event_set.length * (gridSize_x + this.sizes.def_cell_margins.x);
                 env.guiManager.dom.mainSvg.css("width", svg_width);
             }
             var svg_height = this.sizes.margin.top + margin_y + this.keys.length * (gridSize_y + this.sizes.def_cell_margins.y);

@@ -97,7 +97,8 @@ define([
                         }
                     }
                     catch(err){
-                        env.logger.log(err);
+                        //env.logger.log(err);
+                        console.log(err);
                         alert("No data found for this target in the interval of time selected");
                     }
                     finally {
