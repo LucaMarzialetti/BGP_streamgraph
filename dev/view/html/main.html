@@ -23,9 +23,11 @@
 
 
     <div class="bgpst-header">
-        <button type="button" class="btn-group btn btn-xs btn-default time-modal-button date_range_button" data-toggle="modal" data-target=".time-modal" title="Time range">
-            <span class="glyphicon glyphicon-calendar"></span>
-        </button>
+        <div class="btn-group time-modal-button date_range_button" data-toggle="modal" title="Time Range" data-target=".time-modal">
+            <label class="btn btn-default btn-xs">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </label>
+        </div>
 
         <div class="btn-group steps_btn stream_option" data-toggle="buttons" title="Play animation">
             <label class="btn btn-default btn-xs">
@@ -94,13 +96,12 @@
                         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                     </a>
                 </li>
-                <li style="display: inline-flex;">
+                <li style="display: inline-flex; width: 100%;">
                     <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
                         Upstream Level (AS-path hop)
 
                     </a>
-                    <input type="number" name="asn_lvl" min="0" max="50"
-                           style="width: 60px; float: right; height: 25px; text-align: center;" class="asn_lvl form-control jquery_ui_spinner">
+                    <input type="number" name="asn_lvl" min="0" max="50" class="asn_lvl form-control jquery_ui_spinner">
                 </li>
 
                 <!-- STREAMGRAPH OPTIONS -->
@@ -118,13 +119,12 @@
                         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                     </a>
                 </li>
-                <li class="heat_option" style="display: inline-flex;">
+                <li class="heat_option" style="display: inline-flex; width: 100%;">
                     <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
                         Merge events with same routing
 
                     </a>
-                    <input type="number" name="merge_events" min="0" max="500"
-                           style="width: 60px; float: right; height: 25px; text-align: center;" class="merge_events form-control jquery_ui_spinner">
+                    <input type="number" name="merge_events" min="0" max="500" class="merge_events form-control jquery_ui_spinner">
                 </li>
                 <li class="heat_option">
                     <a href="#" class="events_labels_btn">
