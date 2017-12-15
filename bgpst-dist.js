@@ -8565,8 +8565,8 @@ define('bgpst.view.gui',[
                 .on('show', function () {
                     var offset = $this.dom.startDate.offset();
                     $this.dom.container.find(".datetimepicker")
-                        .css("top", offset.top + 25)
-                        .css("left", offset.left);
+                        .css("top", offset.top + 25 - $(window).scrollTop())
+                        .css("left", offset.left - $(window).scrollLeft());
                 });
 
             this.dom.stopDate
@@ -8582,8 +8582,8 @@ define('bgpst.view.gui',[
                 .on('show', function () {
                     var offset = $this.dom.stopDate.offset();
                     $this.dom.container.find(".datetimepicker")
-                        .css("top", offset.top + 25)
-                        .css("left", offset.left);
+                        .css("top", offset.top + 25 - $(window).scrollTop())
+                        .css("left", offset.left - $(window).scrollLeft());
                 });
         };
 

@@ -160,7 +160,7 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
             instance.shell()
                 .on("updated", function(params){
                     var newParams = {
-                        resource: params.resource,
+                        resource: params.targets.join(","),
                         starttime: params.startDate.unix(),
                         endtime: params.stopDate.unix()
                     };

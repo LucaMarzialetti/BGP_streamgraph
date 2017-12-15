@@ -9709,7 +9709,7 @@
   height: 70px;
 }
 .bgpst-container .main_svg {
-  height: 300px;
+  height: 300px!important;
 }
 .bgpst-container .controls_container {
   position: relative;
