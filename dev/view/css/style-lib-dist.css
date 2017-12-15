@@ -9634,6 +9634,21 @@
 .bgpst-container .flag-icon-un.flag-icon-squared {
   background-image: url(flags/2.8.0/flags/1x1/un.svg);
 }
+.bgpst-container input.asn_lvl {
+  width: 60px;
+  float: right;
+  height: 25px;
+  text-align: center;
+}
+.bgpst-container input.merge_events {
+  width: 60px;
+  float: right;
+  height: 25px;
+  text-align: center;
+}
+.bgpst-container div.modal.time-modal {
+  overflow: hidden;
+}
 .bgpst-container .bgpst-container {
   position: relative;
   height: 400px;
@@ -9867,6 +9882,7 @@
 }
 .bgpst-container ul.dropdown-menu.repositioned a {
   width: 100%;
+  padding: 3px 5px;
 }
 .bgpst-container ul.dropdown-menu.repositioned span.ui-spinner.ui-corner-all.ui-widget.ui-widget-content {
   width: auto;
