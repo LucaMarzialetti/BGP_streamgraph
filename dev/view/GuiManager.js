@@ -53,7 +53,7 @@ define([
             clearTargetsButton: env.parentDom.find(".clear_targets_button"),
             myIpButton: env.parentDom.find(".my_ip_button"),
             goButton: env.parentDom.find(".go_button"),
-            date: env.parentDom.find(".date"),
+            date: env.parentDom.find(".date_range_button"),
             counter: env.parentDom.find(".counter"),
             counterAsn: env.parentDom.find(".counter_asn").parent(),
 
@@ -273,7 +273,8 @@ define([
             this.dom.clearTargetsButton.addClass("disabled");
             this.dom.myIpButton.addClass("disabled");
             this.dom.goButton.addClass("disabled");
-            this.dom.date.addClass("disabled");
+            this.dom.date.find("label").addClass("disabled");
+
 
             this.dom.pathButton.addClass("not-active");
             this.dom.listButton.addClass("not-active");
@@ -281,8 +282,9 @@ define([
             this.dom.optionCommandButton.addClass("not-active");
             this.dom.clearTargetsButton.addClass("not-active");
             this.dom.myIpButton.addClass("not-active");
-            this.dom.goButton.addClass("not-active");
+            this.dom.goButton.addClass("not-active");         
             this.dom.date.addClass("not-active");
+            this.dom.date.find("label").addClass("not-active");
 
             this.dom.graphType.parent().addClass("disabled");
             this.dom.graphType.parent().addClass("not-active");
@@ -423,12 +425,13 @@ define([
                 this.dom.optionCommandButton.removeClass("disabled");
                 this.dom.myIpButton.removeClass("disabled");
                 this.dom.goButton.removeClass("disabled");
-                this.dom.date.removeClass("disabled");
+                this.dom.date.find("label").removeClass("disabled");
 
                 this.dom.optionCommandButton.removeClass("not-active");
                 this.dom.myIpButton.removeClass("not-active");
                 this.dom.goButton.removeClass("not-active");
                 this.dom.date.removeClass("not-active");
+                this.dom.date.find("label").removeClass("not-active");
 
                 this.dom.graphType.parent().removeClass("disabled");
                 this.dom.graphType.parent().removeClass("not-active");
