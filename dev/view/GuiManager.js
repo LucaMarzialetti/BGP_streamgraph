@@ -178,7 +178,15 @@ define([
                     endDate: moment.utc().format("YYYY-MM-DD HH:mm"),
                     container: $this.dom.container
                 })
-                .on('changeDate', this.checkDatetimepicker);
+                .on('changeDate', this.checkDatetimepicker)
+                .on('show', function () {
+                    var offset = $this.dom.startDate.offset();
+                    console.log(offset.top);
+
+                    $this.dom.container.find("datetimepicker")
+                        .css("top", offset.top + 15)
+                        .css("left", offset.left);
+                });
 
             this.dom.stopDate
                 .datetimepicker({
