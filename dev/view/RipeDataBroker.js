@@ -99,7 +99,7 @@ define([
                     catch(err){
                         //env.logger.log(err);
                         console.log(err);
-                        alert("No data found for this target in the interval of time selected");
+                        //alert("No data found for this target in the interval of time selected");
                     }
                     finally {
                         env.guiManager.draw_functions_btn_enabler();
@@ -328,30 +328,40 @@ define([
 
             call();
             var interval_id = setInterval(call, every);
-            env.logger.log("Streaming started with interval ID: " + interval_id);
+            //env.logger
+            console.log("Streaming started with interval ID: " + interval_id);
             return interval_id;
         };
 
         this.streamgraph_stepped_view = function(every) {
-            var max = this.current_asn_tsv.split("\n").length-1;
-            var i = 2;
+            env.guiManager.step_max = this.current_asn_tsv.split("\n").length-1;
+            if(env.guiManager.current_step<2)
+                env.guiManager.current_step = 2;
             var interval_id = setInterval(function (){
-                if(i>max){
-                    clearInterval(interval_id);
+                if(env.guiManager.current_step>env.guiManager.step_max){
+                    clearInterval(env.guiManager.steps_interval);
+                    delete env.guiManager.steps_interval;
+                    env.guiManager.current_step = 0;
                     env.guiManager.steps = false;
+                    env.guiManager.dom.stepsStartButton.removeClass("hidden");
+                    env.guiManager.dom.stepsPauseButton.addClass("hidden");
+                    env.guiManager.dom.stepsStopButton.addClass("hidden");
                     env.guiManager.draw_functions_btn_enabler();
+                    console.log("Step view ended");
                 } else {
-                    core(i);
-                    i+=1;
+                    $this.steps_core(env.guiManager.current_step);
+                    env.guiManager.current_step+=1;
                 }
             },every);
-            env.logger.log("Step view started with interval ID: "+interval_id);
+            //env.logger
+            console.log("Step view started with interval ID: "+interval_id);
+            return interval_id;
+        };
 
-            function core(i) {
+        this.steps_core = function(i) {
                 env.guiManager.drawer.draw_streamgraph($this.current_parsed, env.guiManager.graph_type, $this.current_asn_tsv, env.guiManager.drawer.keys, env.guiManager.preserve_map, $this.current_visibility, $this.current_parsed.targets, $this.current_parsed.query_id, $this.gotToBgplayFromPosition, i, null, false);
                 env.guiManager.update_counters(".counter_asn", $this.current_parsed.asn_set.length);
-                env.guiManager.update_counters(".counter_events", i + "/" + max);
-            }
+                env.guiManager.update_counters(".counter_events", i + "/" + env.guiManager.step_max);
         };
 
         this.gotToBgplayFromPosition = function(pos){

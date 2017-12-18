@@ -50,7 +50,7 @@ define([
 
   //sum all values in the array
   const cumulate = (a) => {
-    if(a && a != [])
+    if(Array.isArray(a))
       return a.reduce((pv, cv) => pv+cv, 0);
   };
 
@@ -69,7 +69,7 @@ define([
 
   //find the variance of the array, if the average is given skip the process to make it
   const variance = (a,avg_a) => {
-    if(a && a != []){
+    if(Array.isArray(a)){
       let avg;
       if(!avg_a)
         avg = average(a);
@@ -82,7 +82,7 @@ define([
 
   //find the std deviation of the array, if the variance is given skip the process to make it
   const std_dev = (a, varx_a) => {
-    if(a && a != []) {
+    if(Array.isArray(a)) {
       let varx;
       if(!varx_a)
         varx = variance(a);
@@ -94,19 +94,19 @@ define([
 
   //find the max in the array
   const max = (a) => {
-    if(a && a != [])
+    if(Array.isArray(a))
       return a.reduce(function(va,vb){return Math.max(va,vb)});
   };
 
   //find the min in the array
   const min = (a) => {
-    if(a && a != [])
+    if(Array.isArray(a))
       return a.reduce(function(va,vb){return Math.min(va,vb)});
   };
 
   //find the position of every occourrence in the array of C
   const occurrences_positions = (a,c) => {
-    if(a && a != []){
+    if(Array.isArray(a)){
       var pos = []
       a.forEach(function(v,i,array){if(v == c) pos.push(i)});
       return pos;
@@ -115,7 +115,7 @@ define([
 
   //randomically sort an array
   const random_sort = (a,b) => {
-    if(a && a != [])
+    if(Array.isArray(a))
       return a.slice(0,b).sort(function() { return 0.5 - Math.random();});
   };
 

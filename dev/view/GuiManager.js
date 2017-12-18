@@ -25,10 +25,9 @@ define([
             miniSvg: env.parentDom.find("div.mini_svg"),
             tooltip: env.parentDom.find("[data-toggle='tooltip']"),
             tooltipSvg: env.parentDom.find(".svg_tooltip"),
-
             title: env.parentDom.find(".title"),
 
-            pathButton: env.parentDom.find(".path_btn"),
+            optionCommandButton: env.parentDom.find(".option_command_btn"),
             sortButton: env.parentDom.find(".sort_btn"),
 
             listButton: env.parentDom.find(".list_btn"),
@@ -37,22 +36,13 @@ define([
             cpList: env.parentDom.find(".cp_list"),
             cpListButton: env.parentDom.find(".cp_list_btn"),
 
-            docsButton: env.parentDom.find(".docs_btn"),
-            aboutButton: env.parentDom.find(".about_btn"),
-            embedButton: env.parentDom.find(".embed_btn"),
+            stepsStartButton: env.parentDom.find(".steps_start"),
+            stepsStopButton: env.parentDom.find(".steps_stop"),
+            stepsPauseButton: env.parentDom.find(".steps_pause"),
 
-            stepsButton: env.parentDom.find(".steps_btn"),
-            stepsValueButton: env.parentDom.find("input[name='steps']"),
+            streamingStartButton: env.parentDom.find(".streaming_start"),
+            streamingStopButton: env.parentDom.find(".streaming_stop"),
 
-            streamingButton: env.parentDom.find(".streaming_btn"),
-            streamingValueButton: env.parentDom.find("input[name='streaming']"),
-
-
-            eraseGraphButton: env.parentDom.find(".erase_graph_btn"),
-            optionCommandButton: env.parentDom.find(".option_command_btn"),
-            clearTargetsButton: env.parentDom.find(".clear_targets_button"),
-            myIpButton: env.parentDom.find(".my_ip_button"),
-            goButton: env.parentDom.find(".go_button"),
             date: env.parentDom.find(".date_range_button"),
             counter: env.parentDom.find(".counter"),
             counterAsn: env.parentDom.find(".counter_asn").parent(),
@@ -122,6 +112,7 @@ define([
         this.graph_type = "stream";
         this.streaming = false;
         this.steps = false;
+        this.current_step = 0;
         this.merge_cp = false;
         this.merge_events = 0;
         this.events_labels = false;
@@ -218,7 +209,6 @@ define([
             env.parentDom.find('.graph_type').button('toggle');
             this.setTimeFrameButton();
             this.shuffle_color_map_btn_setup();
-            this.erase_graph_btn_setup();
             this.gather_information_btn_setup();
             this.preserve_color_map_btn_setup();
             this.prepending_prevention_btn_setup();
@@ -270,25 +260,17 @@ define([
         };
 
         this.lock_all = function () {
-            this.dom.pathButton.addClass("disabled");
             this.dom.listButton.addClass("disabled");
-            this.dom.sortButton.addClass("disabled");
-            this.dom.optionCommandButton.addClass("disabled");
-            this.dom.clearTargetsButton.addClass("disabled");
-            this.dom.myIpButton.addClass("disabled");
-            this.dom.goButton.addClass("disabled");
-            this.dom.date.find("label").addClass("disabled");
-
-
-            this.dom.pathButton.addClass("not-active");
             this.dom.listButton.addClass("not-active");
+
+            this.dom.sortButton.addClass("disabled");
             this.dom.sortButton.addClass("not-active");
+
+            this.dom.optionCommandButton.addClass("disabled");
             this.dom.optionCommandButton.addClass("not-active");
-            this.dom.clearTargetsButton.addClass("not-active");
-            this.dom.myIpButton.addClass("not-active");
-            this.dom.goButton.addClass("not-active");         
+
+            this.dom.date.addClass("disabled");
             this.dom.date.addClass("not-active");
-            this.dom.date.find("label").addClass("not-active");
 
             this.dom.graphType.parent().addClass("disabled");
             this.dom.graphType.parent().addClass("not-active");
@@ -302,16 +284,18 @@ define([
             this.dom.ipVersionButton.filter("[value='4']").parent().addClass("not-active");
             this.dom.ipVersionButton.filter("[value='4']").parent().attr("disabled", true);
 
-            this.dom.stepsValueButton.filter("[value='steps']").parent().addClass("disabled");
-            this.dom.stepsValueButton.filter("[value='steps']").parent().addClass("not-active");
-            this.dom.stepsValueButton.filter("[value='steps']").parent().attr("disabled", true);
-            this.dom.stepsButton.addClass("not-active");
+            this.dom.stepsStartButton.addClass("disabled");
+            this.dom.stepsStartButton.addClass("not-active");
+            this.dom.stepsStartButton.attr("disabled", true);
 
             if (!this.streaming) {
-                this.dom.streamingValueButton.filter("[value='streaming']").parent().addClass("disabled");
-                this.dom.streamingValueButton.filter("[value='streaming']").parent().addClass("not-active");
-                this.dom.streamingValueButton.filter("[value='streaming']").parent().attr("disabled", true);
-                this.dom.streamingButton.addClass("not-active");
+                this.dom.streamingStartButton.addClass("disabled");
+                this.dom.streamingStartButton.addClass("not-active");
+                this.dom.streamingStartButton.attr("disabled", true);
+
+                this.dom.streamingStopButton.addClass("disabled");
+                this.dom.streamingStopButton.addClass("not-active");
+                this.dom.streamingStopButton.attr("disabled", true);
             }
         };
 
@@ -427,26 +411,18 @@ define([
         this.draw_functions_btn_enabler = function () {
             if (!this.streaming) {
                 this.dom.optionCommandButton.removeClass("disabled");
-                this.dom.myIpButton.removeClass("disabled");
-                this.dom.goButton.removeClass("disabled");
-                this.dom.date.find("label").removeClass("disabled");
-
                 this.dom.optionCommandButton.removeClass("not-active");
-                this.dom.myIpButton.removeClass("not-active");
-                this.dom.goButton.removeClass("not-active");
+                this.dom.date.removeClass("disabled");
                 this.dom.date.removeClass("not-active");
-                this.dom.date.find("label").removeClass("not-active");
 
                 this.dom.graphType.parent().removeClass("disabled");
                 this.dom.graphType.parent().removeClass("not-active");
                 this.dom.graphType.parent().attr("disabled", false);
 
                 if (this.isGraphPresent()) {
-                    this.dom.pathButton.removeClass("disabled");
                     this.dom.listButton.removeClass("disabled");
-                    this.dom.sortButton.removeClass("disabled");
-                    this.dom.pathButton.removeClass("not-active");
                     this.dom.listButton.removeClass("not-active");
+                    this.dom.sortButton.removeClass("disabled");
                     this.dom.sortButton.removeClass("not-active");
 
                     var containsIpv6, containsIpv4;
@@ -500,38 +476,32 @@ define([
                     }
                     this.dom.counter.removeClass("hidden");
                     if (this.graph_type == "stream") {
-                        this.dom.stepsValueButton.filter("[value='steps']").parent().removeClass("disabled");
-                        this.dom.stepsValueButton.filter("[value='steps']").parent().removeClass("not-active");
-                        this.dom.stepsValueButton.filter("[value='steps']").parent().attr("disabled", false);
-                        this.dom.stepsButton.removeClass("not-active");
+                        this.dom.stepsStartButton.removeClass("disabled");
+                        this.dom.stepsStartButton.removeClass("not-active");
+                        this.dom.stepsStartButton.attr("disabled", false);
 
-                        this.dom.streamingValueButton.filter("[value='streaming']").parent().removeClass("disabled");
-                        this.dom.streamingValueButton.filter("[value='streaming']").parent().removeClass("not-active");
-                        this.dom.streamingValueButton.filter("[value='streaming']").parent().attr("disabled", false);
-                        this.dom.streamingButton.removeClass("not-active");
+                        this.dom.streamingStartButton.removeClass("disabled");
+                        this.dom.streamingStartButton.removeClass("not-active");
+                        this.dom.streamingStartButton.attr("disabled", false);
                     }
                     if (this.graph_type == "heat") {
-                        this.dom.stepsValueButton.filter("[value='steps']").parent().addClass("disabled");
-                        this.dom.stepsValueButton.filter("[value='steps']").parent().addClass("not-active");
-                        this.dom.stepsValueButton.filter("[value='steps']").parent().attr("disabled", true);
-                        this.dom.stepsButton.addClass("not-active");
+                        this.dom.stepsStartButton.addClass("disabled");
+                        this.dom.stepsStartButton.addClass("not-active");
+                        this.dom.stepsStartButton.attr("disabled", true);
 
-                        this.dom.streamingValueButton.filter("[value='streaming']").parent().addClass("disabled");
-                        this.dom.streamingValueButton.filter("[value='streaming']").parent().addClass("not-active");
-                        this.dom.streamingValueButton.filter("[value='streaming']").parent().attr("disabled", true);
-                        this.dom.streamingButton.addClass("not-active");
+                        this.dom.streamingStartButton.addClass("disabled");
+                        this.dom.streamingStartButton.addClass("not-active");
+                        this.dom.streamingStartButton.attr("disabled", true);
                     }
                     if (!this.steps) {
-                        this.dom.stepsValueButton.filter("[value='steps']").prop('checked', false);
-                        this.dom.stepsValueButton.filter("[value='steps']").parent().removeClass("active");
+                        this.dom.stepsStartButton.prop('checked', false);
+                        this.dom.stepsStartButton.removeClass("active");
                     }
                 }
                 else {
-                    this.dom.pathButton.addClass("disabled");
                     this.dom.listButton.addClass("disabled");
-                    this.dom.sortButton.addClass("disabled");
-                    this.dom.pathButton.addClass("not-active");
                     this.dom.listButton.addClass("not-active");
+                    this.dom.sortButton.addClass("disabled");
                     this.dom.sortButton.addClass("not-active");
 
                     this.dom.ipVersionButton.filter("[value='6']").parent().addClass("disabled");
@@ -544,15 +514,13 @@ define([
 
                     this.dom.counter.addClass("hidden");
 
-                    this.dom.stepsValueButton.filter("[value='steps']").parent().addClass("disabled");
-                    this.dom.stepsValueButton.filter("[value='steps']").parent().addClass("not-active");
-                    this.dom.stepsValueButton.filter("[value='steps']").parent().attr("disabled", true);
-                    this.dom.stepsButton.addClass("not-active");
+                    this.dom.stepsStartButton.addClass("disabled");
+                    this.dom.stepsStartButton.addClass("not-active");
+                    this.dom.stepsStartButton.attr("disabled", true);
 
-                    this.dom.streamingValueButton.filter("[value='streaming']").parent().addClass("disabled");
-                    this.dom.streamingValueButton.filter("[value='streaming']").parent().addClass("not-active");
-                    this.dom.streamingValueButton.filter("[value='streaming']").parent().attr("disabled", true);
-                    this.dom.streamingButton.addClass("not-active");
+                    this.dom.streamingStartButton.addClass("disabled");
+                    this.dom.streamingStartButton.addClass("not-active");
+                    this.dom.streamingStartButton.attr("disabled", true);
                 }
             }
         };
@@ -614,13 +582,6 @@ define([
             this.dom.shuffleColorButton.on("click", function (e) {
                 if ($this.isGraphPresent())
                     $this.drawer.shuffle_color_map($this.graph_type);
-            });
-        };
-
-        this.erase_graph_btn_setup = function () {
-            this.dom.eraseGraphButton.on("click", function (e) {
-                $this.drawer.drawer_init();
-                $this.draw_functions_btn_enabler();
             });
         };
 
@@ -807,44 +768,90 @@ define([
                 });
         };
 
+
         this.streaming_btn_setup = function () {
-            var interval, streaming_icon_swap;
+            this.streaming_start_btn_setup();
+            this.streaming_stop_btn_setup();
+            this.dom.streamingStopButton.addClass("hidden");
+        };
 
-            streaming_icon_swap = function () {
-                var icon = $this.dom.streamingButton.find("span");
-                if ($this.streaming) {
-                    icon.removeClass("glyphicon-record");
-                    icon.addClass("glyphicon-stop");
-                }
-                else {
-                    icon.addClass("glyphicon-record");
-                    icon.removeClass("glyphicon-stop");
-                }
-            };
-
-
-            this.dom.streamingButton.on("mousedown", function (e, ui) {
-                $this.streaming = !$this.streaming;
-                streaming_icon_swap();
-                if ($this.streaming) {
+        this.streaming_start_btn_setup = function () {
+            this.dom.streamingStartButton.on("mousedown", function (e, ui) {
+                if(e.which==1){
+                    $this.streaming = true;
                     $this.lock_all();
-                    interval = $this.ripeDataBroker.streamgraph_streaming($this.streaming_speed);
+                    $this.dom.streamingStartButton.addClass("hidden");
+                    $this.dom.streamingStopButton.removeClass("hidden");
+                    $this.streaming_interval = $this.ripeDataBroker.streamgraph_streaming($this.streaming_speed);
                 }
-                else {
-                    clearInterval(interval);
+            });
+        };
+
+        this.streaming_stop_btn_setup = function () {
+            this.dom.streamingStopButton.on("mousedown", function (e, ui) {
+                if(e.which==1){
+                    console.log("Stopping streaming ith interval ID: "+$this.streaming_interval);
+                    clearInterval($this.streaming_interval);
+                    delete $this.streaming_interval;
+                    $this.streaming=false;
+                    $this.dom.streamingStartButton.removeClass("hidden");
+                    $this.dom.streamingStopButton.addClass("hidden");
+                    $this.draw_functions_btn_enabler();
+                }
+            });
+        };
+
+        this.steps_btn_setup = function () {
+            this.steps_start_btn_setup();
+            this.steps_stop_btn_setup();
+            this.steps_pause_btn_setup();
+            this.dom.stepsStopButton.addClass("hidden");
+            this.dom.stepsPauseButton.addClass("hidden");
+        };
+
+
+        this.steps_start_btn_setup = function () {
+            this.dom.stepsStartButton.on("mousedown", function (e, ui) {
+                if(e.which==1) {
+                    $this.steps = true;
+                    $this.lock_all();
+                    $this.dom.stepsStartButton.addClass("hidden");
+                    $this.dom.stepsStopButton.removeClass("hidden");
+                    $this.dom.stepsPauseButton.removeClass("hidden");
+                    $this.steps_interval= $this.ripeDataBroker.streamgraph_stepped_view(50);
+                }
+            });
+        };
+
+        this.steps_stop_btn_setup = function () {
+            this.dom.stepsStopButton.on("mousedown", function (e, ui) {
+                if(e.which==1) {
+                    console.log("Stopping steps view with interval ID: "+$this.steps_interval);
+                    clearInterval($this.steps_interval);
+                    delete $this.steps_interval;
+                    $this.current_step = 0;
+                    $this.steps = false;
+                    $this.ripeDataBroker.steps_core(0);
+                    $this.dom.stepsStartButton.removeClass("hidden");
+                    $this.dom.stepsStopButton.addClass("hidden");
+                    $this.dom.stepsPauseButton.addClass("hidden");
                     env.logger.log("== GuiManager Streaming stopped");
                     $this.draw_functions_btn_enabler();
                 }
             });
-
         };
 
-        this.steps_btn_setup = function () {
-            this.dom.stepsButton.on("mousedown", function (e, ui) {
-                $this.steps = !$this.steps;
-                if ($this.steps) {
-                    $this.lock_all();
-                    $this.ripeDataBroker.streamgraph_stepped_view(50);
+        this.steps_pause_btn_setup = function () {
+            this.dom.stepsPauseButton.on("mousedown", function (e, ui) {
+                if(e.which==1) {
+                    console.log("Pausing steps view with interval ID: "+$this.steps_interval);
+                    clearInterval($this.steps_interval);
+                    delete $this.steps_interval;
+                    $this.steps = false;
+                    $this.dom.stepsStartButton.removeClass("hidden");
+                    $this.dom.stepsPauseButton.addClass("hidden");
+                    env.logger.log("== GuiManager Streaming stopped");
+                    $this.draw_functions_btn_enabler();
                 }
             });
         };

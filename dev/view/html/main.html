@@ -23,24 +23,35 @@
 
 
     <div class="bgpst-header">
-        <div class="btn-group time-modal-button date_range_button" data-toggle="modal" title="Time Range" data-target=".time-modal">
-            <label class="btn btn-default btn-xs">
+        <div class="btn-group time-modal-button" data-toggle="modal" title="Time Range" data-target=".time-modal">
+            <label class="btn btn-default btn-xs date_range_button">
                 <span class="glyphicon glyphicon-calendar"></span>
             </label>
         </div>
 
-        <div class="btn-group steps_btn stream_option" data-toggle="buttons" title="Play animation">
-            <label class="btn btn-default btn-xs">
-                <input type="checkbox" name="steps" value="steps" autocomplete="off">
+        <div class="btn-group steps_btn stream_option" data-toggle="buttons">
+            <label class="btn btn-default btn-xs not-active" title="Animation">
+                Animate
+            </label>
+            <label class="btn btn-default btn-xs steps_start" title="Play animation">
                 <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-                Play
+            </label>
+            <label class="btn btn-default btn-xs steps_pause" title="Pause animation">
+                <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+            </label>
+            <label class="btn btn-default btn-xs steps_stop" title="Stop animation">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
             </label>
         </div>
-        <div class="btn-group streaming_btn stream_option" data-toggle="buttons" title="Data streaming">
-            <label class="btn btn-default btn-xs">
-                <input type="checkbox" name="streaming" value="streaming" autocomplete="off">
-                <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+        <div class="btn-group streaming_btn stream_option" data-toggle="buttons">
+            <label class="btn btn-default btn-xs not-active" title="Data Streaming">
                 Streaming
+            </label>
+            <label class="btn btn-default btn-xs streaming_start" title="Start streaming">
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+            </label>
+            <label class="btn btn-default btn-xs streaming_stop" title="Stop streaming">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
             </label>
         </div>
         <div class="btn-group ip_version" data-toggle="buttons" >
