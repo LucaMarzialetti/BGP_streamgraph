@@ -956,8 +956,7 @@ define([
                                 s += "</span><br/>";
                             }
                         }
-                }
-                else {
+                } else {
                     s += d_key.cp;
                     var cp_country = current_parsed.known_cp[d_key.cp];
                     if (cp_country) {
