@@ -914,6 +914,11 @@ define([
                     $this.dom.asnList.css("overflow-y", "");
                 }
             });
+
+            this.dom.asnListButton.click(function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            });
         };
 
         this.cp_list_btn_setup = function () {
@@ -948,6 +953,11 @@ define([
                     $this.dom.cpList.css("height", "");
                     $this.dom.cpList.css("overflow-y", "");
                 }
+            });
+            
+            this.dom.cpListButton.click(function (event) {
+                event.stopPropagation();
+                event.preventDefault();
             });
         };
 
