@@ -27,7 +27,7 @@ define([
         this.drawer_init = function () {
             this.erase_all();
             var margin = {top: 5, right: 15, bottom: 15, left: 15};
-            var width = env.guiManager.dom.mainSvg.outerWidth() - margin.left - margin.right;
+            var width = env.guiManager.dom.mainSvg.outerWidth() - 5 - margin.left - margin.right *2;
             var height_main = parseInt(env.guiManager.dom.mainSvg.outerHeight()) - margin.top;
             var height_mini = parseInt(env.guiManager.dom.miniSvg.outerHeight()) - margin.bottom;
             this.sizes = {

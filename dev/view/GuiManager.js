@@ -17,7 +17,6 @@ define([
         env.parentDom.append(template());
 
         this.dom = {
-            svg: env.parentDom.find("svg"),
             applyTime: env.parentDom.find(".apply-time"),
             container: env.parentDom.find(".bgpst-container"),
             canvasContainer: env.parentDom.find(".canvas_container"),
@@ -681,17 +680,22 @@ define([
         };
 
         this.scrollbars_btn_setup = function () {
+            var oldHeight;
             this.dom.scrollbarsButton.on("mousedown", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
                 $this.use_scrollbars = !$this.use_scrollbars;
                 if ($this.use_scrollbars) {
-                    $this.dom.svg.parent().css("overflow", "scroll");
-
+                    oldHeight = $this.dom.mainSvg.css("height");
+                    $this.dom.mainSvg.css("height", '');
+                    $this.dom.mainSvg.css("overflow-y", "scroll");
+                    $this.dom.mainSvg.find('svg').css("height",oldHeight);
                 }
                 else {
-                    $this.dom.svg.parent().css("overflow", "visible");
+                    $this.dom.mainSvg.css("height", oldHeight);
+                    $this.dom.mainSvg.css("overflow-y", '');
+                    $this.dom.mainSvg.find('svg').css("height",'');
                 }
             });
         };
@@ -719,10 +723,14 @@ define([
                         $this.dom.counterAsn.find("label").text("#ASN");
                         $this.dom.streamOptionButton.removeClass("hidden");
                         $this.dom.heatOptionButton.addClass("hidden");
+                        $this.dom.mainSvg.css("height", '');
+                        $this.dom.mainSvg.css("overflow-y", '');
+                        $this.dom.mainSvg.find('svg').css("height",'');
                     } else if ($this.graph_type == "heat") {
                         $this.dom.counterAsn.find("label").text("#CP");
                         $this.dom.streamOptionButton.addClass("hidden");
                         $this.dom.heatOptionButton.removeClass("hidden");
+                        
                     }
                     $this.ripeDataBroker.heuristicsManager.setDefaultHeuristic($this.graph_type);
                     if ($this.isGraphPresent()) {
@@ -954,7 +962,7 @@ define([
                     $this.dom.cpList.css("overflow-y", "");
                 }
             });
-            
+
             this.dom.cpListButton.click(function (event) {
                 event.stopPropagation();
                 event.preventDefault();
