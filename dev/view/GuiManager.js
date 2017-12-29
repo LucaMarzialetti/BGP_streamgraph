@@ -122,6 +122,8 @@ define([
         this.gather_information = true;
         this.heatmap_time_map = true;
         this.streaming_speed = 60000;
+
+        this.oldHeight; /*temp for scrol*/
         var $this = this;
 
 
@@ -680,20 +682,19 @@ define([
         };
 
         this.scrollbars_btn_setup = function () {
-            var oldHeight;
             this.dom.scrollbarsButton.on("mousedown", function (e) {
                 var target = e.target;
                 $(target).find("span").toggleClass("hidden");
                 $(target).parent().toggleClass("active");
                 $this.use_scrollbars = !$this.use_scrollbars;
                 if ($this.use_scrollbars) {
-                    oldHeight = $this.dom.mainSvg.css("height");
+                    $this.oldHeight = $this.dom.mainSvg.css("height");
                     $this.dom.mainSvg.css("height", '');
                     $this.dom.mainSvg.css("overflow-y", "scroll");
-                    $this.dom.mainSvg.find('svg').css("height",oldHeight);
+                    $this.dom.mainSvg.find('svg').css("height",$this.oldHeight);
                 }
                 else {
-                    $this.dom.mainSvg.css("height", oldHeight);
+                    $this.dom.mainSvg.css("height", $this.oldHeight);
                     $this.dom.mainSvg.css("overflow-y", '');
                     $this.dom.mainSvg.find('svg').css("height",'');
                 }
@@ -726,11 +727,14 @@ define([
                         $this.dom.mainSvg.css("height", '');
                         $this.dom.mainSvg.css("overflow-y", '');
                         $this.dom.mainSvg.find('svg').css("height",'');
-                    } else if ($this.graph_type == "heat") {
-                        $this.dom.counterAsn.find("label").text("#CP");
-                        $this.dom.streamOptionButton.addClass("hidden");
-                        $this.dom.heatOptionButton.removeClass("hidden");
-                        
+                        $this.use_scrollbars=false;
+                    } 
+                    else {
+                        if ($this.graph_type == "heat") {
+                            $this.dom.counterAsn.find("label").text("#CP");
+                            $this.dom.streamOptionButton.addClass("hidden");
+                            $this.dom.heatOptionButton.removeClass("hidden");
+                        }
                     }
                     $this.ripeDataBroker.heuristicsManager.setDefaultHeuristic($this.graph_type);
                     if ($this.isGraphPresent()) {
