@@ -469,3 +469,23 @@ ol.drag_sort_list li.placeholder:before {
     z-index: 100000!important;
     position: fixed!important;
 }
+
+.stop-date.form-control {
+    cursor: unset !important;
+    background-color: unset !important;
+    opacity: unset !important;
+}
+
+.start-date.form-control {
+    cursor: unset !important;
+    background-color: unset !important;
+    opacity: unset !important;
+}
+
+.form-group.row .date-column {
+    padding: 5px;
+}
+
+.modal-body .form-group.row {
+    margin: 0;
+}

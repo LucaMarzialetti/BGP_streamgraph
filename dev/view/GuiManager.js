@@ -150,6 +150,7 @@ define([
         };
 
         this.pickers_setup = function () {
+            
 
             this.dom.timeModal.modal({
                 show: false,
@@ -163,11 +164,11 @@ define([
             });
             this.dom.startDate
                 .datetimepicker({
-                    initialDate: env.queryParams.startDate.format("YYYY-MM-DD HH:mm"),
-                    format: 'yyyy-mm-dd hh:ii',
+                    initialDate: env.queryParams.startDate.format("YYYY-MM-DD HH:mm:ss"),
+                    format: "yyyy-mm-dd hh:ii:ss",
                     autoclose: true,
-                    startDate: "2004-01-01 00:00",
-                    endDate: moment.utc().format("YYYY-MM-DD HH:mm"),
+                    startDate: "2004-01-01 00:00:00",
+                    endDate: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker)
@@ -180,11 +181,11 @@ define([
 
             this.dom.stopDate
                 .datetimepicker({
-                    initialDate: env.queryParams.stopDate.format("YYYY-MM-DD HH:mm"),
-                    format: 'yyyy-mm-dd hh:ii',
+                    initialDate: env.queryParams.stopDate.format("YYYY-MM-DD HH:mm:ss"),
+                    format: "yyyy-mm-dd hh:ii:ss",
                     autoclose: true,
-                    startDate: "2004-01-01 00:00",
-                    endDate: moment.utc().format("YYYY-MM-DD HH:mm"),
+                    startDate: "2004-01-01 00:00:00",
+                    endDate: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
                     container: $this.dom.container
                 })
                 .on('changeDate', this.checkDatetimepicker)
@@ -194,6 +195,9 @@ define([
                         .css("top", offset.top + 25 - $(window).scrollTop())
                         .css("left", offset.left - $(window).scrollLeft());
                 });
+
+            this.dom.startDate.datetimepicker("setDate", env.queryParams.startDate.utc().toDate());
+            this.dom.stopDate.datetimepicker("setDate", env.queryParams.stopDate.utc().toDate());
         };
 
         this.setTimeFrameButton = function () {

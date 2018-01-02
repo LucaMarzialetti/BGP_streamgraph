@@ -14,17 +14,24 @@
 
 <script>
 
+    var streamgraphStartDate = new Date();
+    var streamgraphStopDate = new Date(streamgraphStartDate);
+    streamgraphStopDate.setDate(streamgraphStopDate.getDate()-2);
+
     var widget = initBGPst(
             '#place-here',
             {
                 dev: true
             }, // Tool options, see table below for more info
             {
-                startDate: "2017-12-04 04:00",
-                stopDate: "2017-12-04 08:00" ,
+                startDate: streamgraphStopDate.toISOString().replace(/\..*/,"").replace("T", " "), //"2017-12-04 04:00",
+                stopDate: streamgraphStartDate.toISOString().replace(/\..*/,"").replace("T", " "), //"2017-12-04 08:00" ,
                 targets: ["66.232.224.0/24"] //"2607:f0d0:1002:51::4"
             } // Query options, see table below for more info
     );
+    
+    streamgraphStopDate = undefined;
+    streamgraphStartDate = undefined;
 
 </script>
 

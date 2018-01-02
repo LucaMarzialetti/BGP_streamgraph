@@ -10,8 +10,28 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    Start: <input size="14" type="text" readonly class="start-date">
-                    Stop: <input size="14" type="text" readonly class="stop-date">
+                    <form>
+                        <div class="form-group row">
+                            <div class="col-sm-1 date-column">
+                            </div>
+                            <div class="col-sm-1 date-column">
+                                <label for="start-date" class="col-form-label col-form-label-lg">Start:</label>
+                            </div>
+                            <div class="col-sm-3 date-column">
+                                <input type="text" readonly class="start-date form-control form-control-lg">
+                            </div>
+                            <div class="col-sm-2 date-column">
+                            </div>
+                            <div class="col-sm-1 date-column">
+                                <label for="stop-date" class="col-form-label col-form-label-lg">Stop:</label>
+                            </div>
+                            <div class="col-sm-3 date-column">
+                                <input type="text" readonly class="stop-date form-control form-control-lg">
+                            </div>
+                            <div class="col-sm-1 date-column">
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer" style="margin: 0">
                     <button type="button" class="btn btn-primary apply-time" data-dismiss="modal">Ok</button>
