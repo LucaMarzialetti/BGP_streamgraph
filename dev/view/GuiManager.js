@@ -276,6 +276,7 @@ define([
 
             this.dom.date.addClass("disabled");
             this.dom.date.addClass("not-active");
+            this.dom.date.parent().addClass("not-active");
 
             this.dom.graphType.parent().addClass("disabled");
             this.dom.graphType.parent().addClass("not-active");
@@ -297,10 +298,11 @@ define([
                 this.dom.streamingStartButton.addClass("disabled");
                 this.dom.streamingStartButton.addClass("not-active");
                 this.dom.streamingStartButton.attr("disabled", true);
-
-                this.dom.streamingStopButton.addClass("disabled");
-                this.dom.streamingStopButton.addClass("not-active");
-                this.dom.streamingStopButton.attr("disabled", true);
+            }
+            else {
+                this.dom.streamingStopButton.removeClass("disabled");
+                this.dom.streamingStopButton.removeClass("not-active");
+                this.dom.streamingStopButton.attr("disabled", false);
             }
         };
 
@@ -414,111 +416,82 @@ define([
         };
 
         this.draw_functions_btn_enabler = function () {
-            if (!this.streaming) {
+            if (this.isGraphPresent() && !this.streaming) {
+                this.dom.listButton.removeClass("disabled");
+                this.dom.listButton.removeClass("not-active");
                 this.dom.optionCommandButton.removeClass("disabled");
                 this.dom.optionCommandButton.removeClass("not-active");
-                this.dom.date.removeClass("disabled");
-                this.dom.date.removeClass("not-active");
+                this.dom.sortButton.removeClass("disabled");
+                this.dom.sortButton.removeClass("not-active");
 
                 this.dom.graphType.parent().removeClass("disabled");
                 this.dom.graphType.parent().removeClass("not-active");
                 this.dom.graphType.parent().attr("disabled", false);
 
-                if (this.isGraphPresent()) {
-                    this.dom.listButton.removeClass("disabled");
-                    this.dom.listButton.removeClass("not-active");
-                    this.dom.sortButton.removeClass("disabled");
-                    this.dom.sortButton.removeClass("not-active");
+                this.dom.date.removeClass("disabled");
+                this.dom.date.removeClass("not-active");
+                this.dom.date.parent().removeClass("not-active");
 
-                    var containsIpv6, containsIpv4;
+                var containsIpv6, containsIpv4;
 
-                    containsIpv4 = this.ripeDataBroker.current_parsed.targets
-                        .some(function (e) {
-                            return $this.validator.check_ipv4(e);
-                        });
-                    containsIpv6 = this.ripeDataBroker.current_parsed.targets
-                        .some(function (e) {
-                            return $this.validator.check_ipv6(e);
-                        });
+                containsIpv4 = this.ripeDataBroker.current_parsed.targets
+                    .some(function (e) {
+                        return $this.validator.check_ipv4(e);
+                    });
+                containsIpv6 = this.ripeDataBroker.current_parsed.targets
+                    .some(function (e) {
+                        return $this.validator.check_ipv6(e);
+                    });
 
-                    if (containsIpv4 || containsIpv6) {
-                        if (!containsIpv4) {
-                            this.dom.ipVersionButton.filter("[value='4']").parent().addClass("disabled");
-                            this.dom.ipVersionButton.filter("[value='4']").parent().addClass("not-active");
-                            this.dom.ipVersionButton.filter("[value='4']").parent().attr("disabled", true);
-                        } else {
-                            this.dom.ipVersionButton.filter("[value='4']").parent().removeClass("disabled");
-                            this.dom.ipVersionButton.filter("[value='4']").parent().removeClass("not-active");
-                            this.dom.ipVersionButton.filter("[value='4']").parent().attr("disabled", false);
-                        }
-
-                        if (!containsIpv6) {
-                            this.dom.ipVersionButton.filter("[value='6']").parent().addClass("disabled");
-                            this.dom.ipVersionButton.filter("[value='6']").parent().addClass("not-active");
-                            this.dom.ipVersionButton.filter("[value='6']").parent().attr("disabled", true);
-                        } else {
-                            this.dom.ipVersionButton.filter("[value='6']").parent().removeClass("disabled");
-                            this.dom.ipVersionButton.filter("[value='6']").parent().removeClass("not-active");
-                            this.dom.ipVersionButton.filter("[value='6']").parent().attr("disabled", false);
-                        }
+                if (containsIpv4 || containsIpv6) {
+                    if (!containsIpv4) {
+                        this.dom.ipVersionButton.filter("[value='4']").parent().addClass("disabled");
+                        this.dom.ipVersionButton.filter("[value='4']").parent().addClass("not-active");
+                        this.dom.ipVersionButton.filter("[value='4']").parent().attr("disabled", true);
                     } else {
-                        this.dom.ipVersion.hide();
+                        this.dom.ipVersionButton.filter("[value='4']").parent().removeClass("disabled");
+                        this.dom.ipVersionButton.filter("[value='4']").parent().removeClass("not-active");
+                        this.dom.ipVersionButton.filter("[value='4']").parent().attr("disabled", false);
                     }
 
-                    if (this.ip_version.indexOf(4) != -1) {
-                        this.dom.ipVersionButton.filter('[value="4"]').prop('checked', true);
-                        this.dom.ipVersionButton.filter('[value="4"]').parent().addClass("active");
+                    if (!containsIpv6) {
+                        this.dom.ipVersionButton.filter("[value='6']").parent().addClass("disabled");
+                        this.dom.ipVersionButton.filter("[value='6']").parent().addClass("not-active");
+                        this.dom.ipVersionButton.filter("[value='6']").parent().attr("disabled", true);
                     } else {
-                        this.dom.ipVersionButton.filter('[value="4"]').prop('checked', false);
-                        this.dom.ipVersionButton.filter('[value="4"]').parent().removeClass("active");
+                        this.dom.ipVersionButton.filter("[value='6']").parent().removeClass("disabled");
+                        this.dom.ipVersionButton.filter("[value='6']").parent().removeClass("not-active");
+                        this.dom.ipVersionButton.filter("[value='6']").parent().attr("disabled", false);
                     }
-                    if (this.ip_version.indexOf(6) != -1) {
-                        this.dom.ipVersionButton.filter('[value="6"]').prop('checked', true);
-                        this.dom.ipVersionButton.filter('[value="6"]').parent().addClass("active");
-                    } else {
-                        this.dom.ipVersionButton.filter('[value="6"]').prop('checked', false);
-                        this.dom.ipVersionButton.filter('[value="6"]').parent().removeClass("active");
-                    }
-                    this.dom.counter.removeClass("hidden");
-                    if (this.graph_type == "stream") {
-                        this.dom.stepsStartButton.removeClass("disabled");
-                        this.dom.stepsStartButton.removeClass("not-active");
-                        this.dom.stepsStartButton.attr("disabled", false);
-
-                        this.dom.streamingStartButton.removeClass("disabled");
-                        this.dom.streamingStartButton.removeClass("not-active");
-                        this.dom.streamingStartButton.attr("disabled", false);
-                    }
-                    if (this.graph_type == "heat") {
-                        this.dom.stepsStartButton.addClass("disabled");
-                        this.dom.stepsStartButton.addClass("not-active");
-                        this.dom.stepsStartButton.attr("disabled", true);
-
-                        this.dom.streamingStartButton.addClass("disabled");
-                        this.dom.streamingStartButton.addClass("not-active");
-                        this.dom.streamingStartButton.attr("disabled", true);
-                    }
-                    if (!this.steps) {
-                        this.dom.stepsStartButton.prop('checked', false);
-                        this.dom.stepsStartButton.removeClass("active");
-                    }
+                } else {
+                    this.dom.ipVersion.hide();
                 }
-                else {
-                    this.dom.listButton.addClass("disabled");
-                    this.dom.listButton.addClass("not-active");
-                    this.dom.sortButton.addClass("disabled");
-                    this.dom.sortButton.addClass("not-active");
 
-                    this.dom.ipVersionButton.filter("[value='6']").parent().addClass("disabled");
-                    this.dom.ipVersionButton.filter("[value='6']").parent().addClass("not-active");
-                    this.dom.ipVersionButton.filter("[value='6']").parent().attr("disabled", true);
+                if (this.ip_version.indexOf(4) != -1) {
+                    this.dom.ipVersionButton.filter('[value="4"]').prop('checked', true);
+                    this.dom.ipVersionButton.filter('[value="4"]').parent().addClass("active");
+                } else {
+                    this.dom.ipVersionButton.filter('[value="4"]').prop('checked', false);
+                    this.dom.ipVersionButton.filter('[value="4"]').parent().removeClass("active");
+                }
+                if (this.ip_version.indexOf(6) != -1) {
+                    this.dom.ipVersionButton.filter('[value="6"]').prop('checked', true);
+                    this.dom.ipVersionButton.filter('[value="6"]').parent().addClass("active");
+                } else {
+                    this.dom.ipVersionButton.filter('[value="6"]').prop('checked', false);
+                    this.dom.ipVersionButton.filter('[value="6"]').parent().removeClass("active");
+                }
+                this.dom.counter.removeClass("hidden");
+                if (this.graph_type == "stream") {
+                    this.dom.stepsStartButton.removeClass("disabled");
+                    this.dom.stepsStartButton.removeClass("not-active");
+                    this.dom.stepsStartButton.attr("disabled", false);
 
-                    this.dom.ipVersionButton.filter("[value='4']").parent().addClass("disabled");
-                    this.dom.ipVersionButton.filter("[value='4']").parent().addClass("not-active");
-                    this.dom.ipVersionButton.filter("[value='4']").parent().attr("disabled", true);
-
-                    this.dom.counter.addClass("hidden");
-
+                    this.dom.streamingStartButton.removeClass("disabled");
+                    this.dom.streamingStartButton.removeClass("not-active");
+                    this.dom.streamingStartButton.attr("disabled", false);
+                }
+                if (this.graph_type == "heat") {
                     this.dom.stepsStartButton.addClass("disabled");
                     this.dom.stepsStartButton.addClass("not-active");
                     this.dom.stepsStartButton.attr("disabled", true);
@@ -527,6 +500,44 @@ define([
                     this.dom.streamingStartButton.addClass("not-active");
                     this.dom.streamingStartButton.attr("disabled", true);
                 }
+                if (!this.steps) {
+                    this.dom.stepsStartButton.prop('checked', false);
+                    this.dom.stepsStartButton.removeClass("active");
+                }
+            }
+            else {
+                this.dom.listButton.addClass("disabled");
+                this.dom.listButton.addClass("not-active");
+                this.dom.sortButton.addClass("disabled");
+                this.dom.sortButton.addClass("not-active");
+                this.dom.optionCommandButton.addClass("disabled");
+                this.dom.optionCommandButton.addClass("not-active");
+
+                this.dom.ipVersionButton.filter("[value='6']").parent().addClass("disabled");
+                this.dom.ipVersionButton.filter("[value='6']").parent().addClass("not-active");
+                this.dom.ipVersionButton.filter("[value='6']").parent().attr("disabled", true);
+
+                this.dom.ipVersionButton.filter("[value='4']").parent().addClass("disabled");
+                this.dom.ipVersionButton.filter("[value='4']").parent().addClass("not-active");
+                this.dom.ipVersionButton.filter("[value='4']").parent().attr("disabled", true);
+
+                this.dom.graphType.parent().addClass("disabled");
+                this.dom.graphType.parent().addClass("not-active");
+                this.dom.graphType.parent().attr("disabled", true);
+
+                this.dom.counter.addClass("hidden");
+
+                this.dom.stepsStartButton.addClass("disabled");
+                this.dom.stepsStartButton.addClass("not-active");
+                this.dom.stepsStartButton.attr("disabled", true);
+
+                this.dom.streamingStartButton.addClass("disabled");
+                this.dom.streamingStartButton.addClass("not-active");
+                this.dom.streamingStartButton.attr("disabled", true);
+
+                this.dom.date.addClass("disabled");
+                this.dom.date.addClass("not-active");
+                this.dom.date.parent().addClass("not-active");  
             }
         };
 
