@@ -10,12 +10,54 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    Start: <input size="14" type="text" readonly class="start-date">
-                    Stop: <input size="14" type="text" readonly class="stop-date">
+                    <form>
+                        <div class="form-group row vertical-align">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-5">
+                                <div class="col-xs-1">
+                                    <label for="start-date" class="col-form-label col-form-label-lg">Start:</label>
+                                </div>
+                                <div class="col-xs-1">
+                                    <hr />
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" readonly class="start-date form-control form-control-lg">
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="col-xs-1">
+                            </div>
+                            
+                            <div class="col-xs-5">
+                                <div class="col-xs-1">
+                                    <label for="stop-date" class="col-form-label col-form-label-lg">Stop:</label>
+                                </div>
+                                <div class="col-xs-1">
+                                    <hr />
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" readonly class="stop-date form-control form-control-lg">
+                                </div>
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer" style="margin: 0">
-                    <button type="button" class="btn btn-primary apply-time" data-dismiss="modal">Ok</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <div class="btn-group apply-time" data-toggle="buttons" data-dismiss="modal">
+                        <label class="btn btn-primary" title="Ok">
+                            Ok
+                        </label>
+                    </div>
+
+                    <div class="btn-group" data-toggle="buttons" data-dismiss="modal">
+                        <label class="btn btn-default" title="Close">
+                            Close
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,159 +116,129 @@
                 Local
             </label>
         </div>
-        <span class="dropdown">
-            <button type="button" class="btn-group btn-xs dropdown-toggle option_command_btn btn btn-default text_centerd" data-toggle="dropdown" title="Configurations">
-                <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right repositioned">
-                <!--<li><a href="#" class="draw_last_data_btn">Draw Last Data</a></li>
-                <li><a href="#" class="erase_graph_btn">Erase Graph</a></li>
-                <li>
-                    <a href="#" class="preserve_color_btn">
-                        Preserve Color Map
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="gather_information_btn">
-                        Gather Information (CP Geo, ASN Detail)
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="localstorage_enabled_btn">
-                        Enable Local Storage
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li> -->
+        <div class="btn-group" data-toggle="buttons">
+            <span class="dropdown">
+                <button type="button" class="btn-group btn-xs dropdown-toggle option_command_btn btn btn-default text_centerd" data-toggle="dropdown" title="Configurations">
+                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right repositioned">
 
-                <!-- SHARED OPTIONS -->
-                <li>
-                    <a href="#" class="prepending_prevention_btn">
-                        AS-Path Anti-Prepending
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li>
-                <li style="display: inline-flex; width: 100%;">
-                    <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
-                        Upstream Level (AS-path hop)
+                    <!-- SHARED OPTIONS -->
+                    <li>
+                        <a href="#" class="prepending_prevention_btn">
+                            AS-Path Anti-Prepending
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li style="display: inline-flex; width: 100%;">
+                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
+                            Upstream Level (AS-path hop)
 
-                    </a>
-                    <input type="number" name="asn_lvl" min="0" max="50" class="asn_lvl form-control jquery_ui_spinner">
-                </li>
+                        </a>
+                        <input type="number" name="asn_lvl" min="0" max="50" class="asn_lvl form-control jquery_ui_spinner">
+                    </li>
 
-                <!-- STREAMGRAPH OPTIONS -->
-                <li class="stream_option">
-                    <a href="#" class="global_visibility_btn">
-                        Global visibility (All CPs)
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li>
-                
-                <!-- HEATMAP OPTIONS -->
-                <li class="heat_option">
-                    <a href="#" class="merge_cp_btn">
-                        Merge CPs with same paths
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li>
-                <li class="heat_option" style="display: inline-flex; width: 100%;">
-                    <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
-                        Merge events with same routing
+                    <!-- STREAMGRAPH OPTIONS -->
+                    <li class="stream_option">
+                        <a href="#" class="global_visibility_btn">
+                            Global visibility (All CPs)
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    
+                    <!-- HEATMAP OPTIONS -->
+                    <li class="heat_option">
+                        <a href="#" class="merge_cp_btn">
+                            Merge CPs with same paths
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li class="heat_option" style="display: inline-flex; width: 100%;">
+                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
+                            Merge events with same routing
 
-                    </a>
-                    <input type="number" name="merge_events" min="0" max="500" class="merge_events form-control jquery_ui_spinner">
-                </li>
-                <li class="heat_option">
-                    <a href="#" class="events_labels_btn">
-                        Events labels
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li>
-                <li class="heat_option">
-                    <a href="#" class="cp_labels_btn">
-                        CP labels
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li>
-                <li class="heat_option">
-                    <a href="#" class="heatmap_time_btn">
-                        Use time mapping
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li>
+                        </a>
+                        <input type="number" name="merge_events" min="0" max="500" class="merge_events form-control jquery_ui_spinner">
+                    </li>
+                    <li class="heat_option">
+                        <a href="#" class="events_labels_btn">
+                            Events labels
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li class="heat_option">
+                        <a href="#" class="cp_labels_btn">
+                            CP labels
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li class="heat_option">
+                        <a href="#" class="heatmap_time_btn">
+                            Use time mapping
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
 
-                <li class="heat_option">
-                    <a href="#" class="scrollbars_btn">
-                        Use scrollbars
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </a>
-                </li>
-            </ul>
-        </span>
-        <!-- <span class="dropdown">
-            <button type="button" class="btn-group btn-xs dropdown-toggle path_btn btn btn-default text_centerd" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right repositioned">
-                <li>
-                    <a href="#" class="draw_path_btn">Draw Path</a>
-                </li>
+                    <li class="heat_option">
+                        <a href="#" class="scrollbars_btn">
+                            Use scrollbars
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                </ul>
+            </span>
 
-                
-            </ul>
-        </span> -->
-        <span class="dropdown">
-            <button type="button" class="btn-xs btn-group dropdown-toggle list_btn btn btn-default text_centerd" data-toggle="dropdown" title="Resources">
-                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">
-                <li class="dropdown-submenu right_arrows">
-                    <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>
-                    <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>
-                </li>
-                <li class="dropdown-submenu right_arrows">
-                    <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>
-                    <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>
-                </li>
-            </ul>
-        </span>
-        <span class="dropdown">
-            <button type="button" class="btn-xs btn-group dropdown-toggle sort_btn btn btn-default text_centerd" data-toggle="dropdown" title="Optimizations">
-                <span class="glyphicon glyphicon-signal" aria-hidden="true"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right repositioned">
-                <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>
-                <li class="divider stream_option"></li>
+        </div>
+        <div class="btn-group" data-toggle="buttons">
+            <span class="dropdown">
+                <button type="button" class="btn-xs btn-group dropdown-toggle list_btn btn btn-default text_centerd" data-toggle="dropdown" title="Resources">
+                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">
+                    <li class="dropdown-submenu right_arrows">
+                        <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>
+                        <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>
+                    </li>
+                    <li class="dropdown-submenu right_arrows">
+                        <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>
+                        <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>
+                    </li>
+                </ul>
+            </span>
+        </div>
+        <div class="btn-group" data-toggle="buttons">
+            <span class="dropdown">
+                <button type="button" class="btn-xs btn-group dropdown-toggle sort_btn btn btn-default text_centerd" data-toggle="dropdown" title="Optimizations">
+                    <span class="glyphicon glyphicon-signal" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right repositioned">
+                    <li ><a href="#" class="shuffle_color_map_btn">Shuffle Color Map</a></li>
+                    <li class="divider stream_option"></li>
 
-                <!-- STREAMGRAPH OPTIONS -->
-                <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>
-                <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>
-                <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>
-                <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>
-                <li class="divider stream_option"></li>
-                <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>
-                <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>
-                <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>
-                <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>
-                <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>
-                <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>
-                <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>
-                <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>
-                <!-- <li class="divider stream_option"></li>
-                <li class="stream_option"><a href="#" class="lev_dist_randwalk_cum_btn">Ordering by Levensthein Cum Dist Rand.Walk</a></li>
-                <li class="stream_option"><a href="#" class="lev_dist_randwalk_max_btn">Ordering by Levensthein Max Dist Rand.Walk</a></li>
-                <li class="stream_option"><a href="#" class="point_dist_by_randwalk_btn">Ordering by STDEV Rand.Walk</a></li>
-                <li class="not-active disabled stream_option"><a href="#" class="point_dist_by_inference_btn">Ordering by STDEV Inference</a></li> -->
-                
-                <!-- HEATMAP OPTIONS -->
-                <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>
-                <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>
-                <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>
-                <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>
-                <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>
-            </ul>
-        </span>
+                    <!-- STREAMGRAPH OPTIONS -->
+                    <li class="stream_option"><a href="#" class="exchange_greedy_sort_btn">Ordering by Near Flows</a></li>
+                    <li class="stream_option"><a href="#" class="point_dist_greedy_btn">Ordering by STDEV Swap</a></li>
+                    <li class="stream_option"><a href="#" class="wiggle_max_btn">Ordering by Wiggle Swap (Min Max)</a></li>
+                    <li class="stream_option"><a href="#" class="wiggle_sum_btn">Ordering by Wiggle Swap (Min Sum )</a></li>
+                    <li class="divider stream_option"></li>
+                    <li class="stream_option"><a href="#" class="sort_asn_ascstdev_btn">Sort By Frequency STD Dev (ASC)</a></li>
+                    <li class="stream_option"><a href="#" class="sort_asn_dscstdev_btn">Sort By Frequency STD Dev (DSC)</a></li>
+                    <li class="stream_option"><a href="#" class="sort_asn_ascvar_btn">Sort By Frequency Variance (ASC)</a></li>
+                    <li class="stream_option"><a href="#" class="sort_asn_dscvar_btn">Sort By Frequency Variance (DSC)</a></li>
+                    <li class="stream_option"><a href="#" class="sort_asn_ascavg_btn">Sort By Frequency Avg (ASC)</a></li>
+                    <li class="stream_option"><a href="#" class="sort_asn_dscavg_btn">Sort By Frequency Avg (DSC)</a></li>
+                    <li class="stream_option"><a href="#" class="sort_asn_ascsum_btn">Sort By Frequency Sum (ASC)</a></li>
+                    <li class="stream_option"><a href="#" class="sort_asn_dscsum_btn">Sort By Frequency Sum (DSC)</a></li>
+
+                    <!-- HEATMAP OPTIONS -->
+                    <li class="heat_option"><a href="#" class="heat_stdev_sort_btn">Ordering by StdDev </a></li>
+                    <li class="heat_option"><a href="#" class="heat_greedy_sort_1_btn">Ordering by Exchanges Greedy (Level) </a></li>
+                    <li class="heat_option"><a href="#" class="heat_greedy_sort_2_btn">Ordering by Exchanges Greedy (Level + Changes) </a></li>
+                    <li class="heat_option"><a href="#" class="heat_as_sort">Sort By Collector Peer AS</a></li>
+                    <li class="heat_option"><a href="#" class="heat_country_sort">Sort By Collector Peer Country </a></li>
+                </ul>
+            </span>
+        </div>
     </div>
 
     <div class="svg_tooltip hidden"></div>

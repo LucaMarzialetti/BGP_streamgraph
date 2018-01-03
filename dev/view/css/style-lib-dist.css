@@ -10025,3 +10025,34 @@
   z-index: 100000!important;
   position: fixed!important;
 }
+.bgpst-container input.form-control {
+  text-align: center;
+  padding: 6px 5px;
+}
+.bgpst-container input.stop-date.form-control {
+  cursor: unset !important;
+  background-color: unset !important;
+  opacity: unset !important;
+  width: 140px;
+}
+.bgpst-container input.start-date.form-control {
+  cursor: unset !important;
+  background-color: unset !important;
+  opacity: unset !important;
+  width: 140px;
+}
+.bgpst-container .modal-body .form-group.row {
+  margin: 0;
+}
+.bgpst-container .vertical-align {
+  display: flex;
+  flex-direction: row;
+}
+.bgpst-container .vertical-align > [class^="col-"],
+.bgpst-container .vertical-align > [class*=" col-"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Optional, to align inner items 
+                              horizontally inside the column */
+}

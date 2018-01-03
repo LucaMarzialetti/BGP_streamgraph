@@ -6,11 +6,16 @@ define([
 		this.ripestat_data_format = "YYYY-MM-DDTHH:mm:ss";
 		this.ripestat_data_format_date = "YYYY-MM-DD";
 		this.ripestat_data_format_time = "HH:mm:ss";
-		this.interface_format_date = "D/M/YYYY";
+		this.interface_format_date = "DD/MM/YYYY";
 		this.interface_format_time = "HH:mm:ss";
+		this.interface_format = "YYYY-MM-DD HH:mm:ss";
 	};
 
 	/****************************************************************/
+	DateConverter.prototype.formatInterface = function(date){
+		return moment(date).format(this.interface_format);
+	};
+
 	DateConverter.prototype.parseRipe = function(date){
 		return moment(date, this.ripestat_data_format);
 	};
