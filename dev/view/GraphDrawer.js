@@ -392,7 +392,7 @@ define([
                 .style("opacity", 1)
                 .attr("d", area)
                 .on('mousemove', function (d) {
-                    if (!env.guiManager.steps) mousemove(d, d3.mouse(this))
+                    if (!env.guiManager.steps) mousemove(d, d3.mouse(this), d3.event)
                 });
 
             layer
@@ -423,10 +423,13 @@ define([
             }).left;
 
             function mouseover() {
-                env.guiManager.dom.tooltipSvg.removeClass("hidden");
+                setTimeout(function(){
+                    env.guiManager.dom.tooltipSvg.removeClass("hidden");
+                },0);
             }
 
-            function mousemove(d_key, pos) {
+            function mousemove(d_key, pos, event) {
+                var $current_parsed = current_parsed;
                 //trova l'interesezione sull'asse X (percentuale) relativamente al mouse X
                 var x0 = $this.x.invert(pos[0]),
                     i = bisectDate(data, x0, 1),
@@ -436,39 +439,52 @@ define([
                 var perc = (d[d_key.key] * 100).toFixed(2);
                 //trova l'interesezione sull'asse y (data) relativamente al mouse Y
                 var date = formatDate(data[i]['date']);
-                var s = "";
-                s += "<strong>ASN: </strong>";
-                s += "<span>" + d_key.key + "</span>";
-                var asn_country = current_parsed.known_asn[d_key.key];
-                if (asn_country) {
-                    var ac = asn_country.split(",");
-                    ac = ac[ac.length - 1].trim();
-                    s += "<span> (" + ac + ") </span>";
-                    s += "<span class='flag-icon flag-icon-" + ac.toLowerCase() + "'></span>";
-                }
-                s += "<br/><strong>Date: </strong>";
-                s += "<span>" + date + "</span>";
-                s += "<br/><strong>%: </strong>";
-                s += "<span>" + perc + "</span>";
                 env.guiManager.dom.tooltipSvg
-                    .html(s)
-                    .css("left", (d3.event.pageX + 10) + "px")
-                    .css("top", (d3.event.pageY - 35) + "px");
+                    .css("left", (event.pageX + 10) + "px")
+                    .css("top", (event.pageY - 35) + "px");
 
-                if ($this.last_hover != d_key.key) {
-                    d3.selectAll(".area")
-                        .filter(function (d) {
-                            return d.key != d_key.key;
-                        })
-                        .style("fill-opacity", 0.35);
-                    $this.last_hover = d_key.key;
+                if($this.last_hover==null || $this.last_hover.asn!=d_key.key || $this.last_hover.date!=date || $this.last_hover.perc!=perc)
+                    setTimeout(function(){
+                        var s = "";
+                        s += "<strong>ASN: </strong>";
+                        s += "<span>" + d_key.key + "</span>";
+                        var asn_country = $current_parsed.known_asn[d_key.key];
+                        if (asn_country) {
+                            var ac = asn_country.split(",");
+                            ac = ac[ac.length - 1].trim();
+                            s += "<span> (" + ac + ") </span>";
+                            s += "<span class='flag-icon flag-icon-" + ac.toLowerCase() + "'></span>";
+                        }
+                        s += "<br/><strong>Date: </strong>";
+                        s += "<span>" + date + "</span>";
+                        s += "<br/><strong>%: </strong>";
+                        s += "<span>" + perc + "</span>";
+                        env.guiManager.dom.tooltipSvg
+                            .html(s);
+                    },0);
+
+                if ($this.last_hover==null || $this.last_hover.asn != d_key.key) {
+                    setTimeout(function(){
+                        d3.selectAll(".area")
+                            .filter(function (d) {
+                                return d.key != d_key.key;
+                            })
+                            .style("fill-opacity", 0.35);
+                        $this.last_hover = {
+                            asn: d_key.key,
+                            date: date,
+                            perc: perc
+                        };
+                    },0);
                 }
             }
 
             function mouseout() {
-                d3.selectAll(".area").style("fill-opacity", 1);
-                env.guiManager.dom.tooltipSvg.addClass("hidden");
-                $this.last_hover = null;
+                setTimeout(function(){
+                    d3.selectAll(".area").style("fill-opacity", 1);
+                    env.guiManager.dom.tooltipSvg.addClass("hidden");
+                    $this.last_hover = null;
+                },0);
             }
 
             function click(pos, event) {
@@ -685,6 +701,7 @@ define([
                 gridSize_x = this.sizes.def_min_grid_size.x;
 
             //time map axis
+            
             if (timemap) {
                 env.guiManager.dom.mainSvg.css("width", $this.sizes.width+$this.sizes.margin.left+$this.sizes.margin.right);
                 this.draw_heat_axis(this.event_set, margin_x);
@@ -694,6 +711,7 @@ define([
                 var svg_width = 4*this.sizes.margin.left + margin_x + this.event_set.length * (gridSize_x + this.sizes.def_cell_margins.x);
                 env.guiManager.dom.mainSvg.css("width", svg_width);
             }
+
             var svg_height = this.sizes.margin.top + margin_y + this.keys.length * (gridSize_y + this.sizes.def_cell_margins.y);
             env.guiManager.dom.mainSvg.css("height", svg_height);
 
@@ -738,7 +756,7 @@ define([
                 .on('mouseout', mouseout)
                 .on('mouseover', mouseover)
                 .on("mousemove", function (d) {
-                    cp_mouse_over(d, d3.mouse(this))
+                    cp_mouse_over(d, d3.mouse(this), d3.event)
                 });
 
             if (!cp_labels)
@@ -766,7 +784,7 @@ define([
                 })
                 .on('mouseout', mouseout)
                 .on("mousemove", function (d) {
-                    date_mouse_over(d, d3.mouse(this))
+                    date_mouse_over(d, d3.mouse(this), d3.event)
                 });
 
             if (!events_labels)
@@ -817,7 +835,7 @@ define([
                 .style("stroke-width", this.sizes.def_cell_margins.x / 5)
                 .style("opacity", 1)
                 .on('mousemove', function (d) {
-                    mousemove(d, d3.mouse(this))
+                    mousemove(d, d3.mouse(this), d3.event)
                 })
                 .on('mouseout', mouseout)
                 .on('mouseover', mouseover);
@@ -923,82 +941,103 @@ define([
             };
 
             function mouseover() {
-                env.guiManager.dom.tooltipSvg.removeClass("hidden");
+                setTimeout(function(){
+                    env.guiManager.dom.tooltipSvg.removeClass("hidden");
+                },0);
             };
 
-            function mousemove(d_key, pos) {
-                var s = "<strong> ASN: </strong>";
-                s += "<span>" + ((d_key.asn != null) ? d_key.asn : "None") + "</span>";
-                var asn_country = current_parsed.known_asn[d_key.asn];
-                if (asn_country) {
-                    var ac = asn_country.split(",");
-                    ac = ac[ac.length - 1];
-                    s += "<span> (" + ac + ") </span>";
-                    s += "<span class='flag-icon flag-icon-" + ac.toLowerCase().trim() + "'></span>";
-                }
-                s += "<br/><strong>Date: </strong><span>" + formatDate(parseDate(d_key.date)) + "</span>";
-                s += "<br/><strong>CP: </strong>";
-                if (collapse_cp) {
-                    for (var i in cp_to_filter)
-                        if (cp_to_filter[i].indexOf(d_key.cp) != -1) {
-                            var list = cp_to_filter[i];
-                            if (list.length > 1)
-                                s += "<br/>";
-                            for (var j in list) {
-                                var r = list[j];
-                                s += "<span>" + r;
-                                var cp_country = current_parsed.known_cp[r];
+            function mousemove(d_key, pos, event) {
+                var $current_parsed = current_parsed;
+                env.guiManager.dom.tooltipSvg
+                        .css("left", (event.pageX + 10) + "px")
+                        .css("top", (event.pageY - 30) + "px");
+                if($this.last_hover==null || !($this.last_hover.asn == d_key.asn && d_key.cp == $this.last_hover.cp && $this.last_hover.date == d_key.date))
+                     setTimeout(function(){
+                            var s = "<strong> ASN: </strong>";
+                            s += "<span>" + ((d_key.asn != null) ? d_key.asn : "None") + "</span>";
+                            var asn_country = $current_parsed.known_asn[d_key.asn];
+                            if (asn_country) {
+                                var ac = asn_country.split(",");
+                                ac = ac[ac.length - 1];
+                                s += "<span> (" + ac + ") </span>";
+                                s += "<span class='flag-icon flag-icon-" + ac.toLowerCase().trim() + "'></span>";
+                            }
+                            s += "<br/><strong>Date: </strong><span>" + formatDate(parseDate(d_key.date)) + "</span>";
+                            s += "<br/><strong>CP: </strong>";
+                            if ($this.collapse_cp) {
+                                for (var i in cp_to_filter)
+                                    if (cp_to_filter[i].indexOf(d_key.cp) != -1) {
+                                        var list = cp_to_filter[i];
+                                        if (list.length > 1)
+                                            s += "<br/>";
+                                        for (var j in list) {
+                                            var r = list[j];
+                                            s += "<span>" + r;
+                                            var cp_country = $current_parsed.known_cp[r];
+                                            if (cp_country) {
+                                                var cc = cp_country["geo"].trim().split("-")[0];
+                                                s += "<span> (" + cc + ") </span>";
+                                                s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
+                                            }
+                                            s += "</span><br/>";
+                                        }
+                                    }
+                            }
+                            else {
+                                s += d_key.cp;
+                                var cp_country = $current_parsed.known_cp[d_key.cp];
                                 if (cp_country) {
                                     var cc = cp_country["geo"].trim().split("-")[0];
                                     s += "<span> (" + cc + ") </span>";
                                     s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
                                 }
-                                s += "</span><br/>";
                             }
-                        }
-                } else {
-                    s += d_key.cp;
-                    var cp_country = current_parsed.known_cp[d_key.cp];
-                    if (cp_country) {
-                        var cc = cp_country["geo"].trim().split("-")[0];
-                        s += "<span> (" + cc + ") </span>";
-                        s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
-                    }
-                }
-                env.guiManager.dom.tooltipSvg
-                    .html(s)
-                    .css("left", (d3.event.pageX + 10) + "px")
-                    .css("top", (d3.event.pageY - 30) + "px");
+                            
+                            env.guiManager.dom.tooltipSvg
+                                .html(s);
+                    },0);
 
-                if ($this.last_hover != d_key.asn) {
-                    d3.selectAll("rect.area")
-                        .filter(function (d) {
-                            return d.asn != d_key.asn;
-                        })
-                        .style("fill-opacity", 0.35);
-                    d3.selectAll("path.area")
-                        .filter(function (d) {
-                            return d.key != d_key.asn;
-                        })
-                        .style("fill-opacity", 0.35);
-                    $this.last_hover = d_key.asn;
+                if(d_key.asn!=null && ($this.last_hover==null || $this.last_hover.asn!=d_key.asn)){
+                    setTimeout(function(){
+                            d3.selectAll("rect.area")
+                                .filter(function (d) {
+                                    return d.asn != d_key.asn;
+                                })
+                                .style("fill-opacity", 0.35);
+                            d3.selectAll("path.area")
+                                .filter(function (d) {
+                                    return d.key != d_key.asn;
+                                })
+                                .style("fill-opacity", 0.35);
+                        
+                        $this.last_hover = {
+                            asn:d_key.asn,
+                            cp:d_key.cp,
+                            date:d_key.date,
+                        };
+                    },0);
                 }
             };
 
             function mouseout() {
-                d3.selectAll(".area")
-                    .style("fill-opacity", 1);
-                $this.last_hover = null;
-                env.guiManager.dom.tooltipSvg.addClass("hidden");
+                setTimeout(function(){
+                    $this.last_hover = null;
+                    d3.selectAll(".area")
+                        .style("fill-opacity", 1);
+                    env.guiManager.dom.tooltipSvg.addClass("hidden");
+                },0);
             }
 
             function click(pos, event) {
-                if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey) {
-                    var confirmed = confirm("Do you want to open BGPlay on this instant?");
-                    if (confirmed) {
-                        var date = $this.x.invert(pos[0]);
-                        bgplay_callback(date);
-                    }
+                var confirmed = confirm("Do you want to open BGPlay on this instant?");
+                if (confirmed) {
+                    var x0 = $this.x.invert(pos[0]),
+                        i = bisectDate(data, x0, 1),
+                        d0 = data[i - 1],
+                        d1 = data[i],
+                        d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+                    var date = data[i]['date'];
+                    bgplay_callback(date);
                 }
             }
 
