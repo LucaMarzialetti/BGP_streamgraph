@@ -450,10 +450,13 @@ define([
                 s += "<span>" + date + "</span>";
                 s += "<br/><strong>%: </strong>";
                 s += "<span>" + perc + "</span>";
+
+                var offset = env.guiManager.dom.canvasContainer.offset();
                 env.guiManager.dom.tooltipSvg
                     .html(s)
-                    .css("left", (d3.event.pageX + 10) + "px")
-                    .css("top", (d3.event.pageY - 35) + "px");
+                    .css("left", (d3.event.pageX + 30 - offset.left) + "px")
+                    .css("top", (d3.event.pageY - offset.top + 80) + "px");
+
 
                 if ($this.last_hover != d_key.key) {
                     d3.selectAll(".area")
@@ -965,10 +968,11 @@ define([
                         s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
                     }
                 }
+                var offset = env.guiManager.dom.canvasContainer.offset();
                 env.guiManager.dom.tooltipSvg
                     .html(s)
-                    .css("left", (d3.event.pageX + 10) + "px")
-                    .css("top", (d3.event.pageY - 30) + "px");
+                    .css("left", (d3.event.pageX + 30 - offset.left) + "px")
+                    .css("top", (d3.event.pageY - offset.top + 80) + "px");
 
                 if ($this.last_hover != d_key.asn) {
                     d3.selectAll("rect.area")
@@ -1015,14 +1019,14 @@ define([
                     }
                     else
                         s += list;
-                }
-                else {
+                } else {
                     s += d;
                 }
+                var offset = env.guiManager.dom.canvasContainer.offset();
                 env.guiManager.dom.tooltipSvg
                     .html(s)
-                    .css("left", (d3.event.pageX + 10) + "px")
-                    .css("top", (d3.event.pageY - 30) + "px");
+                    .css("left", (d3.event.pageX + 30 - offset.left) + "px")
+                    .css("top", (d3.event.pageY - offset.top + 80) + "px");
 
                 if ($this.last_hover != d) {
                     d3.selectAll(".area")
