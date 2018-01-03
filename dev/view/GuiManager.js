@@ -925,7 +925,10 @@ define([
                     var info = $this.ripeDataBroker.current_parsed.known_asn[asn];
                     if (info) {
                         var tokens = info.split(",");
-                        html += "<div>" + tokens[0].trim() + "</div>";
+                        var parts = string_break(tokens[0].trim());
+                        html+= "<div>";
+                        html+=parts.join("<br/>");
+                        html+= "</div>";
                         var country = tokens[tokens.length - 1].trim().split("-")[0];
                         html += '<div> Country: (' + country + ') <span class="flag-icon flag-icon-' + country.toLowerCase() + '" alt="' + country + '" title="' + country + '"></span></div>';
                     }
@@ -946,6 +949,35 @@ define([
                 event.stopPropagation();
                 event.preventDefault();
             });
+
+            function string_break(str){
+                console.log("str",str)
+                var l = str.length;
+                var tks = str.split(/[ -]/);
+                console.log("from",tks)
+                var parts = [];
+                var limit = 15;
+                var counter = 0;
+                var s = "";
+                for(var i in tks){
+                    var ti = tks[i];
+                    counter+=ti.length;
+                    s+=ti;
+                    if(s.length>limit){
+                        parts.push(s);
+                        s="";
+                    }
+                    else{
+                        if(str[counter]!=undefined)
+                            s+=str[counter];
+                    }
+                    counter++;
+                }
+                if(s!=="")
+                    parts.push(s);
+                console.log("to",parts)
+                return parts;
+            }
         };
 
         this.cp_list_btn_setup = function () {
