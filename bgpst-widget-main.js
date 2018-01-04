@@ -30,15 +30,13 @@ window.atlas._widgets.bgpst.instances = window.atlas._widgets.bgpst.instances ||
 
 if (!window.atlas._widgets.widgetInjectorRequested) { // Only one injector
     window.atlas._widgets.widgetInjectorRequested = true;
-    if (typeof requirejs == "undefined"){
-        console.log("loading");
+    if (typeof requirejs == "undefined") {
         window.atlas._widgets.widgetInjectorLoaded = false;
         window.atlas._widgets.bgpst.tmp_scripts = document.getElementsByTagName('script');
         window.atlas._widgets.bgpst.tmp_scrip = window.atlas._widgets.bgpst.tmp_scripts[window.atlas._widgets.bgpst.tmp_scripts.length - 1];
         window.atlas._widgets.injectorScript = document.createElement('script');
         window.atlas._widgets.injectorScript.async = false;
         window.atlas._widgets.injectorScript.src = window.atlas._widgets.bgpst.urls.libs + 'require.min.js';
-        // window.atlas._widgets.injectorScript.type = 'text/javascript';
         window.atlas._widgets.bgpst.tmp_scrip.parentNode.appendChild(window.atlas._widgets.injectorScript);
     } else {
         window.atlas._widgets.widgetInjectorLoaded = true;
@@ -74,7 +72,6 @@ function initBGPst(domElement, instanceParams, queryParams){
                     });
                 }
             })(instances, instance);
-
 
             instance = instances.requested.shift();
         }
@@ -156,7 +153,7 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
         });
 
         instance.ready(function(){
-
+            var updateLink = false;
             instance.shell()
                 .on("updated", function(params){
                     var newParams = {
@@ -165,8 +162,12 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
                         endtime: params.stopDate.unix()
                     };
                     thisWidget.set_params(newParams);
-                    thisWidget.navigate(newParams);
-                    thisWidget.update_permalinks();
+                    if (updateLink) {
+                        thisWidget.navigate(newParams);
+                        thisWidget.update_permalinks();
+                    } else {
+                        updateLink = true;
+                    }
 
                     $(domElement).find(".messages").remove();
                 });

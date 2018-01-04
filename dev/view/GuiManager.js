@@ -123,7 +123,6 @@ define([
         this.heatmap_time_map = true;
         this.streaming_speed = 60000;
 
-        this.oldHeight; /*temp for scrol*/
         var $this = this;
 
 

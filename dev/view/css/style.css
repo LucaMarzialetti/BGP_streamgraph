@@ -479,14 +479,14 @@ input.stop-date.form-control {
     cursor: unset !important;
     background-color: unset !important;
     opacity: unset !important;
-    width: 140px!important;
+    width: 150px!important;
 }
 
 input.start-date.form-control {
     cursor: unset !important;
     background-color: unset !important;
     opacity: unset !important;
-    width: 140px!important;
+    width: 150px!important;
 }
 
 .modal-body .form-group.row {

@@ -1,59 +1,132 @@
 define([
-  "bgpst.lib.d3-amd"
+    "bgpst.lib.d3-amd"
 ], function(d3){
 
     var ColorManager = function (env) {
-        setTimeout(this.initcolors(), 0);
+        this.initcolors();
     };
 
 
-    ColorManager.prototype.validcolor = function(lab) {
-        var rugub = lab.rgb();
-        return ((0 < rugub.r) && (rugub.r < 256)
-        && (0 < rugub.g) && (rugub.g < 256)
-        && (0 < rugub.b) && (rugub.b < 256));
-    };
 
     ColorManager.prototype.initcolors = function() {
-        this.ds = [];
-        this.d_sorteds = [];
-        this.mindist = 0;
-        // the world's slowest loop:
-        this.innerloop(100); //100
+        return new Promise(function (resolve, reject) {
+            this.ds = [];
+            this.d_sorteds = [];
+
+
+            resolve(this.innerloop());
+        }.bind(this));
     };
 
-    ColorManager.prototype.constraint = function(lab) {
-        return lab.l > 45 && lab.l < 75; //45-70
-    };
 
-// should probably use a web worker here but don't want a separate file. Use SetTimeout instead.
-    ColorManager.prototype.innerloop = function(L) {
-        if (L > 0) {
-            for (var b = -110; b < 100; b+=1) {
-                for (var a = -100; a < 100; a+=1) {
-                    var lab = d3.lab(L, a, b);
-                    if (this.validcolor(lab)) {
-                        if (this.constraint(lab)) {
+    ColorManager.prototype.innerloop = function() {
+        for (var size=76; size >= 46; size--) {
+            for (var b = -110; b < 100; b += 1) {
+                for (var a = -100; a < 100; a += 1) {
+                    var lab = d3.lab(size, a, b);
+                    var rugub = lab.rgb();
+
+                    // valid color?
+                    if ((0 < rugub.r) && (rugub.r < 256) && (0 < rugub.g) && (rugub.g < 256) && (0 < rugub.b) && (rugub.b < 256)) {
+
+                        // constraint
+                        if (lab.l > 45 && lab.l < 75) {
+                            // var vector = [size, a, b];
+                            // unique[JSON.stringify(vector)] = true;
                             this.ds.push({
                                 lab: lab, // the color
-                                nearest: 1000000 // (distance to the nearest chosen color) ** 2
+                                n: 1000000 // (distance to the nearest chosen color) ** 2
                             });
                         }
                     }
                 }
             }
-            this.innerloop(L-1);
         }
     };
 
-    ColorManager.prototype.lab_dist = function(lab_1, lab_2) {
-        return Math.sqrt(
-            (lab_1.l-lab_2.l)*(lab_1.l-lab_2.l) +
-            (lab_1.a-lab_2.a)*(lab_1.a-lab_2.a) +
-            (lab_1.b-lab_2.b)*(lab_1.b-lab_2.b));
-    };
 
-// Order colours by greatest distance from all other selected colors.
+    // ColorManager.prototype.innerloop = function() {
+    //
+    //     // var workerWrapper = function () {
+    //     //     addEventListener('message', function(e) {
+    //     //         var ds = [];
+    //     //         for (var size=76; size >= 46; size--) {
+    //     //             for (var b = -110; b < 100; b += 1) {
+    //     //                 for (var a = -100; a < 100; a += 1) {
+    //     //                     var lab = d3.lab(size, a, b);
+    //     //                     var rugub = lab.rgb();
+    //     //
+    //     //                     // valid color?
+    //     //                     if ((0 < rugub.r) && (rugub.r < 256) && (0 < rugub.g) && (rugub.g < 256) && (0 < rugub.b) && (rugub.b < 256)) {
+    //     //
+    //     //                         // constraint
+    //     //                         if (lab.l > 45 && lab.l < 75) {
+    //     //                             ds.push({
+    //     //                                 lab: lab, // the color
+    //     //                                 n: 1000000 // (distance to the nearest chosen color) ** 2
+    //     //                             });
+    //     //                         }
+    //     //                     }
+    //     //                 }
+    //     //             }
+    //     //         }
+    //     //
+    //     //         postMessage(ds);
+    //     //     }, false);
+    //     // }.toString();
+    //
+    //
+    //     var workerWrapper ="function () {addEventListener('message', function() {var ds = [];var d3 = " + d3.toString() + ";for (var size=76; size >= 46; size--) {for (var b = -110; b < 100; b += 1) {for (var a = -100; a < 100; a += 1) {var lab = d3.lab(size, a, b);var rugub = lab.rgb();if ((0 < rugub.r) && (rugub.r < 256) && (0 < rugub.g) && (rugub.g < 256) && (0 < rugub.b) && (rugub.b < 256)) {if (lab.l > 45 && lab.l < 75) {ds.push({lab: lab, n: 1000000});}}}}}postMessage(ds);}, false);}";
+    //
+    //     var generate = function (d3){
+    //         var ds = [];
+    //         for (var size=76; size >= 46; size--) {
+    //             for (var b = -110; b < 100; b += 1) {
+    //                 for (var a = -100; a < 100; a += 1) {
+    //                     var lab = d3.lab(size, a, b);
+    //                     var rugub = lab.rgb();
+    //
+    //                     // valid color?
+    //                     if ((0 < rugub.r) && (rugub.r < 256) && (0 < rugub.g) && (rugub.g < 256) && (0 < rugub.b) && (rugub.b < 256)) {
+    //
+    //                         // constraint
+    //                         if (lab.l > 45 && lab.l < 75) {
+    //                             ds.push({
+    //                                 lab: lab, // the color
+    //                                 n: 1000000 // (distance to the nearest chosen color) ** 2
+    //                             });
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //
+    //         return ds;
+    //     };
+    //
+    //     if(typeof(Worker) !== "undefined") {
+    //         var blobURL = URL.createObjectURL(new Blob([ '(', workerWrapper, ')()' ], {type: 'application/javascript' }));
+    //         var worker = new Worker(blobURL);
+    //
+    //         worker.postMessage("start");
+    //
+    //         URL.revokeObjectURL( blobURL );
+    //
+    //         worker.onmessage = function (data) {
+    //             this.ds = data;
+    //             // worker.terminate();
+    //
+    //         }.bind(this);
+    //
+    //     } else {
+    //         //this.ds = generate();
+    //     }
+    //
+    //
+    // };
+
+
+    // Order colours by greatest distance from all other selected colors.
     ColorManager.prototype.sortcolors = function(times) {
         if(times>0){
             var d_new = this.select_distant_node();
@@ -62,47 +135,52 @@ define([
         }
     };
 
-// find the node that is furthest away from all the currently selected (sorted) nodes.
+    // find the node that is furthest away from all the currently selected (sorted) nodes.
     ColorManager.prototype.select_distant_node = function() {
+        var n, d, length, selected_node, index;
+
         // could optimize this by only updating colours within mindist of selected node
         // (would need an octree or something), and keeping a heap so we don't need to do
         // a full scan for the next colour each time.
         //
         // It's fast enough like this though.
 
-        var selected_node = this.ds[0];
+        index = 0;
+        selected_node = this.ds[index];
         // find the node with the highest "nearest" value (full scan)
         // -- in other words, the most distant one
-        this.ds.forEach(function(d) {
-            if (d.nearest > selected_node.nearest)
+
+        for (n=0,length=this.ds.length; n<length; n++){
+            d = this.ds[n];
+            if (d.n > selected_node.n) {
                 selected_node = d;
-        });
+                index = n;
+            }
+        }
 
         // remove it from candidates list
-        var index = this.ds.indexOf(selected_node);
         this.ds.splice(index, 1);
-
-        // update the "nearest" value for all the other (nearby) nodes
-        var sq = function(x) { return x * x; };
 
         // each candidate node knows how far away the nearest selected node is.
         // if the newly-selected node is closer, we need to update this distance.
-        this.ds.forEach(function(d) {
-            dist = (sq(d.lab.a - selected_node.lab.a)
-            + sq(d.lab.b - selected_node.lab.b)
-            + sq(d.lab.l - selected_node.lab.l));
-            if (dist < d.nearest)
-                d.nearest = dist;
-        });
+        for (n=0,length=this.ds.length; n<length; n++){
+
+            d = this.ds[n];
+            var diff1 = d.lab.a - selected_node.lab.a;
+            var diff2 = d.lab.b - selected_node.lab.b;
+            var diff3 = d.lab.l - selected_node.lab.l;
+
+            var dist = (diff1*diff1 + diff2*diff2 + diff3*diff3);
+            if (dist < d.n) {
+                d.n = dist;
+            }
+        }
 
         return selected_node;
     };
 
     ColorManager.prototype.furthestLabelColor = function(color) {
-        if((color.r*0.2126 + color.g*0.7152 + color.b*0.0722)  < 128)
-            return "white";
-        else
-            return "black";
+        return ((color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722) < 128) ? "white" : "black";
     };
 
     return ColorManager;

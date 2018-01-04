@@ -43,7 +43,7 @@ define([
             this.draw_background(this.main_svg, this.sizes);
             this.draw_stream_axis(this.main_svg, this.sizes);
             this.draw_minimap(this.mini_svg, this.sizes);
-            // this.draw_over(this.main_svg, this.sizes);
+            utils.observer.publish("first-draw", env.queryParams);
         };
 
         this.draw_over = function (svg, sizes) {
@@ -539,8 +539,9 @@ define([
             this.x = d3.scaleTime().range([0, $this.sizes.width - margin_x / 3 * 2]).domain(date_domain);
             this.ticks = [];
             for (var i in events) {
-                if (this.width_axis(this.diff_ranges[i]) > 10)
+                if (this.width_axis(this.diff_ranges[i]) > 10) {
                     this.ticks.push(new Date(events[i]));
+                }
             }
             this.ticks.push(new Date(events[events.length - 1]));
         };
@@ -552,26 +553,27 @@ define([
                 data.columns = keys_order.slice(0);
                 data.columns.unshift('date');
                 data.columns.unshift('tot_number');
-            }
-            else
+            } else {
                 data.columns = tsv_data.columns;
+            }
             //events limit
             var limit = tsv_data.length;
-            if (events_limit)
+            if (events_limit) {
                 limit = events_limit;
+            }
             for (var i = 0; i < limit; i++) {
                 data.push(type(tsv_data[i], data.columns, visibility));
             }
 
-
             this.keys = data.columns.slice(2);
             //if colors are not enought in the pallette
-            if (this.colorManager.d_sorteds.length < this.keys.length)
+            if (this.colorManager.d_sorteds.length < this.keys.length) {
                 this.colorManager.sortcolors(this.keys.length - this.colorManager.d_sorteds.length);
+            }
             if (!preserve_color_map || this.current_query_id != query_id || this.colors.length != this.keys.length) {
-                this.colors = this.colorManager.d_sorteds.map(function (c) {
-                    return c.lab.rgb()
-                }).slice(0, this.keys.length);
+                this.colors = this.colorManager.d_sorteds
+                    .map(function (c) { return c.lab.rgb() })
+                    .slice(0, this.keys.length);
                 this.z = d3.scaleOrdinal(this.colors.slice(0).reverse());
                 this.z.domain(this.keys);
             }
@@ -579,12 +581,15 @@ define([
             return data;
 
             function type(d, columns, visibility) {
-                if ($this.events.indexOf(d.date) == -1)
+                if ($this.events.indexOf(d.date) == -1) {
                     $this.events.push(d.date);
+                }
                 d.date = parseDate(d.date);
                 var percentage = Math.max(visibility, d.tot_number);
-                for (var i = 2; i < columns.length; i++)
+                for (var i = 2; i < columns.length; i++) {
                     d[columns[i]] = d[columns[i]] / percentage;
+                }
+
                 return d;
             };
         };
@@ -605,9 +610,9 @@ define([
             /* brush the selection */
             if (events_range) {
                 this.events_range = [moment(events_range[0]), moment(events_range[1])];
-            }
-            else
+            } else {
                 this.events_range = null;
+            }
 
             for (var i = 0; i < tsv_data.length; i++) {
                 if (!(this.events_range && !(moment(tsv_data[i].date).isSameOrAfter(this.events_range[0]) && moment(tsv_data[i].date).isSameOrBefore(this.events_range[1]))))
@@ -645,19 +650,21 @@ define([
             }
 
             if (keys_order) {
-                if (keys_order.length < 0)
+                if (keys_order.length < 0) {
                     this.ordering = this.cp_set;
-                else
+                } else {
                     this.ordering = keys_order;
-                if (collapse_cp)
+                }
+                if (collapse_cp) {
                     this.keys = keys_order.filter(function (e) {
                         return $this.cp_set.indexOf(e) >= 0;
                     }); //QUI
-                else
+                } else {
                     this.keys = keys_order;
-            }
-            else
+                }
+            } else {
                 this.keys = this.cp_set;
+            }
 
 
             /****************************************************  DRAWING ***************************************/
@@ -665,26 +672,29 @@ define([
             this.sizes.def_cell_margins = {x: 1, y: 1};
             this.sizes.def_labels_margins = {x: 120, y: 140};
             this.sizes.def_min_grid_size = {x: 8, y: 8};
-            if (ip_version.indexOf(6) != -1)
+            if (ip_version.indexOf(6) != -1) {
                 this.sizes.def_labels_margins.x += 100;
+            }
 
             //IGNORA I MARGINI
             var time_axis_margin = {x: 30, y: 110};
             var margin_y = 0;
             var margin_x = 0;
-            if (events_labels)
+            if (events_labels) {
                 margin_y += this.sizes.def_labels_margins.y;
+            }
 
-            if (cp_labels)
+            if (cp_labels) {
                 margin_x += this.sizes.def_labels_margins.x;
+            }
 
             if (timemap) {
                 margin_x += time_axis_margin.x + this.sizes.margin.left;
                 margin_y += time_axis_margin.y + this.sizes.margin.top;
-            }
-            else {
+            }  else {
                 margin_x = this.sizes.margin.left * 4;
             }
+
             //CALCOLO DELLE PROPORZIONI E DEI MARGINI
             //approfondire come poter fare una cosa fatta bene sul resize
             var min_width = Math.round((this.sizes.width - (margin_x)) / this.event_set.length);
@@ -693,23 +703,22 @@ define([
             //griglia
             var gridSize_x, gridSize_y;
             //quadrata
-            //gridSize_x=Math.max(min_width,min_height);
-            //gridSize_y=gridSize_y;
             gridSize_x = min_width;
             gridSize_y = min_height;
 
-            if (gridSize_y < this.sizes.def_min_grid_size.y)
+            if (gridSize_y < this.sizes.def_min_grid_size.y) {
                 gridSize_y = this.sizes.def_min_grid_size.y;
-            if (gridSize_x < this.sizes.def_min_grid_size.x)
+            }
+
+            if (gridSize_x < this.sizes.def_min_grid_size.x) {
                 gridSize_x = this.sizes.def_min_grid_size.x;
+            }
 
             //time map axis
-            
             if (timemap) {
                 env.guiManager.dom.mainSvg.css("width", $this.sizes.width+$this.sizes.margin.left+$this.sizes.margin.right);
                 this.draw_heat_axis(this.event_set, margin_x);
-            }
-            else {
+            } else {
                 //svg
                 var svg_width = 4*this.sizes.margin.left + margin_x + this.event_set.length * (gridSize_x + this.sizes.def_cell_margins.x);
                 env.guiManager.dom.mainSvg.css("width", svg_width);
@@ -762,8 +771,9 @@ define([
                     cp_mouse_over(d, d3.mouse(this), d3.event)
                 });
 
-            if (!cp_labels)
+            if (!cp_labels) {
                 $(".cp_axis").css("display", "none");
+            }
             //labels horizontal
             var EventsLabels = g
                 .append("g")
@@ -790,8 +800,9 @@ define([
                     date_mouse_over(d, d3.mouse(this), d3.event)
                 });
 
-            if (!events_labels)
+            if (!events_labels) {
                 $(".event_axis").css("display", "none");
+            }
             //areas
             var areas = g
                 .append("g")
@@ -923,96 +934,99 @@ define([
             // this.draw_over(this.main_svg, this.sizes);
 
             function type(d, asn_set, cp_set, event_set, level, prepending) {
-                if (cp_set.indexOf(d.cp) == -1)
+                if (cp_set.indexOf(d.cp) == -1) {
                     cp_set.push(d.cp);
-                if (event_set.indexOf(d.date) == -1)
+                }
+
+                if (event_set.indexOf(d.date) == -1) {
                     event_set.push(d.date);
+                }
                 var asn_path = JSON.parse(d.asn_path);
                 if (prepending) {
-                    var set = myUtils.no_consecutive_repetition(asn_path);
-                    asn_path = set;
+                    asn_path = myUtils.no_consecutive_repetition(asn_path);
                 }
                 if (asn_path.length != 0 && asn_path.length > level) {
                     var asn = asn_path[asn_path.length - (1 + level)];
                     d.asn = asn;
-                    if (asn_set.indexOf(asn) == -1)
+                    if (asn_set.indexOf(asn) == -1) {
                         asn_set.push(asn);
+                    }
                 }
                 else
                     d.asn = null;
                 return d;
-            };
+            }
 
             function mouseover() {
                 setTimeout(function(){
                     env.guiManager.dom.tooltipSvg.removeClass("hidden");
                 },0);
-            };
+            }
 
             function mousemove(d_key, pos, event) {
                 var $current_parsed = current_parsed;
                 env.guiManager.dom.tooltipSvg
-                        .css("left", (event.pageX + 10) + "px")
-                        .css("top", (event.pageY - 30) + "px");
+                    .css("left", (event.pageX + 10) + "px")
+                    .css("top", (event.pageY - 30) + "px");
                 if($this.last_hover==null || !($this.last_hover.asn == d_key.asn && d_key.cp == $this.last_hover.cp && $this.last_hover.date == d_key.date))
-                     setTimeout(function(){
-                            var s = "<strong> ASN: </strong>";
-                            s += "<span>" + ((d_key.asn != null) ? d_key.asn : "None") + "</span>";
-                            var asn_country = $current_parsed.known_asn[d_key.asn];
-                            if (asn_country) {
-                                var ac = asn_country.split(",");
-                                ac = ac[ac.length - 1];
-                                s += "<span> (" + ac + ") </span>";
-                                s += "<span class='flag-icon flag-icon-" + ac.toLowerCase().trim() + "'></span>";
-                            }
-                            s += "<br/><strong>Date: </strong><span>" + formatDate(parseDate(d_key.date)) + "</span>";
-                            s += "<br/><strong>CP: </strong>";
-                            if ($this.collapse_cp) {
-                                for (var i in cp_to_filter)
-                                    if (cp_to_filter[i].indexOf(d_key.cp) != -1) {
-                                        var list = cp_to_filter[i];
-                                        if (list.length > 1)
-                                            s += "<br/>";
-                                        for (var j in list) {
-                                            var r = list[j];
-                                            s += "<span>" + r;
-                                            var cp_country = $current_parsed.known_cp[r];
-                                            if (cp_country) {
-                                                var cc = cp_country["geo"].trim().split("-")[0];
-                                                s += "<span> (" + cc + ") </span>";
-                                                s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
-                                            }
-                                            s += "</span><br/>";
+                    setTimeout(function(){
+                        var s = "<strong> ASN: </strong>";
+                        s += "<span>" + ((d_key.asn != null) ? d_key.asn : "None") + "</span>";
+                        var asn_country = $current_parsed.known_asn[d_key.asn];
+                        if (asn_country) {
+                            var ac = asn_country.split(",");
+                            ac = ac[ac.length - 1];
+                            s += "<span> (" + ac + ") </span>";
+                            s += "<span class='flag-icon flag-icon-" + ac.toLowerCase().trim() + "'></span>";
+                        }
+                        s += "<br/><strong>Date: </strong><span>" + formatDate(parseDate(d_key.date)) + "</span>";
+                        s += "<br/><strong>CP: </strong>";
+                        if ($this.collapse_cp) {
+                            for (var i in cp_to_filter)
+                                if (cp_to_filter[i].indexOf(d_key.cp) != -1) {
+                                    var list = cp_to_filter[i];
+                                    if (list.length > 1)
+                                        s += "<br/>";
+                                    for (var j in list) {
+                                        var r = list[j];
+                                        s += "<span>" + r;
+                                        var cp_country = $current_parsed.known_cp[r];
+                                        if (cp_country) {
+                                            var cc = cp_country["geo"].trim().split("-")[0];
+                                            s += "<span> (" + cc + ") </span>";
+                                            s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
                                         }
+                                        s += "</span><br/>";
                                     }
-                            }
-                            else {
-                                s += d_key.cp;
-                                var cp_country = $current_parsed.known_cp[d_key.cp];
-                                if (cp_country) {
-                                    var cc = cp_country["geo"].trim().split("-")[0];
-                                    s += "<span> (" + cc + ") </span>";
-                                    s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
                                 }
+                        }
+                        else {
+                            s += d_key.cp;
+                            var cp_country = $current_parsed.known_cp[d_key.cp];
+                            if (cp_country) {
+                                var cc = cp_country["geo"].trim().split("-")[0];
+                                s += "<span> (" + cc + ") </span>";
+                                s += "<span class='flag-icon flag-icon-" + cc.toLowerCase() + "'></span>";
                             }
-                            
-                            env.guiManager.dom.tooltipSvg
-                                .html(s);
+                        }
+
+                        env.guiManager.dom.tooltipSvg
+                            .html(s);
                     },0);
 
                 if(d_key.asn!=null && ($this.last_hover==null || $this.last_hover.asn!=d_key.asn)){
                     setTimeout(function(){
-                            d3.selectAll("rect.area")
-                                .filter(function (d) {
-                                    return d.asn != d_key.asn;
-                                })
-                                .style("fill-opacity", 0.35);
-                            d3.selectAll("path.area")
-                                .filter(function (d) {
-                                    return d.key != d_key.asn;
-                                })
-                                .style("fill-opacity", 0.35);
-                        
+                        d3.selectAll("rect.area")
+                            .filter(function (d) {
+                                return d.asn != d_key.asn;
+                            })
+                            .style("fill-opacity", 0.35);
+                        d3.selectAll("path.area")
+                            .filter(function (d) {
+                                return d.key != d_key.asn;
+                            })
+                            .style("fill-opacity", 0.35);
+
                         $this.last_hover = {
                             asn:d_key.asn,
                             cp:d_key.cp,
