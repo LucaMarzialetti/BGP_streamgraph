@@ -150,7 +150,7 @@ define([
         };
 
         this.pickers_setup = function () {
-            
+
 
             this.dom.timeModal.modal({
                 show: false,
@@ -175,6 +175,11 @@ define([
                 .on('show', function () {
                     var offset = $this.dom.startDate.offset();
                     $this.dom.container.find(".datetimepicker")
+                        .on("click", function () {
+                            $this.dom.container.find(".datetimepicker")
+                                .css("top", offset.top + 25 - $(window).scrollTop())
+                                .css("left", offset.left - $(window).scrollLeft());
+                        })
                         .css("top", offset.top + 25 - $(window).scrollTop())
                         .css("left", offset.left - $(window).scrollLeft());
                 });
@@ -192,6 +197,11 @@ define([
                 .on('show', function () {
                     var offset = $this.dom.stopDate.offset();
                     $this.dom.container.find(".datetimepicker")
+                        .on("click", function () {
+                            $this.dom.container.find(".datetimepicker")
+                                .css("top", offset.top + 25 - $(window).scrollTop())
+                                .css("left", offset.left - $(window).scrollLeft());
+                        })
                         .css("top", offset.top + 25 - $(window).scrollTop())
                         .css("left", offset.left - $(window).scrollLeft());
                 });
@@ -537,7 +547,7 @@ define([
 
                 this.dom.date.addClass("disabled");
                 this.dom.date.addClass("not-active");
-                this.dom.date.parent().addClass("not-active");  
+                this.dom.date.parent().addClass("not-active");
             }
         };
 
@@ -743,7 +753,7 @@ define([
                         $this.dom.mainSvg.css("overflow-y", '');
                         $this.dom.mainSvg.find('svg').css("height",'');
                         $this.use_scrollbars=false;
-                    } 
+                    }
                     else {
                         if ($this.graph_type == "heat") {
                             $this.dom.counterAsn.find("label").text("#CP");

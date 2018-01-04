@@ -10033,13 +10033,13 @@
   cursor: unset !important;
   background-color: unset !important;
   opacity: unset !important;
-  width: 140px;
+  width: 140px!important;
 }
 .bgpst-container input.start-date.form-control {
   cursor: unset !important;
   background-color: unset !important;
   opacity: unset !important;
-  width: 140px;
+  width: 140px!important;
 }
 .bgpst-container .modal-body .form-group.row {
   margin: 0;

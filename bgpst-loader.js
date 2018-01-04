@@ -111,7 +111,7 @@ define([
          * Init Dependency Injection Vector
          */
         env = {
-            "version": "18.1.3.1",
+            "version": "18.1.4.1",
             "dev": instanceParams.dev,
             "logger": new Logger(),
             "autoStart": instanceParams.autoStart || true,
