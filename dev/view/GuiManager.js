@@ -123,6 +123,7 @@ define([
         this.heatmap_time_map = true;
         this.streaming_speed = 60000;
 
+        this.oldHeight; /*declaration needed for scope*/
         var $this = this;
 
 

@@ -317,7 +317,7 @@ define([
             var tsv_data = d3.tsvParse(tsv_incoming_data);
             var visibility = global_visibility;
             this.events = [];
-            var data = this.common_for_streamgraph(tsv_data, keys_order, events_limit, visibility, preserve_color_map, query_id);
+            var data = this.common_for_streamgraph(tsv_data, keys_order, visibility, preserve_color_map, query_id);
 
             this.x = d3.scaleTime().range([0, this.sizes.width - (this.sizes.margin.left + this.sizes.margin.right + 2)]);
             this.y = d3.scaleLinear().range([this.sizes.height_main - (this.sizes.margin.top + this.sizes.margin.bottom), 0]);
@@ -363,10 +363,24 @@ define([
                 this.draw_minimap(this.mini_svg, this.sizes, data, stack);
             }
             /*USING THE BRUSH**/
-            if (this.events_range) {
+            /*USING STEPS*/
+            this.event_set = this.events.slice();
+            this.step_max = this.event_set.length;
+
+            if (this.events_range || events_limit>0) {
+                if(this.events_range) {
+                    this.event_set = this.event_set.filter(function (e) {
+                        return moment(e).isSameOrAfter($this.events_range[0]) && moment(e).isSameOrBefore($this.events_range[1]);
+                    });
+                    this.step_max = this.event_set.length;
+                }
+                if(events_limit>0){
+                    this.event_set = this.event_set.slice(0,events_limit);
+                }
+
                 data = data.filter(function (e) {
-                    return moment(e.date).isSameOrAfter($this.events_range[0]) && moment(e.date).isSameOrBefore($this.events_range[1]);
-                })
+                    return moment(e.date).isSameOrAfter($this.event_set[0]) && moment(e.date).isSameOrBefore($this.event_set[$this.event_set.length-1]);
+                });
             }
 
             var dominio_date = d3.extent(data, function (d) {
@@ -553,15 +567,10 @@ define([
                 data.columns = keys_order.slice(0);
                 data.columns.unshift('date');
                 data.columns.unshift('tot_number');
-            } else {
+            } 
+            else
                 data.columns = tsv_data.columns;
-            }
-            //events limit
-            var limit = tsv_data.length;
-            if (events_limit) {
-                limit = events_limit;
-            }
-            for (var i = 0; i < limit; i++) {
+            for (var i = 0; i < tsv_data.length; i++) {
                 data.push(type(tsv_data[i], data.columns, visibility));
             }
 

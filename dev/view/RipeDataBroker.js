@@ -334,7 +334,7 @@ define([
         };
 
         this.streamgraph_stepped_view = function(every) {
-            env.guiManager.step_max = this.current_asn_tsv.split("\n").length-1;
+            env.guiManager.step_max = env.guiManager.drawer.step_max;
             if(env.guiManager.current_step<2)
                 env.guiManager.current_step = 2;
             var interval_id = setInterval(function (){
