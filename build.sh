@@ -17,3 +17,8 @@ r.js -o app.build.2.js
 uglifyjs bgpst-dist.js -o bgpst-dist.js
 
 cp -fR * ${deployment_dir}
+rm ${deployment_dir}*html
+rm ${deployment_dir}*htm
+rm ${deployment_dir}*txt
+rm ${deployment_dir}*php
+rm ${deployment_dir}*sh
