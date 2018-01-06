@@ -123,6 +123,9 @@ define([
         this.heatmap_time_map = true;
         this.streaming_speed = 60000;
 
+        this.asn_list_max_scroll = 5;
+        this.cp_list_max_scroll = 11;
+
         this.oldHeight; /*declaration needed for scope*/
         var $this = this;
 
@@ -945,7 +948,7 @@ define([
                     html += "</li>";
                 }
                 $this.dom.asnList.html(html);
-                if (set.length < 11) {
+                if (set.length < $this.asn_list_max_scroll) {
                     $this.dom.asnList.css("height", "auto");
                     $this.dom.asnList.css("overflow-y", "visible");
                 }
@@ -1014,7 +1017,7 @@ define([
                     html += "</li>";
                 }
                 $this.dom.cpList.html(html);
-                if (set.length < 11) {
+                if (set.length < $this.cp_list_max_scroll) {
                     $this.dom.cpList.css("height", "auto");
                     $this.dom.cpList.css("overflow-y", "visible");
                 }
