@@ -228,9 +228,6 @@ define([
                     }
                 }
             }
-            console.log("current viz", this.current_visibility)
-            console.log("local viz", this.current_parsed.local_visibility)
-
             if(this.current_visibility<this.current_parsed.local_visibility){
                 this.current_visibility=this.current_parsed.local_visibility;
                 env.guiManager.global_visibility=false;
