@@ -964,10 +964,8 @@ define([
             });
 
             function string_break(str){
-                console.log("str",str)
                 var l = str.length;
                 var tks = str.split(/[ -]/);
-                console.log("from",tks)
                 var parts = [];
                 var limit = 15;
                 var counter = 0;
@@ -988,7 +986,6 @@ define([
                 }
                 if(s!=="")
                     parts.push(s);
-                console.log("to",parts)
                 return parts;
             }
         };
