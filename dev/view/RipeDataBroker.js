@@ -24,9 +24,29 @@ define([
 
 
         //do the ajax get
-        this.getData = function() {
-            var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
+        this.dataRequest = function(){
+            var valid = true;
+            for(var t=0; (t<env.queryParams.targets&valid); t++){
+                var tgt = env.queryParams.targets[t];
+                if(!(env.guiManager.validator.check_ipv6(tgt) ||  env.guiManager.validator.check_ipv4(tgt) || env.guiManager.validator.check_asn(tgt)))
+                    valid=false;
+            }
+            if(!valid){
+                utils.observer.publish("error", "Invalid Request - bad target");
+                return false;
+            }
+            if(!(env.guiManager.validator.check_date(env.queryParams.startDate) || env.guiManager.validator.check_date(env.queryParams.stopDate))){
+                utils.observer.publish("error", "Invalid Request - bad date");
+            }
+            else{
+                $this.getPeerCountData();
+                $this.getBGPData();
+            }
+        };
 
+
+        this.getPeerCountData = function() {
+            var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
             $.ajax({
                 url: url_ris_peer_count,
                 dataType: "json",
@@ -45,6 +65,7 @@ define([
                         if($this.ipv4_peerings == 0 && env.queryParams.targets.some(function(e){return env.guiManager.validator.check_ipv4(e)}))
                             env.guiManager.global_visibility = false;
                     } catch(err) {
+                        utils.observer.publish("error", "PEERCOUNT API empty");
                         env.logger.log("=== RipeBroker Warning: empty peerings size");
                         $this.ipv6_peerings = 0;
                         $this.ipv4_peerings = 0;
@@ -52,12 +73,10 @@ define([
                     }
                 },
                 fail: function (argument) {
-                    alert("Server error");
+                    utils.observer.publish("error", "PEERCOUNT API error");
                 }
             });
-            $this.getBGPData();
         };
-
 
         this.getBGPData = function() {
             var url_bgplay = "https://stat.ripe.net/data/bgplay/data.json";
@@ -73,33 +92,40 @@ define([
                     env.logger.log("=== RipeBroker Success! Data loaded from:"+url_bgplay);
                     env.logger.log(data);
                     try {
-                        $this.current_parsed = $this.parser.ripe_response_parse(data, env.queryParams.startDate, env.queryParams.stopDate);
-                        if(env.guiManager.gather_information){
-                            env.logger.log("=== RipeBroker Starting gathering CP Info");
-                            env.guiManager.rrc_info_done=false;
-                            setTimeout(function(){
-                                $this.getCPInfo($this.current_parsed.resources,0)
-                            },0);
+                        if(Array.isArray(data['data']['events']) && data['data']['events'].length<1 && Array.isArray(data['data']['initial_state']) && data['data']['initial_state'].length<1){
+                            console.log("=== RipeBroker empty response ! ")
+                            utils.observer.publish("error", "BGPLAY API EMPTY DATA");
+                            return false;
                         }
-                        env.queryParams.targets = data.data.targets.map(function (e) {return e['prefix'].replace(/"/g,'');});
-                        $this.loadCurrentState(true, env.guiManager.drawer.events_range, true);
+                        else {
+                            $this.current_parsed = $this.parser.ripe_response_parse(data, env.queryParams.startDate, env.queryParams.stopDate);
+                            if(env.guiManager.gather_information){
+                                env.logger.log("=== RipeBroker Starting gathering CP Info");
+                                env.guiManager.rrc_info_done=false;
+                                setTimeout(function(){
+                                    $this.getCPInfo($this.current_parsed.resources,0)
+                                },0);
+                            }
+                            env.queryParams.targets = data.data.targets.map(function (e) {return e['prefix'].replace(/"/g,'');});
+                            $this.loadCurrentState(true, env.guiManager.drawer.events_range, true);
 
-                        if(env.guiManager.gather_information){
-                            env.logger.log("=== RipeBroker Starting gathering ASN Info");
-                            setTimeout(function(){
-                                env.guiManager.asn_info_done=false;
-                                if(env.guiManager.graph_type=="stream")
-                                    $this.getASNInfo($this.current_parsed.asn_set,0);
-                                else
-                                if(env.guiManager.graph_type=="heat")
-                                    $this.getASNInfo(env.guiManager.drawer.asn_set,0);
-                            },0);
+                            if(env.guiManager.gather_information){
+                                env.logger.log("=== RipeBroker Starting gathering ASN Info");
+                                setTimeout(function(){
+                                    env.guiManager.asn_info_done=false;
+                                    if(env.guiManager.graph_type=="stream")
+                                        $this.getASNInfo($this.current_parsed.asn_set,0);
+                                    else
+                                    if(env.guiManager.graph_type=="heat")
+                                        $this.getASNInfo(env.guiManager.drawer.asn_set,0);
+                                },0);
+                            }
                         }
                     }
                     catch(err){
                         //env.logger.log(err);
                         console.log(err);
-                        //alert("No data found for this target in the interval of time selected");
+                        utils.observer.publish("error", "PARSING DATA error");
                     }
                     finally {
                         env.guiManager.draw_functions_btn_enabler();
@@ -108,14 +134,14 @@ define([
                 error: function(jqXHR, exception){
                     switch(jqXHR.status){
                         case 500:
-                            alert("Server error");
-                            break;
+                            utils.observer.publish("error", "BGPLAY API 500 error");
+                        break;
                         case 404:
-                            alert("Bad Request");
-                            break;
+                            utils.observer.publish("error", "BGPLAY API 404 error");
+                        break;
                         default:
-                            alert("Something went wrong");
-                            break;
+                            utils.observer.publish("error", "BGPLAY API error");
+                        break;
                     }
                 }
             });
@@ -327,7 +353,7 @@ define([
                 env.queryParams.stopDate = moment.utc();
                 env.queryParams.startDate = moment(env.queryParams.stopDate).subtract(timeWindow, "seconds");
 
-                $this.getData();
+                $this.dataRequest();
                 env.logger.log("Streaming got new data!");
             };
 

@@ -140,7 +140,7 @@ define([
             this.other_command_button_setup();
             this.tooltip_setup();
 
-            this.ripeDataBroker.getData();
+            this.ripeDataBroker.dataRequest();
         };
 
         this.checkDatetimepicker = function () {
@@ -217,7 +217,7 @@ define([
             this.dom.applyTime.on("mousedown", function () {
                 env.queryParams.startDate = moment($this.dom.startDate.datetimepicker("getDate"));
                 env.queryParams.stopDate = moment($this.dom.stopDate.datetimepicker("getDate"));
-                $this.ripeDataBroker.getData();
+                $this.ripeDataBroker.dataRequest();
             });
         };
 
