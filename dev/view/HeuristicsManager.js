@@ -178,7 +178,7 @@ define([
             var done = [];
             for(var i in theorical_devs)
                 if(theorical_devs[i] == 0){
-                    done.push(i);
+                    done.push(parseInt(i));
                 }
             var d_l = done.length;
             var a_l = current_parsed.asn_set.length;

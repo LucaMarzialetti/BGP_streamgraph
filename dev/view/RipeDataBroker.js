@@ -50,12 +50,12 @@ define([
                         $this.ipv4_peerings = 0;
                         env.guiManager.global_visibility = false;
                     }
-                    $this.getBGPData();
                 },
                 fail: function (argument) {
                     alert("Server error");
                 }
             });
+            $this.getBGPData();
         };
 
 
@@ -212,21 +212,26 @@ define([
             this.parser.cp_seqs(this.current_parsed);
             this.parser.asn_exchanges(this.current_parsed);
             this.current_visibility = 0;
+            this.use_ipv4_vis = env.guiManager.ip_version.indexOf(4) != -1;
+            this.use_ipv6_vis = env.guiManager.ip_version.indexOf(6) != -1;
+
             if(env.guiManager.global_visibility) {
                 for(var t in this.current_parsed.targets){
                     var tgs = this.current_parsed.targets[t];
-                    if(env.guiManager.ip_version.indexOf(4) != -1 && env.guiManager.validator.check_ipv4(tgs)){
+                    if(this.use_ipv4_vis && env.guiManager.validator.check_ipv4(tgs)){
                         env.logger.log("== RipeBroker adding ipv4 peerings");
                         this.current_visibility+=this.ipv4_peerings;
                     }
-                    if(env.guiManager.ip_version.indexOf(6) != -1 && env.guiManager.validator.check_ipv6(tgs)){
+                    if(this.use_ipv6_vis && env.guiManager.validator.check_ipv6(tgs)){
                         env.logger.log("== RipeBroker adding ipv6 peerings");
                         this.current_visibility+=this.ipv6_peerings;
                     }
                 }
             }
-            else
-                this.current_visibility = this.current_parsed.local_visibility;
+            if(this.current_visibility<this.current_parsed.local_visibility){
+                this.current_visibility=this.current_parsed.local_visibility;
+                env.guiManager.global_visibility=false;
+            }
             //STREAM
             if(env.guiManager.graph_type == "stream") {
                 //ORDERING
@@ -334,7 +339,7 @@ define([
         };
 
         this.streamgraph_stepped_view = function(every) {
-            env.guiManager.step_max = this.current_asn_tsv.split("\n").length-1;
+            env.guiManager.step_max = env.guiManager.drawer.step_max;
             if(env.guiManager.current_step<2)
                 env.guiManager.current_step = 2;
             var interval_id = setInterval(function (){
