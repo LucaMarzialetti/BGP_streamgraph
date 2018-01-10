@@ -26,21 +26,20 @@ define([
         //do the ajax get
         this.dataRequest = function(){
             var valid = true;
-            for(var t=0; (t<env.queryParams.targets&valid); t++){
+            for (var t=0; t < env.queryParams.targets && valid; t++){
                 var tgt = env.queryParams.targets[t];
-                if(!(env.guiManager.validator.check_ipv6(tgt) ||  env.guiManager.validator.check_ipv4(tgt) || env.guiManager.validator.check_asn(tgt)))
-                    valid=false;
+                if (!(env.guiManager.validator.check_ipv6(tgt) ||  env.guiManager.validator.check_ipv4(tgt) || env.guiManager.validator.check_asn(tgt)))
+                    valid = false;
             }
             if(!valid){
                 utils.observer.publish("error", "Invalid Request - bad target");
-                return false;
-            }
-            if(!(env.guiManager.validator.check_date(env.queryParams.startDate) || env.guiManager.validator.check_date(env.queryParams.stopDate))){
-                utils.observer.publish("error", "Invalid Request - bad date");
-            }
-            else{
-                $this.getPeerCountData();
-                $this.getBGPData();
+            } else {
+                if (!(env.guiManager.validator.check_date(env.queryParams.startDate) || env.guiManager.validator.check_date(env.queryParams.stopDate))) {
+                    utils.observer.publish("error", "Invalid Request - bad date");
+                } else {
+                    $this.getPeerCountData();
+                    $this.getBGPData();
+                }
             }
         };
 
@@ -93,7 +92,7 @@ define([
                     env.logger.log(data);
                     try {
                         if(Array.isArray(data['data']['events']) && data['data']['events'].length<1 && Array.isArray(data['data']['initial_state']) && data['data']['initial_state'].length<1){
-                            console.log("=== RipeBroker empty response ! ")
+                            console.log("=== RipeBroker empty response ! ");
                             utils.observer.publish("error", "BGPLAY API EMPTY DATA");
                             return false;
                         }
