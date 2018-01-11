@@ -20,9 +20,23 @@ define([
         this.heuristicsManager = new HeuristicsManager(env);
         this.ipv6_peerings = 0;
         this.ipv4_peerings = 0;
+
+        /**error strings**/
+        $this.errors = {
+            invalidTarget: "Invalid Target",
+            invalidDate: "Invalid Date",
+            peercountEmpty: "Peer count empty, global visibility may is not available",
+            peercountFail: "Peer count internal error, global visibility may is not available",
+            bgplayEmpty: "No data found",
+            parsingError: "Something went wrong",
+            bgplayFail4: "Server internal error",
+            bgplayFail5: "Something went wrong",
+            bgplayFailDef: "Something went wrong",
+            cpInfoError: "Collector peer missing informations",
+            asnInfoError: "AS missing informations"
+        };
+
         env.logger.log("=== RipeBroker Ready");
-
-
         //do the ajax get
         this.dataRequest = function(){
             var valid = true;
@@ -32,10 +46,10 @@ define([
                     valid = false;
             }
             if(!valid){
-                utils.observer.publish("error", "Invalid Request - bad target");
+                utils.observer.publish("error", $this.errors.invalidTarget);
             } else {
                 if (!(env.guiManager.validator.check_date(env.queryParams.startDate) || env.guiManager.validator.check_date(env.queryParams.stopDate))) {
-                    utils.observer.publish("error", "Invalid Request - bad date");
+                    utils.observer.publish("error", $this.errors.invalidDate);
                 } else {
                     $this.getPeerCountData();
                     $this.getBGPData();
@@ -64,7 +78,7 @@ define([
                         if($this.ipv4_peerings == 0 && env.queryParams.targets.some(function(e){return env.guiManager.validator.check_ipv4(e)}))
                             env.guiManager.global_visibility = false;
                     } catch(err) {
-                        utils.observer.publish("error", "PEERCOUNT API empty");
+                        utils.observer.publish("error", $this.errors.peercountEmpty);
                         env.logger.log("=== RipeBroker Warning: empty peerings size");
                         $this.ipv6_peerings = 0;
                         $this.ipv4_peerings = 0;
@@ -72,7 +86,7 @@ define([
                     }
                 },
                 fail: function (argument) {
-                    utils.observer.publish("error", "PEERCOUNT API error");
+                    utils.observer.publish("error", $this.errors.peercountFail);
                 }
             });
         };
@@ -93,7 +107,7 @@ define([
                     try {
                         if(Array.isArray(data['data']['events']) && data['data']['events'].length<1 && Array.isArray(data['data']['initial_state']) && data['data']['initial_state'].length<1){
                             console.log("=== RipeBroker empty response ! ");
-                            utils.observer.publish("error", "BGPLAY API EMPTY DATA");
+                            utils.observer.publish("error", $this.errors.bgplayEmpty);
                             return false;
                         }
                         else {
@@ -124,7 +138,7 @@ define([
                     catch(err){
                         //env.logger.log(err);
                         console.log(err);
-                        utils.observer.publish("error", "PARSING DATA error");
+                        utils.observer.publish("error", $this.errors.parsingError);
                     }
                     finally {
                         env.guiManager.draw_functions_btn_enabler();
@@ -132,14 +146,14 @@ define([
                 },
                 error: function(jqXHR, exception){
                     switch(jqXHR.status){
-                        case 500:
-                            utils.observer.publish("error", "BGPLAY API 500 error");
-                        break;
                         case 404:
-                            utils.observer.publish("error", "BGPLAY API 404 error");
+                            utils.observer.publish("error", this.erors.bgplayFail4);
+                        break;
+                        case 500:
+                            utils.observer.publish("error", this.erors.bgplayFail5);
                         break;
                         default:
-                            utils.observer.publish("error", "BGPLAY API error");
+                            utils.observer.publish("error", this.erors.bgplayFailDef);
                         break;
                     }
                 }
@@ -157,7 +171,7 @@ define([
                     $this.current_parsed.known_cp[res.id] = res;
                 },
                 error: function(jqXHR, exception){
-                    alert("failed CP lookup for "+res);
+                    utils.observer.publish("error", $this.errors.cpInfoError);
                 }
             });
         };
@@ -186,7 +200,7 @@ define([
                     $this.current_parsed.known_asn[res] = data.data.holder;
                 },
                 error: function(jqXHR, exception){
-                    alert("failed ASN lookup for "+res);
+                    utils.observer.publish("error", $this.errors.asnInfoError);
                 }
             });
         };
@@ -347,15 +361,12 @@ define([
 
         this.streamgraph_streaming = function(every) {
             var call = function (){
-
                 var timeWindow = env.queryParams.stopDate.diff(env.queryParams.startDate, "seconds");
                 env.queryParams.stopDate = moment.utc();
                 env.queryParams.startDate = moment(env.queryParams.stopDate).subtract(timeWindow, "seconds");
-
                 $this.dataRequest();
                 env.logger.log("Streaming got new data!");
             };
-
             call();
             var interval_id = setInterval(call, every);
             //env.logger
