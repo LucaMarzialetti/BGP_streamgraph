@@ -1,12 +1,11 @@
 define([
+    "bgpst.env.utils",
     "bgpst.lib.moment",
-    "bgpst.controller.validator",
     "bgpst.controller.functions"
-], function(moment, Validator, myUtils){
+], function(utils, moment, myUtils){
 
     var RipeDataParser = function(env) {
         env.logger.log("==== RipeParser Starting");
-        this.validator = new Validator();
         this.states = [];
         this.events = [];
         this.resources = [];
@@ -77,7 +76,7 @@ define([
             }
             this.resources = data.sources;
             //inizializza la mappa in base al numero di targets
-            for (var t in this.targets) {
+            for (var t=0; t<this.targets.length; t++){
                 this.cp_map[this.targets[t]] = {};
                 this.states[this.targets[t]] = [];
             }
@@ -137,7 +136,6 @@ define([
             var data = json['data'];
             this.makeIntialStateMapping(data);
             this.snapshotOfState();
-            //data_check();
         };
 
         //only load new events on the already existing configuration
@@ -145,7 +143,6 @@ define([
             var data = json['data'];
             this.fetchUpdates(data);
             this.snapshotOfState();
-            //data_check();
         };
 
         //initialize the cp_map
@@ -155,8 +152,9 @@ define([
                 var state = initial_state[i];
                 var path = state['path'];
                 var cp_id = state['source_id'];
-                if (this.cp_set.indexOf(cp_id) == -1)
+                if (this.cp_set.indexOf(cp_id) == -1) {
                     this.cp_set.push(cp_id);
+                }
                 this.cp_map[state['target_prefix']][cp_id] = path;
             }
         };
@@ -197,14 +195,15 @@ define([
         //take a snapshot of the cp_map
         //cumulate the single CP announcement into ASN view
         this.snapshotOfState = function () {
-            for (var t in this.targets)
+            for (var t=0; t<this.targets.length; t++) {
                 this.states[this.targets[t]].push(JSON.parse(JSON.stringify(this.cp_map[this.targets[t]])));
+            }
             this.events.push(this.last_date);
         };
 
         //zero fill the cps in every moment
         this.zeroFilling = function (start, end) {
-            for (var t in this.targets) {
+            for (var t=0; t<this.targets.length; t++) {
                 var tgt = this.targets[t];
                 for (var i in this.states[tgt]) {
                     var e = this.states[tgt][i];
@@ -221,17 +220,16 @@ define([
                 env.logger.log("ADDED HEAD FAKE EVENT");
                 this.fake_head = true;
                 this.query_starttime = start.format(env.dateConverter.ripestat_data_format);
-            }
-            else
+            } else {
                 this.fake_head = false;
+            }
             if (moment(this.events[this.events.length - 1]).isBefore(end)) {
                 env.logger.log("ADDED TAIL FAKE EVENT");
                 this.fake_tail = true;
                 this.query_endtime = end.format(env.dateConverter.ripestat_data_format);
-            }
-            else
+            } else {
                 this.fake_tail = false;
-            //}
+            }
         };
 
         //object of cp and an array of states for any of them
@@ -239,8 +237,9 @@ define([
         this.states_cp = function (parsed, level, antiprepending) {
             this.states_by_cp = {};
             //init
-            for (var r in parsed.cp_set)
+            for (var r in parsed.cp_set) {
                 this.states_by_cp[parsed.cp_set[r]] = [];
+            }
             //popolate
             for (var t in parsed.targets) {
                 var tgt = parsed.targets[t];
@@ -404,12 +403,13 @@ define([
             this.asn_set = [];
             this.local_visibility = 0;
             //initialize
-            for (var i in data.events)
+            for (var i in data.events) {
                 this.asn_distributions.push({});
+            }
             //counting
-            for (var t in data.targets) {
-                var tgt = data.targets[t];
-                if ((include_ipv4 && this.validator.check_ipv4(tgt)) || (include_ipv6 && this.validator.check_ipv6(tgt))) {
+            for (var n=0; n<data.targets.length; n++){
+                var tgt = data.targets[n];
+                if ((include_ipv4 && utils.validateIPv4(tgt)) || (include_ipv6 && utils.validateIPv6(tgt))) {
                     for (var i in data.states[tgt]) {
                         var state = data.states[tgt][i];
                         var tot = 0;
@@ -569,7 +569,7 @@ define([
                 real_events = real_events.concat(data.query_endtime);
             }
 
-            env.logger.log(real_events)
+            env.logger.log(real_events);
             var converted_data = [];
             var header = "date\tcp\tasn_path";
             var cp_set = data.cp_set.sort();
@@ -578,7 +578,7 @@ define([
             converted_data.push(header);
             for (var t in data.targets) {
                 var tgt = data.targets[t];
-                if ((include_ipv4 && this.validator.check_ipv4(tgt)) || (include_ipv6 && this.validator.check_ipv6(tgt))) {
+                if ((include_ipv4 && utils.validateIPv4(tgt)) || (include_ipv6 && utils.validateIPv6(tgt))) {
                     for (var i in real_states[tgt]) {
                         var state = real_states[tgt][i];
                         for (var j in cp_set) {
@@ -592,8 +592,7 @@ define([
                     }
                 }
             }
-            var converted = converted_data.join("\n");
-            return converted;
+            return converted_data.join("\n");
         };
 
         /************************ OTHER ************************/

@@ -46,9 +46,7 @@ requirejs.config({
         /* controller */
         "bgpst.controller.main": window.atlas._widgets.bgpst.urls.controller + "main",
 
-        "bgpst.controller.asnvalidator": window.atlas._widgets.bgpst.urls.controller + "helpers/AsnValidator",
         "bgpst.controller.dateconverter": window.atlas._widgets.bgpst.urls.controller + "helpers/DateConverter",
-        "bgpst.controller.datevalidator": window.atlas._widgets.bgpst.urls.controller + "helpers/DateValidator",
         "bgpst.controller.functions": window.atlas._widgets.bgpst.urls.controller + "helpers/Functions",
         "bgpst.controller.ipv4validator": window.atlas._widgets.bgpst.urls.controller + "helpers/Ipv4Validator",
         "bgpst.controller.ipv6validator": window.atlas._widgets.bgpst.urls.controller + "helpers/Ipv6Validator",
@@ -111,7 +109,7 @@ define([
          * Init Dependency Injection Vector
          */
         env = {
-            "version": "18.1.9.1",
+            "version": "18.1.16.2",
             "dev": instanceParams.dev,
             "logger": new Logger(),
             "autoStart": instanceParams.autoStart || true,
@@ -121,9 +119,14 @@ define([
             //{ resource: "IP", startDate: new Date(), stopDate: new Date()}
         };
 
+        if (!env.queryParams.targets.every(function (item) {
+                return utils.validateIP(item.toString()) || !isNaN(item.toString().replace(/AS/ig, ''));
+            })){
+            utils.observer.publish("error", "One of the targets is not a valid resource (IP, prefix, ASN)");
+        }
 
         if (env.queryParams.stopDate) {
-            env.queryParams.stopDate = (typeof env.queryParams.stopDate == "string") ?
+            env.queryParams.stopDate = (isNaN(env.queryParams.stopDate)) ?
                 moment(env.queryParams.stopDate).utc() : // parse string
                 moment.unix(env.queryParams.stopDate).utc(); // parse unix timestamp
         } else {
@@ -131,13 +134,12 @@ define([
         }
 
         if (env.queryParams.startDate) {
-            env.queryParams.startDate = (typeof env.queryParams.startDate == "string") ?
+            env.queryParams.startDate = (isNaN(env.queryParams.startDate)) ?
                 moment(env.queryParams.startDate).utc() :
                 moment.unix(env.queryParams.startDate).utc();
         } else {
             env.queryParams.startDate = moment(env.queryParams.stopDate).subtract(config.defaultTimeWindowMinutes, "minute"); // default time window
         }
-
 
         /*
          * Check if parent dom exists

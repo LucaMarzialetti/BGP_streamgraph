@@ -144,6 +144,7 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
             dev: false,
             sendErrors: false,
             onError: function (error) {
+                console.log(error);
                 $(domElement).addMsg("error", error, true);
             }
         }, {

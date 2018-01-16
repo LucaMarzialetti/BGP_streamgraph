@@ -1,13 +1,13 @@
 define([
+    "bgpst.env.utils",
     "bgpst.view.graphdrawer",
-    "bgpst.controller.validator",
     "bgpst.controller.dateconverter",
     "bgpst.view.broker",
     "bgpst.view.scroller",
     "bgpst.lib.moment",
     "bgpst.lib.jquery-amd",
     "bgpst.lib.stache!main"
-], function(GraphDrawer, Validator, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
+], function(utils, GraphDrawer, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
 
 
     //setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
@@ -132,7 +132,6 @@ define([
 
         this.init = function () {
             this.ripeDataBroker = new RipeDataBroker(env);
-            this.validator = new Validator();
             this.dateConverter = new DateConverter();
 
             this.drawer.drawer_init();
@@ -448,13 +447,9 @@ define([
                 var containsIpv6, containsIpv4;
 
                 containsIpv4 = this.ripeDataBroker.current_parsed.targets
-                    .some(function (e) {
-                        return $this.validator.check_ipv4(e);
-                    });
+                    .some(utils.validateIPv4);
                 containsIpv6 = this.ripeDataBroker.current_parsed.targets
-                    .some(function (e) {
-                        return $this.validator.check_ipv6(e);
-                    });
+                    .some(utils.validateIPv6);
 
                 if (containsIpv4 || containsIpv6) {
                     if (!containsIpv4) {
@@ -556,9 +551,7 @@ define([
 
         this.ip_version_checkbox_enabler = function () {
             if (!this.streaming) {
-                if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
-                        return $this.validator.check_ipv4(e);
-                    })) {
+                if (this.ripeDataBroker.current_parsed.targets.every(utils.validateIPv4)) {
                     this.dom.ipVersionButton.filter("[value='4']").parent().removeClass("disabled");
                     this.dom.ipVersionButton.filter("[value='4']").parent().removeClass("not-active");
                     this.dom.ipVersionButton.filter("[value='4']").parent().attr("disabled", false);
@@ -570,7 +563,7 @@ define([
                     this.dom.ipVersionButton.filter("[value='4']").parent().attr("disabled", true);
                 }
                 if (this.ripeDataBroker.current_parsed.targets.every(function (e) {
-                        return $this.validator.check_ipv6(e);
+                        return utils.validateIPv6(e);
                     })) {
                     this.dom.ipVersionButton.filter("[value='6']").parent().removeClass("disabled");
                     this.dom.ipVersionButton.filter("[value='6']").parent().removeClass("not-active");
@@ -583,9 +576,9 @@ define([
                     this.dom.ipVersionButton.filter("[value='6']").parent().attr("disabled", true);
                 }
                 if (this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                        return $this.validator.check_ipv4(e);
+                        return utils.validateIPv4(e);
                     }) && this.ripeDataBroker.current_parsed.targets.some(function (e) {
-                        return $this.validator.check_ipv6(e);
+                        return utils.validateIPv6(e);
                     })) {
                     this.dom.ipVersionButton.filter("[value='4']").parent().removeClass("disabled");
                     this.dom.ipVersionButton.filter("[value='4']").parent().removeClass("not-active");

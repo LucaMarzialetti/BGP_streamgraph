@@ -22,7 +22,7 @@ define([
         this.ipv4_peerings = 0;
 
         /**error strings**/
-        $this.errors = {
+        this.errors = {
             invalidTarget: "Invalid Target",
             invalidDate: "Invalid Date",
             peercountEmpty: "Peer count empty, global visibility may is not available",
@@ -39,24 +39,9 @@ define([
         env.logger.log("=== RipeBroker Ready");
         //do the ajax get
         this.dataRequest = function(){
-            var valid = true;
-            for (var t=0; t < env.queryParams.targets && valid; t++){
-                var tgt = env.queryParams.targets[t];
-                if (!(env.guiManager.validator.check_ipv6(tgt) ||  env.guiManager.validator.check_ipv4(tgt) || env.guiManager.validator.check_asn(tgt)))
-                    valid = false;
-            }
-            if(!valid){
-                utils.observer.publish("error", $this.errors.invalidTarget);
-            } else {
-                if (!(env.guiManager.validator.check_date(env.queryParams.startDate) || env.guiManager.validator.check_date(env.queryParams.stopDate))) {
-                    utils.observer.publish("error", $this.errors.invalidDate);
-                } else {
-                    $this.getPeerCountData();
-                    $this.getBGPData();
-                }
-            }
+            $this.getPeerCountData();
+            $this.getBGPData();
         };
-
 
         this.getPeerCountData = function() {
             var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
@@ -73,9 +58,9 @@ define([
                     try {
                         $this.ipv4_peerings = myUtils.max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
                         $this.ipv6_peerings = myUtils.max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
-                        if($this.ipv6_peerings == 0 && env.queryParams.targets.some(function(e){return env.guiManager.validator.check_ipv6(e)}))
+                        if($this.ipv6_peerings == 0 && env.queryParams.targets.some(utils.validateIPv6))
                             env.guiManager.global_visibility = false;
-                        if($this.ipv4_peerings == 0 && env.queryParams.targets.some(function(e){return env.guiManager.validator.check_ipv4(e)}))
+                        if($this.ipv4_peerings == 0 && env.queryParams.targets.some(utils.validateIPv6))
                             env.guiManager.global_visibility = false;
                     } catch(err) {
                         utils.observer.publish("error", $this.errors.peercountEmpty);
@@ -134,9 +119,7 @@ define([
                                 },0);
                             }
                         }
-                    }
-                    catch(err){
-                        //env.logger.log(err);
+                    } catch(err) {
                         console.log(err);
                         utils.observer.publish("error", $this.errors.parsingError);
                     }
@@ -147,14 +130,14 @@ define([
                 error: function(jqXHR, exception){
                     switch(jqXHR.status){
                         case 404:
-                            utils.observer.publish("error", this.erors.bgplayFail4);
-                        break;
+                            utils.observer.publish("error", $this.errors.bgplayFail4);
+                            break;
                         case 500:
-                            utils.observer.publish("error", this.erors.bgplayFail5);
-                        break;
+                            utils.observer.publish("error", $this.errors.bgplayFail5);
+                            break;
                         default:
-                            utils.observer.publish("error", this.erors.bgplayFailDef);
-                        break;
+                            utils.observer.publish("error", $this.errors.bgplayFailDef);
+                            break;
                     }
                 }
             });
@@ -257,11 +240,11 @@ define([
             if(env.guiManager.global_visibility) {
                 for(var t in this.current_parsed.targets){
                     var tgs = this.current_parsed.targets[t];
-                    if(this.use_ipv4_vis && env.guiManager.validator.check_ipv4(tgs)){
+                    if(this.use_ipv4_vis && utils.validateIPv4(tgs)){
                         env.logger.log("== RipeBroker adding ipv4 peerings");
                         this.current_visibility+=this.ipv4_peerings;
                     }
-                    if(this.use_ipv6_vis && env.guiManager.validator.check_ipv6(tgs)){
+                    if(this.use_ipv6_vis && utils.validateIPv6(tgs)){
                         env.logger.log("== RipeBroker adding ipv6 peerings");
                         this.current_visibility+=this.ipv6_peerings;
                     }
@@ -400,9 +383,9 @@ define([
         };
 
         this.steps_core = function(i) {
-                env.guiManager.drawer.draw_streamgraph($this.current_parsed, env.guiManager.graph_type, $this.current_asn_tsv, env.guiManager.drawer.keys, env.guiManager.preserve_map, $this.current_visibility, $this.current_parsed.targets, $this.current_parsed.query_id, $this.gotToBgplayFromPosition, i, null, false);
-                env.guiManager.update_counters(".counter_asn", $this.current_parsed.asn_set.length);
-                env.guiManager.update_counters(".counter_events", i + "/" + env.guiManager.step_max);
+            env.guiManager.drawer.draw_streamgraph($this.current_parsed, env.guiManager.graph_type, $this.current_asn_tsv, env.guiManager.drawer.keys, env.guiManager.preserve_map, $this.current_visibility, $this.current_parsed.targets, $this.current_parsed.query_id, $this.gotToBgplayFromPosition, i, null, false);
+            env.guiManager.update_counters(".counter_asn", $this.current_parsed.asn_set.length);
+            env.guiManager.update_counters(".counter_events", i + "/" + env.guiManager.step_max);
         };
 
         this.gotToBgplayFromPosition = function(pos){

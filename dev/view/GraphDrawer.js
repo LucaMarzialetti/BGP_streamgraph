@@ -600,7 +600,7 @@ define([
                 }
 
                 return d;
-            };
+            }
         };
 
         //function used to draw the data - already parsed as TSV
@@ -823,7 +823,6 @@ define([
             areas.enter().append("rect")
                 .attr("x", function (d) {
                     if (timemap) {
-                        /*console.log(d);*/
                         var i = $this.event_set.indexOf(d.date);
                         var before = $this.diff_ranges.slice(0, i);
                         var dist = 0;
@@ -844,7 +843,6 @@ define([
                 })
                 .attr("width", function (d) {
                     if (timemap) {
-                        /*console.log(d);*/
                         return Math.max(0, $this.width_axis($this.diff_ranges[$this.event_set.indexOf(d.date)] - $this.sizes.def_cell_margins.x));
                     }
                     else
