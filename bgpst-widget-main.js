@@ -142,11 +142,7 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
 
         instance = initBGPst(domElement, {
             dev: false,
-            sendErrors: false,
-            onError: function (error) {
-                console.log(error);
-                $(domElement).addMsg("error", error, true);
-            }
+            sendErrors: false
         }, {
             targets: [widgetParams.resource],
             startDate: widgetParams.starttime,
@@ -155,6 +151,11 @@ if (typeof jQuery != 'undefined' && jQuery.fn && window.ripestat) {
 
         instance.ready(function(){
             var updateLink = false;
+
+            instance.shell()
+                .on("error", function (error) {
+                    $(domElement).addMsg("error", error, true);
+                });
             instance.shell()
                 .on("updated", function(params){
                     var newParams = {
