@@ -5,7 +5,7 @@ define([
   const levenshtein = (a, b) => {
     if (a.length === 0) return b.length
     if (b.length === 0) return a.length
-    let tmp, i, j, prev, val
+    var tmp, i, j, prev, val;
     // swap to save some memory O(min(a,b)) instead of O(a)
     if (a.length > b.length) {
       tmp = a

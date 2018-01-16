@@ -963,7 +963,7 @@ define([
                 var limit = 15;
                 var counter = 0;
                 var s = "";
-                for(var i in tks){
+                for(var i=0; i<tks.length; i++){
                     var ti = tks[i];
                     counter+=ti.length;
                     s+=ti;

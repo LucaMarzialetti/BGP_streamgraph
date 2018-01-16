@@ -552,7 +552,7 @@ define([
             this.width_axis = d3.scaleLinear().range([0, $this.sizes.width - margin_x / 3 * 2]).domain([0, max_width]);
             this.x = d3.scaleTime().range([0, $this.sizes.width - margin_x / 3 * 2]).domain(date_domain);
             this.ticks = [];
-            for (var i in events) {
+            for (var i=0; i<events.length; i++) {
                 if (this.width_axis(this.diff_ranges[i]) > 10) {
                     this.ticks.push(new Date(events[i]));
                 }

@@ -238,7 +238,7 @@ define([
             this.use_ipv6_vis = env.guiManager.ip_version.indexOf(6) != -1;
 
             if(env.guiManager.global_visibility) {
-                for(var t in this.current_parsed.targets){
+                for(var t=0; t<this.current_parsed.targets.length; t++){
                     var tgs = this.current_parsed.targets[t];
                     if(this.use_ipv4_vis && utils.validateIPv4(tgs)){
                         env.logger.log("== RipeBroker adding ipv4 peerings");

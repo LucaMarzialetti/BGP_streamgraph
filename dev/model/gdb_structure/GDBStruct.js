@@ -11,7 +11,7 @@ define([], function(){
         this.seq = seq.slice(0);
         this.perm_list = [];
         this.binds = [];
-        for(var i in this.seq){
+        for(var i=0; i<this.seq.length; i++){
             this.perm_list.push(this.seq[i]);
         }
     };
@@ -158,7 +158,7 @@ define([], function(){
                             if(seq_x<seq_y)
                                 seq_y--;
                             this.logger.log("nodo "+node)
-                            for(var n in node)
+                            for(var n=0; n<node.length; n++)
                                 this.perm_list[seq_y].push(node[n]);
                         }
                         //Y is head => push in tail of X
@@ -169,7 +169,7 @@ define([], function(){
                             if(seq_y<seq_x)
                                 seq_x--;
                             this.logger.log("nodo "+node)
-                            for(var n in node)
+                            for(var n=0; n<node.length; n++)
                                 this.perm_list[seq_x].push(node[n]);
                         }
                     }
@@ -182,7 +182,7 @@ define([], function(){
                         //from head
                         if(x_i == y_i == 0){
                             this.logger.log("- X,Y head");
-                            for(var n in node)
+                            for(var n=0; n<node.length; n++)
                                 this.perm_list[seq_y].unshift(node[n]);
                         }
                         //from tail
@@ -203,10 +203,10 @@ define([], function(){
 
     GDBStruct.prototype.show = function(){
         var shown = [];
-        for(var n in this.perm_list) {
+        for(var n=0; n<this.perm_list.length; n++) {
             var node = this.perm_list[n];
             if(Array.isArray(node)){
-                for(var i in node)
+                for(var i=0; i<node.length; i++)
                     shown.push(node[i]);
             }
             else
