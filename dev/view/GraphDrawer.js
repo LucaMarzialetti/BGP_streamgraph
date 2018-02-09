@@ -11,6 +11,7 @@ define([
 
     var GraphDrawer = function(env) {
         var $this = this;
+        
         this.main_svg = d3.select(env.parentDom[0]).select("div.main_svg").select("svg");
         this.mini_svg = d3.select(env.parentDom[0]).select("div.mini_svg").select("svg");
         this.background = d3.select(env.parentDom[0]).select("div.main_svg").select(".background");
@@ -454,11 +455,9 @@ define([
                 //trova l'interesezione sull'asse y (data) relativamente al mouse Y
                 var date = formatDate(data[i]['date']);
 
-                var offset = env.guiManager.dom.canvasContainer.offset();
                 env.guiManager.dom.tooltipSvg
-                    .css("left", (d3.event.pageX + 30 - offset.left) + "px")
-                    .css("top", (d3.event.pageY - offset.top + 80) + "px");
-
+                    .css("left", env.guiManager.mouse.x + 10 + "px")
+                    .css("top", env.guiManager.mouse.y - 40 + "px");
 
                 if($this.last_hover==null || $this.last_hover.asn!=d_key.key || $this.last_hover.date!=date || $this.last_hover.perc!=perc)
                     setTimeout(function(){
@@ -474,10 +473,10 @@ define([
                         }
                         s += "<br/><strong>Date: </strong>";
                         s += "<span>" + date + "</span>";
-                        s += "<br/><strong>%: </strong>";
-                        s += "<span>" + perc + "</span>";
-                        env.guiManager.dom.tooltipSvg
-                            .html(s);
+                        s += "<br/><strong>Visibility: </strong>";
+                        s += "<span>" + perc + "%</span>";
+
+                        env.guiManager.dom.tooltipSvg.html(s);
                     },0);
 
                 if ($this.last_hover==null || $this.last_hover.asn != d_key.key) {
@@ -863,7 +862,7 @@ define([
 
             //FLAGS cp
             if (!collapse_cp) {
-                var FlagLabels = g
+                g
                     .append("g")
                     .attr("transform", "translate(" + (margin_x - 45) + "," + (margin_y - (this.sizes.def_min_grid_size.y + (this.sizes.def_min_grid_size.y / 4 * 3))) + ")")
                     .attr("class", "flags")
@@ -871,14 +870,14 @@ define([
                     .attr("style", "font-size: 11px;")
                     .text("Country");
 
-                var Flags = g
+                var flags = g
                     .append("g")
                     .attr("class", "axis mono flag_axis")
                     .attr("transform", "translate(" + 4 + "," + (margin_y + gridSize_y / 2 + $this.sizes.def_cell_margins.y) + ")")
                     .selectAll(".flagLabel")
                     .data(this.keys)
                     .enter();
-                Flags
+                flags
                     .append("text")
                     .attr("style", "font-size: 8px;")
                     .text(function (d) {
@@ -897,20 +896,18 @@ define([
                         return (i * (gridSize_y + $this.sizes.def_cell_margins.y));
                     })
                     .style("text-anchor", "start");
-                Flags
-                    .append("image")
+
+                flags
+                    .append("img")
                     .attr("height", 8)
                     .attr("width", 8)
                     .attr("src", function (d) {
                         var s = WIDGET_URL + "dev/view/css/flags/2.8.0/flags/4x3/";
+                        var geo;
                         try {
-                            var geo = current_parsed.known_cp[d]['geo'].split("-")[0];
-                            s += geo.toLowerCase() + ".svg";
-                        }
-                        catch (err) {
-
-                        }
-                        return s;
+                            geo = current_parsed.known_cp[d]['geo'].split("-")[0];
+                        } catch (err) {}
+                        return s + geo.toLowerCase() + ".svg";
                     })
                     .attr("x", 20)
                     .attr("y", function (d, i) {
@@ -971,10 +968,11 @@ define([
             }
 
             function mousemove(d_key, pos, event) {
+                var cp_country;
                 var $current_parsed = current_parsed;
                 env.guiManager.dom.tooltipSvg
-                    .css("left", (event.pageX + 10) + "px")
-                    .css("top", (event.pageY - 30) + "px");
+                    .css("left", env.guiManager.mouse.x + 10 + "px")
+                    .css("top", env.guiManager.mouse.y - 40 + "px");
                 if($this.last_hover==null || !($this.last_hover.asn == d_key.asn && d_key.cp == $this.last_hover.cp && $this.last_hover.date == d_key.date))
                     setTimeout(function(){
                         var s = "<strong> ASN: </strong>";
@@ -997,7 +995,7 @@ define([
                                     for (var j in list) {
                                         var r = list[j];
                                         s += "<span>" + r;
-                                        var cp_country = $current_parsed.known_cp[r];
+                                         cp_country = $current_parsed.known_cp[r];
                                         if (cp_country) {
                                             var cc = cp_country["geo"].trim().split("-")[0];
                                             s += "<span> (" + cc + ") </span>";
@@ -1006,10 +1004,9 @@ define([
                                         s += "</span><br/>";
                                     }
                                 }
-                        }
-                        else {
+                        } else {
                             s += d_key.cp;
-                            var cp_country = $current_parsed.known_cp[d_key.cp];
+                             cp_country = $current_parsed.known_cp[d_key.cp];
                             if (cp_country) {
                                 var cc = cp_country["geo"].trim().split("-")[0];
                                 s += "<span> (" + cc + ") </span>";
@@ -1017,9 +1014,8 @@ define([
                             }
                         }
 
-                        env.guiManager.dom.tooltipSvg
-                            .html(s);
-                    },0);
+                        env.guiManager.dom.tooltipSvg.html(s);
+                    }, 0);
 
                 if(d_key.asn!=null && ($this.last_hover==null || $this.last_hover.asn!=d_key.asn)){
                     setTimeout(function(){
@@ -1081,11 +1077,10 @@ define([
                 } else {
                     s += d;
                 }
-                var offset = env.guiManager.dom.canvasContainer.offset();
                 env.guiManager.dom.tooltipSvg
                     .html(s)
-                    .css("left", (d3.event.pageX + 30 - offset.left) + "px")
-                    .css("top", (d3.event.pageY - offset.top + 80) + "px");
+                    .css("left", env.guiManager.mouse.x + 10 + "px")
+                    .css("top", env.guiManager.mouse.y - 40 + "px");
 
                 if ($this.last_hover != d) {
                     d3.selectAll(".area")

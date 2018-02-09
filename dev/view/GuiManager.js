@@ -16,6 +16,15 @@ define([
         /*************************************** DOM elements ************************************/
         env.parentDom.append(template());
 
+        this.mouse = { x: 0, y: 0 };
+
+        $(env.parentDom).on("mousemove", function(e){
+            this.mouse = {
+                x: e.pageX,
+                y: e.pageY
+            };
+        }.bind(this));
+
         this.dom = {
             applyTime: env.parentDom.find(".apply-time"),
             container: env.parentDom.find(".bgpst-container"),

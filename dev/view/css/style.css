@@ -18,7 +18,7 @@ div.modal.time-modal {
 
 .bgpst-container {
     position: relative;
-    height: 400px;
+    min-height: 400px;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif!important;
 }
 
@@ -90,7 +90,7 @@ a#cp_list_btn+.popover .popover-content {
 }
 
 .main_svg {
-    height: 300px;
+    min-height: 300px;
 }
 
 .controls_container {
@@ -130,7 +130,7 @@ input.bar {
 }
 
 .svg_tooltip {
-    position: absolute;
+    position: fixed!important;
     text-align: center;
     height: auto;
     padding: 8px;
