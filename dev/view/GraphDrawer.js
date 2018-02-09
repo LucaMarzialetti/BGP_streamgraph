@@ -898,10 +898,10 @@ define([
                     .style("text-anchor", "start");
 
                 flags
-                    .append("img")
+                    .append("svg:image")
                     .attr("height", 8)
                     .attr("width", 8)
-                    .attr("src", function (d) {
+                    .attr("xlink:href", function (d) {
                         var s = "https://stat.ripe.net/widgets/js/interdomain-landscape/dev/view/css/flags/2.8.0/flags/4x3/";
                         var geo;
                         try {
