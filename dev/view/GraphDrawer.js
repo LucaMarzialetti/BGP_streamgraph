@@ -902,7 +902,7 @@ define([
                     .attr("height", 8)
                     .attr("width", 8)
                     .attr("src", function (d) {
-                        var s = WIDGET_URL + "dev/view/css/flags/2.8.0/flags/4x3/";
+                        var s = "https://stat.ripe.net/widgets/js/interdomain-landscape/dev/view/css/flags/2.8.0/flags/4x3/";
                         var geo;
                         try {
                             geo = current_parsed.known_cp[d]['geo'].split("-")[0];
