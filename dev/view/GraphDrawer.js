@@ -11,7 +11,7 @@ define([
 
     var GraphDrawer = function(env) {
         var $this = this;
-        
+
         this.main_svg = d3.select(env.parentDom[0]).select("div.main_svg").select("svg");
         this.mini_svg = d3.select(env.parentDom[0]).select("div.mini_svg").select("svg");
         this.background = d3.select(env.parentDom[0]).select("div.main_svg").select(".background");
@@ -23,6 +23,26 @@ define([
         this.isGraphPresent = function(text) {
             return d3.select(env.parentDom[0]).select("svg").select(".chart").node() != null;
         };
+
+        var formatMillisecond = d3.timeFormat(".%L"),
+            formatSecond = d3.timeFormat(":%S"),
+            formatMinute = d3.timeFormat("%I:%M"),
+            formatHour = d3.timeFormat("%H:%M"),
+            formatDay = d3.timeFormat("%Y-%m-%d"),
+            formatWeek = d3.timeFormat("%b %d"),
+            formatMonth = d3.timeFormat("%B"),
+            formatYear = d3.timeFormat("%Y");
+
+        var customTimeFormat = function(date) {
+            return (d3.timeSecond(date) < date ? formatMillisecond
+                : d3.timeMinute(date) < date ? formatSecond
+                : d3.timeHour(date) < date ? formatMinute
+                : d3.timeDay(date) < date ? formatHour
+                : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? formatDay : formatWeek)
+                : d3.timeYear(date) < date ? formatMonth
+                : formatYear)(date);
+        };
+
 
         //setup the drawing in the svg  <-- TO CALL AT DOM READY
         this.drawer_init = function () {
@@ -172,7 +192,7 @@ define([
                     .append("g")
                     .attr("class", "mini_axis")
                     .attr("transform", "translate (" + margin_left + "," + axis_margin + ")")
-                    .call(d3.axisBottom($this.mini_x).tickFormat(d3.timeFormat("%H:%M")));
+                    .call(d3.axisBottom($this.mini_x).tickFormat(customTimeFormat));
 
                 svg
                     .append("g")
@@ -283,7 +303,7 @@ define([
             this.main_svg.append("g")
                 .attr("class", "axis axis-x")
                 .attr("transform", "translate(" + (sizes.margin.left + sizes.margin.right * 2) + "," + (sizes.height_main - sizes.margin.bottom) + ")")
-                .call(d3.axisBottom(this.x).tickFormat(d3.timeFormat("%H:%M")));
+                .call(d3.axisBottom(this.x).tickFormat(customTimeFormat));
 
             // Add the y axis
             this.main_svg.append("g")
@@ -296,7 +316,7 @@ define([
                 .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
                 .attr("transform", "translate(" + sizes.margin.left + "," + (sizes.height_main / 2) + ")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
                 .attr("class", "axe_description")
-                .text("Visibility");
+                .text("Visibile on % collector peers");
         };
 
         this.parseDate = function () {
@@ -431,7 +451,7 @@ define([
                 });
 
             this.main_svg.selectAll(".axis-x")
-                .call(d3.axisBottom(this.x).tickFormat(d3.timeFormat("%H:%M")));
+                .call(d3.axisBottom(this.x).tickFormat(customTimeFormat));
 
             var bisectDate = d3.bisector(function (d) {
                 return d.date;
@@ -566,7 +586,7 @@ define([
                 data.columns = keys_order.slice(0);
                 data.columns.unshift('date');
                 data.columns.unshift('tot_number');
-            } 
+            }
             else
                 data.columns = tsv_data.columns;
             for (var i = 0; i < tsv_data.length; i++) {
@@ -995,7 +1015,7 @@ define([
                                     for (var j in list) {
                                         var r = list[j];
                                         s += "<span>" + r;
-                                         cp_country = $current_parsed.known_cp[r];
+                                        cp_country = $current_parsed.known_cp[r];
                                         if (cp_country) {
                                             var cc = cp_country["geo"].trim().split("-")[0];
                                             s += "<span> (" + cc + ") </span>";
@@ -1006,7 +1026,7 @@ define([
                                 }
                         } else {
                             s += d_key.cp;
-                             cp_country = $current_parsed.known_cp[d_key.cp];
+                            cp_country = $current_parsed.known_cp[d_key.cp];
                             if (cp_country) {
                                 var cc = cp_country["geo"].trim().split("-")[0];
                                 s += "<span> (" + cc + ") </span>";
