@@ -34,6 +34,9 @@ define([
             tooltip: env.parentDom.find("[data-toggle='tooltip']"),
             tooltipSvg: env.parentDom.find(".svg_tooltip"),
             title: env.parentDom.find(".title"),
+            metaInfoResource: env.parentDom.find(".meta-info-resource"),
+            metaQueryStartTime: env.parentDom.find(".meta-query-start-time"),
+            metaQueryStopTime: env.parentDom.find(".meta-query-stop-time"),
 
             optionCommandButton: env.parentDom.find(".option_command_btn"),
             sortButton: env.parentDom.find(".sort_btn"),
@@ -109,6 +112,13 @@ define([
             timeModal: env.parentDom.find(".time-modal"),
             timeModalButton: env.parentDom.find(".time-modal-button")
         };
+
+        utils.observer.subscribe("updated", function(params){
+            this.dom.metaInfoResource.html(params.targets);
+            this.dom.metaQueryStartTime.html(params.startDate.format("YYYY-MM-DD HH:mm:ss"));
+            this.dom.metaQueryStopTime.html(params.stopDate.format("YYYY-MM-DD HH:mm:ss"));
+        }.bind(this));
+
 
         this.drawer = new GraphDrawer(env);
 
@@ -552,9 +562,9 @@ define([
                 this.dom.streamingStartButton.addClass("not-active");
                 this.dom.streamingStartButton.attr("disabled", true);
 
-                this.dom.date.addClass("disabled");
-                this.dom.date.addClass("not-active");
-                this.dom.date.parent().addClass("not-active");
+                // this.dom.date.addClass("disabled");
+                // this.dom.date.addClass("not-active");
+                // this.dom.date.parent().addClass("not-active");
             }
         };
 

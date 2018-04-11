@@ -50,7 +50,9 @@ define([
                 dataType: "json",
                 data : {
                     starttime: env.queryParams.startDate.unix(),
-                    endtime: env.queryParams.stopDate.unix()
+                    endtime: env.queryParams.stopDate.unix(),
+                    "v4_full_prefix_threshold": 1,
+                    "v6_full_prefix_threshold": 1 
                 },
                 success: function(data){
                     env.logger.log("=== RipeBroker Success! Peer count loaded");
@@ -94,8 +96,7 @@ define([
                             console.log("=== RipeBroker empty response ! ");
                             utils.observer.publish("error", $this.errors.bgplayEmpty);
                             return false;
-                        }
-                        else {
+                        } else {
                             $this.current_parsed = $this.parser.ripe_response_parse(data, env.queryParams.startDate, env.queryParams.stopDate);
                             if(env.guiManager.gather_information){
                                 env.logger.log("=== RipeBroker Starting gathering CP Info");

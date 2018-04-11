@@ -126,14 +126,13 @@
                     <!-- SHARED OPTIONS -->
                     <li>
                         <a href="#" class="prepending_prevention_btn">
-                            AS-Path Anti-Prepending
+                            Skip prepending
                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                         </a>
                     </li>
                     <li style="display: inline-flex; width: 100%;">
                         <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
-                            Upstream Level (AS-path hop)
-
+                            Distance from origin AS
                         </a>
                         <input type="number" name="asn_lvl" min="0" max="50" class="asn_lvl form-control jquery_ui_spinner">
                     </li>
@@ -247,5 +246,8 @@
     </div>
     <div class="canvas_container mini_svg" style="height: 70px;">
         <svg style="height: 100%; width: 100%;"></svg>
+    </div>
+    <div class="query-meta-info" style="font-size: 0.7em;">
+        Showing results for <b><span class="meta-info-resource"></span></b> from <b class="meta-query-start-time"></b> to <b class="meta-query-stop-time"></b>
     </div>
 </div>

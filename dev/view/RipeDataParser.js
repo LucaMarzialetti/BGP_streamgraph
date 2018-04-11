@@ -6,7 +6,7 @@ define([
 
     var RipeDataParser = function(env) {
         env.logger.log("==== RipeParser Starting");
-        this.states = [];
+        this.states = {};
         this.events = [];
         this.resources = [];
         this.asn_distributions = [];
@@ -77,8 +77,9 @@ define([
             this.resources = data.sources;
             //inizializza la mappa in base al numero di targets
             for (var t=0; t<this.targets.length; t++){
-                this.cp_map[this.targets[t]] = {};
-                this.states[this.targets[t]] = [];
+                var target = this.targets[t];
+                this.cp_map[target] = {};
+                this.states[target] = [];
             }
             //stato iniziale
             if (data.initial_state.length > 0)
@@ -165,15 +166,16 @@ define([
         this.fetchUpdates = function (data) {
             var updates = data['events'];
             this.last_date = updates[0]['timestamp'];
-            for (var i in updates) {
+            for (var i=0; i<updates.length; i++) {
                 var e = updates[i];
                 var e_attrs = e['attrs'];
                 var e_s_id = e_attrs['source_id'];
                 var e_target = e_attrs['target_prefix'];
                 var e_type = e['type'];
                 //if its a new resource add to cp_set
-                if (this.cp_set.indexOf(e_s_id) == -1)
+                if (this.cp_set.indexOf(e_s_id) == -1){
                     this.cp_set.push(e_s_id);
+                }
                 //make snapshot if timestamp is different
                 if (this.last_date != e['timestamp']) {
                     this.snapshotOfState();
@@ -196,7 +198,8 @@ define([
         //cumulate the single CP announcement into ASN view
         this.snapshotOfState = function () {
             for (var t=0; t<this.targets.length; t++) {
-                this.states[this.targets[t]].push(JSON.parse(JSON.stringify(this.cp_map[this.targets[t]])));
+                var target = this.targets[t];
+                this.states[target].push(Object.assign({}, this.cp_map[target]));
             }
             this.events.push(this.last_date);
         };
@@ -204,13 +207,15 @@ define([
         //zero fill the cps in every moment
         this.zeroFilling = function (start, end) {
             for (var t=0; t<this.targets.length; t++) {
-                var tgt = this.targets[t];
-                for (var i in this.states[tgt]) {
-                    var e = this.states[tgt][i];
-                    for (var r in this.cp_set) {
+                var target = this.targets[t];
+                var state = this.states[target];
+                for (var i=0,length=state.length; i<length; i++) {
+                    var stateTmp = state[i];
+                    for (var r=0,length2=this.cp_set.length; r<length2; r++) {
                         var cp = this.cp_set[r];
-                        if (!e[cp])
-                            e[cp] = [];
+                        if (!stateTmp[cp]) {
+                            stateTmp[cp] = [];
+                        }
                     }
                 }
             }

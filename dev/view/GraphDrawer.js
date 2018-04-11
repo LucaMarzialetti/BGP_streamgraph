@@ -172,7 +172,7 @@ define([
                     .append("g")
                     .attr("class", "mini_axis")
                     .attr("transform", "translate (" + margin_left + "," + axis_margin + ")")
-                    .call(d3.axisBottom($this.mini_x));
+                    .call(d3.axisBottom($this.mini_x).tickFormat(d3.timeFormat("%H:%M")));
 
                 svg
                     .append("g")
@@ -204,7 +204,7 @@ define([
                     .append("g")
                     .attr("class", "mini_axis")
                     .attr("transform", "translate (" + margin_left + "," + axis_margin + ")")
-                    .call(d3.axisBottom($this.mini_x));
+                    .call(d3.axisBottom($this.mini_x).tickFormat(d3.timeFormat("%H:%M")));
 
                 svg
                     .append("g")
@@ -283,7 +283,7 @@ define([
             this.main_svg.append("g")
                 .attr("class", "axis axis-x")
                 .attr("transform", "translate(" + (sizes.margin.left + sizes.margin.right * 2) + "," + (sizes.height_main - sizes.margin.bottom) + ")")
-                .call(d3.axisBottom(this.x));
+                .call(d3.axisBottom(this.x).tickFormat(d3.timeFormat("%H:%M")));
 
             // Add the y axis
             this.main_svg.append("g")
@@ -431,7 +431,7 @@ define([
                 });
 
             this.main_svg.selectAll(".axis-x")
-                .call(d3.axisBottom(this.x));
+                .call(d3.axisBottom(this.x).tickFormat(d3.timeFormat("%H:%M")));
 
             var bisectDate = d3.bisector(function (d) {
                 return d.date;
