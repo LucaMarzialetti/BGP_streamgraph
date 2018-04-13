@@ -10056,3 +10056,7 @@
   /* Optional, to align inner items 
                               horizontally inside the column */
 }
+.bgpst-container .asn_lvl_btn {
+  padding: 3px;
+  height: 100%;
+}

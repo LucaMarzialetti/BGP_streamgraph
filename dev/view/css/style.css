@@ -505,3 +505,8 @@ input.start-date.form-control {
   justify-content: center; /* Optional, to align inner items 
                               horizontally inside the column */
 }
+
+.asn_lvl_btn {
+    padding: 3px;
+    height: 100%;
+}

@@ -488,7 +488,8 @@ define([
                         if (asn_country) {
                             var ac = asn_country.split(",");
                             ac = ac[ac.length - 1].trim();
-                            s += "<span> (" + ac + ") </span>";
+                            // s += "<span> (" + ac + ") </span>";
+                            s += "<br><span> " + asn_country + " </span>";
                             s += "<span class='flag-icon flag-icon-" + ac.toLowerCase() + "'></span>";
                         }
                         s += "<br/><strong>Date: </strong>";
@@ -505,7 +506,7 @@ define([
                             .filter(function (d) {
                                 return d.key != d_key.key;
                             })
-                            .style("fill-opacity", 0.35);
+                            .style("fill-opacity", 0.2);
                         $this.last_hover = {
                             asn: d_key.key,
                             date: date,
@@ -1043,12 +1044,12 @@ define([
                             .filter(function (d) {
                                 return d.asn != d_key.asn;
                             })
-                            .style("fill-opacity", 0.35);
+                            .style("fill-opacity", 0.2);
                         d3.selectAll("path.area")
                             .filter(function (d) {
                                 return d.key != d_key.asn;
                             })
-                            .style("fill-opacity", 0.35);
+                            .style("fill-opacity", 0.2);
 
                         $this.last_hover = {
                             asn:d_key.asn,
@@ -1107,7 +1108,7 @@ define([
                         .filter(function (e) {
                             return (e.cp != d);
                         })
-                        .style("fill-opacity", 0.35);
+                        .style("fill-opacity", 0.2);
                     $this.last_hover = d;
                 }
             };
@@ -1118,7 +1119,7 @@ define([
                         .filter(function (e) {
                             return (e.date != d);
                         })
-                        .style("fill-opacity", 0.35);
+                        .style("fill-opacity", 0.2);
                     $this.last_hover = d;
                 }
             };

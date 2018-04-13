@@ -25,11 +25,11 @@
                                     <input type="text" readonly class="start-date form-control form-control-lg">
                                 </div>
                             </div>
-                            
-                            
+
+
                             <div class="col-xs-1">
                             </div>
-                            
+
                             <div class="col-xs-5">
                                 <div class="col-xs-1">
                                     <label for="stop-date" class="col-form-label col-form-label-lg">Stop:</label>
@@ -65,47 +65,18 @@
 
 
     <div class="bgpst-header">
+
+        <div class="btn-group" style="vertical-align: bottom">
+            <div style="float: left; padding: 3px;">Distance from origin AS</div>
+            <input type="number" name="asn_lvl" min="0" max="50" class="asn_lvl form-control jquery_ui_spinner">
+        </div>
+
         <div class="btn-group time-modal-button" data-toggle="modal" title="Time Range" data-target=".time-modal">
             <label class="btn btn-default btn-xs date_range_button">
                 <span class="glyphicon glyphicon-calendar"></span>
             </label>
         </div>
 
-        <div class="btn-group steps_btn stream_option" data-toggle="buttons">
-            <label class="btn btn-default btn-xs not-active" title="Animation">
-                Animate
-            </label>
-            <label class="btn btn-default btn-xs steps_start" title="Play animation">
-                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-            </label>
-            <label class="btn btn-default btn-xs steps_pause" title="Pause animation">
-                <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
-            </label>
-            <label class="btn btn-default btn-xs steps_stop" title="Stop animation">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
-            </label>
-        </div>
-        <div class="btn-group streaming_btn stream_option" data-toggle="buttons">
-            <label class="btn btn-default btn-xs not-active" title="Data Streaming">
-                Streaming
-            </label>
-            <label class="btn btn-default btn-xs streaming_start" title="Start streaming">
-                <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
-            </label>
-            <label class="btn btn-default btn-xs streaming_stop" title="Stop streaming">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
-            </label>
-        </div>
-        <div class="btn-group ip_version" data-toggle="buttons" >
-            <label class="btn btn-default btn-xs" title="IPv4 source">
-                <input type="checkbox" name="ip_version" value="4" autocomplete="off">
-                IPv4
-            </label>
-            <label class="btn btn-default btn-xs" title="IPv6 source">
-                <input type="checkbox" name="ip_version" value="6" autocomplete="off">
-                IPv6
-            </label>
-        </div>
         <div class="btn-group graph_type" data-toggle="buttons" >
             <label class="btn btn-default btn-xs active" title="Global View">
                 <input class="graph-type-view" type="radio" name="graph_type" checked="checked" value="stream" autocomplete="off">
@@ -116,95 +87,7 @@
                 Local
             </label>
         </div>
-        <div class="btn-group" data-toggle="buttons">
-            <span class="dropdown">
-                <button type="button" class="btn-group btn-xs dropdown-toggle option_command_btn btn btn-default text_centerd" data-toggle="dropdown" title="Configurations">
-                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right repositioned">
 
-                    <!-- SHARED OPTIONS -->
-                    <li>
-                        <a href="#" class="prepending_prevention_btn">
-                            Skip prepending
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li style="display: inline-flex; width: 100%;">
-                        <a href="#" class="asn_lvl_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
-                            Distance from origin AS
-                        </a>
-                        <input type="number" name="asn_lvl" min="0" max="50" class="asn_lvl form-control jquery_ui_spinner">
-                    </li>
-
-                    <!-- STREAMGRAPH OPTIONS -->
-                    <li class="stream_option">
-                        <a href="#" class="global_visibility_btn">
-                            Global visibility (All CPs)
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    
-                    <!-- HEATMAP OPTIONS -->
-                    <li class="heat_option">
-                        <a href="#" class="merge_cp_btn">
-                            Merge CPs with same paths
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li class="heat_option" style="display: inline-flex; width: 100%;">
-                        <a href="#" class="merge_events_btn" onclick="event.preventDefault(); event.stopPropagation(); $(this).siblings().find('input').focus();">
-                            Merge events with same routing
-
-                        </a>
-                        <input type="number" name="merge_events" min="0" max="500" class="merge_events form-control jquery_ui_spinner">
-                    </li>
-                    <li class="heat_option">
-                        <a href="#" class="events_labels_btn">
-                            Events labels
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li class="heat_option">
-                        <a href="#" class="cp_labels_btn">
-                            CP labels
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                    <li class="heat_option">
-                        <a href="#" class="heatmap_time_btn">
-                            Use time mapping
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-
-                    <li class="heat_option">
-                        <a href="#" class="scrollbars_btn">
-                            Use scrollbars
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </a>
-                    </li>
-                </ul>
-            </span>
-
-        </div>
-        <div class="btn-group" data-toggle="buttons">
-            <span class="dropdown">
-                <button type="button" class="btn-xs btn-group dropdown-toggle list_btn btn btn-default text_centerd" data-toggle="dropdown" title="Resources">
-                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right multi-level repositioned" role="menu">
-                    <li class="dropdown-submenu right_arrows">
-                        <a tabindex="-1" href="#" class="asn_list_btn">AS List</a>
-                        <ul class="dropdown-menu dropdown-menu-right no_top_padding asn_list"></ul>
-                    </li>
-                    <li class="dropdown-submenu right_arrows">
-                        <a tabindex="-1" href="#" class="cp_list_btn">CP List</a>
-                        <ul class="dropdown-menu dropdown-menu-right no_top_padding cp_list"></ul>
-                    </li>
-                </ul>
-            </span>
-        </div>
         <div class="btn-group" data-toggle="buttons">
             <span class="dropdown">
                 <button type="button" class="btn-xs btn-group dropdown-toggle sort_btn btn btn-default text_centerd" data-toggle="dropdown" title="Optimizations">
