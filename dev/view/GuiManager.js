@@ -20,8 +20,8 @@ define([
 
         $(env.parentDom).on("mousemove", function(e){
             this.mouse = {
-                x: e.pageX,
-                y: e.pageY
+                x: e.screenX,
+                y: e.screenY
             };
         }.bind(this));
 

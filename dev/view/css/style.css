@@ -135,7 +135,8 @@ input.bar {
     height: auto;
     padding: 8px;
     opacity: 1;
-    margin-top: -20px;
+    margin-top: -90px;
+    margin-left: 0px;
     font: 10px sans-serif;
     background: #ddd;
     pointer-events: none;
