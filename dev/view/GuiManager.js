@@ -463,12 +463,11 @@ define([
                 this.dom.date.removeClass("not-active");
                 this.dom.date.parent().removeClass("not-active");
 
-                var containsIpv6, containsIpv4;
 
-                containsIpv4 = this.ripeDataBroker.current_parsed.targets
-                    .some(utils.validateIPv4);
-                containsIpv6 = this.ripeDataBroker.current_parsed.targets
-                    .some(utils.validateIPv6);
+                const containsIpv4 = this.ripeDataBroker.current_parsed.targets
+                    .some(utils.isIPv4);
+                const containsIpv6 = this.ripeDataBroker.current_parsed.targets
+                    .some(utils.isIPv6);
 
                 if (containsIpv4 || containsIpv6) {
                     if (!containsIpv4) {

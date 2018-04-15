@@ -79,6 +79,7 @@ define([
     }
   };
 
+
   //find the std deviation of the array, if the variance is given skip the process to make it
   const std_dev = (a, varx_a) => {
     if(Array.isArray(a)) {
@@ -98,8 +99,7 @@ define([
 
   //find the min in the array
   const min = (a) => {
-    if(Array.isArray(a))
-      return a.reduce(function(va,vb){return Math.min(va,vb)});
+      return Math.min.apply(null, a);
   };
 
   //find the position of every occourrence in the array of C

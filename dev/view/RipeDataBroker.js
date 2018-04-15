@@ -39,108 +39,112 @@ define([
         env.logger.log("=== RipeBroker Ready");
         //do the ajax get
         this.dataRequest = function(){
-            $this.getPeerCountData();
-            $this.getBGPData();
-        };
+            return Promise.all([
+                this.getPeerCountData(),
+                this.getBGPData()
+            ])
+                .then( () => {
+                    this.loadCurrentState(true, env.guiManager.drawer.events_range, true);
+                    env.guiManager.draw_functions_btn_enabler();
+                })
+                .catch(error => utils.observer.publish("error", error))
+        }.bind(this);
 
-        this.getPeerCountData = function() {
-            var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
-            $.ajax({
-                url: url_ris_peer_count,
-                dataType: "json",
-                data : {
-                    starttime: env.queryParams.startDate.unix(),
-                    endtime: env.queryParams.stopDate.unix(),
-                    "v4_full_prefix_threshold": 1,
-                    "v6_full_prefix_threshold": 1 
-                },
-                success: function(data){
-                    env.logger.log("=== RipeBroker Success! Peer count loaded");
-                    env.logger.log(data);
-                    try {
-                        $this.ipv4_peerings = myUtils.max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
-                        $this.ipv6_peerings = myUtils.max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
-                        if($this.ipv6_peerings == 0 && env.queryParams.targets.some(utils.validateIPv6))
+        this.getPeerCountData = () => {
+            return new Promise((resolve, reject) => {
+                var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
+                $.ajax({
+                    url: url_ris_peer_count,
+                    dataType: "json",
+                    data : {
+                        starttime: env.queryParams.startDate.unix(),
+                        endtime: env.queryParams.stopDate.unix(),
+                        "v4_full_prefix_threshold": 1000,
+                        "v6_full_prefix_threshold": 1000
+                    },
+                    success: (data) => {
+                        env.logger.log("=== RipeBroker Success! Peer count loaded");
+                        try {
+                            this.ipv4_peerings = myUtils.max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
+                            this.ipv6_peerings = myUtils.max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
+                            if(this.ipv6_peerings === 0 && env.queryParams.targets.some(utils.isIPv4))
+                                env.guiManager.global_visibility = false;
+                            if(this.ipv4_peerings === 0 && env.queryParams.targets.some(utils.isIPv6))
+                                env.guiManager.global_visibility = false;
+
+                        } catch(err) {
+                            utils.observer.publish("error", this.errors.peercountEmpty);
+                            env.logger.log("=== RipeBroker Warning: empty peerings size");
+                            this.ipv6_peerings = 0;
+                            this.ipv4_peerings = 0;
                             env.guiManager.global_visibility = false;
-                        if($this.ipv4_peerings == 0 && env.queryParams.targets.some(utils.validateIPv6))
-                            env.guiManager.global_visibility = false;
-                    } catch(err) {
-                        utils.observer.publish("error", $this.errors.peercountEmpty);
-                        env.logger.log("=== RipeBroker Warning: empty peerings size");
-                        $this.ipv6_peerings = 0;
-                        $this.ipv4_peerings = 0;
-                        env.guiManager.global_visibility = false;
+                        } finally {
+                            resolve();
+                        }
+                    },
+                    fail: () => {
+                        reject(this.errors.peercountFail);
                     }
-                },
-                fail: function (argument) {
-                    utils.observer.publish("error", $this.errors.peercountFail);
-                }
+                });
             });
         };
 
         this.getBGPData = function() {
-            var url_bgplay = "https://stat.ripe.net/data/bgplay/data.json";
-            $.ajax({
-                url: url_bgplay,
-                dataType: "json",
-                data : {
-                    resource: env.queryParams.targets.join(","),
-                    starttime: env.queryParams.startDate.unix(),
-                    endtime: env.queryParams.stopDate.unix()
-                },
-                success: function(data){
-                    env.logger.log("=== RipeBroker Success! Data loaded from:"+url_bgplay);
-                    env.logger.log(data);
-                    try {
-                        if(Array.isArray(data['data']['events']) && data['data']['events'].length<1 && Array.isArray(data['data']['initial_state']) && data['data']['initial_state'].length<1){
-                            console.log("=== RipeBroker empty response ! ");
-                            utils.observer.publish("error", $this.errors.bgplayEmpty);
-                            return false;
-                        } else {
-                            $this.current_parsed = $this.parser.ripe_response_parse(data, env.queryParams.startDate, env.queryParams.stopDate);
-                            if(env.guiManager.gather_information){
-                                env.logger.log("=== RipeBroker Starting gathering CP Info");
-                                env.guiManager.rrc_info_done=false;
-                                setTimeout(function(){
-                                    $this.getCPInfo($this.current_parsed.resources,0)
-                                },0);
-                            }
-                            env.queryParams.targets = data.data.targets.map(function (e) {return e['prefix'].replace(/"/g,'');});
-                            $this.loadCurrentState(true, env.guiManager.drawer.events_range, true);
+            return new Promise((resolve, reject) => {
 
-                            if(env.guiManager.gather_information){
-                                env.logger.log("=== RipeBroker Starting gathering ASN Info");
-                                setTimeout(function(){
-                                    env.guiManager.asn_info_done=false;
-                                    if(env.guiManager.graph_type=="stream")
-                                        $this.getASNInfo($this.current_parsed.asn_set,0);
-                                    else
-                                    if(env.guiManager.graph_type=="heat")
-                                        $this.getASNInfo(env.guiManager.drawer.asn_set,0);
-                                },0);
+                var url_bgplay = "https://stat.ripe.net/data/bgplay/data.json";
+                $.ajax({
+                    url: url_bgplay,
+                    dataType: "json",
+                    data : {
+                        resource: env.queryParams.targets.join(","),
+                        starttime: env.queryParams.startDate.unix(),
+                        endtime: env.queryParams.stopDate.unix()
+                    },
+                    success: (data) => {
+                        env.logger.log("=== RipeBroker Success! Data loaded from:"+url_bgplay);
+                        try {
+                            if(Array.isArray(data['data']['events']) && data['data']['events'].length < 1 &&
+                                Array.isArray(data['data']['initial_state']) && data['data']['initial_state'].length < 1){
+                                console.log("=== RipeBroker empty response ! ");
+                                reject(this.errors.bgplayEmpty);
+                            } else {
+                                this.current_parsed = this.parser.ripe_response_parse(data, env.queryParams.startDate, env.queryParams.stopDate);
+                                if(env.guiManager.gather_information){
+                                    env.logger.log("=== RipeBroker Starting gathering CP Info");
+                                    env.guiManager.rrc_info_done = false;
+                                    this.getCPInfo(this.current_parsed.resources,0);
+                                }
+                                env.queryParams.targets = data.data.targets.map(function (e) {return e['prefix'].replace(/"/g,'');});
+
+                                if (env.guiManager.gather_information ){
+                                    env.logger.log("=== RipeBroker Starting gathering ASN Info");
+                                    env.guiManager.asn_info_done = false;
+                                    if(env.guiManager.graph_type === "stream") {
+                                        this.getASNInfo(this.current_parsed.asn_set, 0);
+                                    } else if(env.guiManager.graph_type === "heat") {
+                                        this.getASNInfo(env.guiManager.drawer.asn_set, 0);
+                                    }
+                                }
+                                resolve();
                             }
+                        } catch(err) {
+                            reject(this.errors.parsingError)
                         }
-                    } catch(err) {
-                        console.log(err);
-                        utils.observer.publish("error", $this.errors.parsingError);
+                    },
+                    error: (jqXHR) => {
+                        let error = this.errors.bgplayFailDef;
+                        switch(jqXHR.status){
+                            case 404:
+                                error = this.errors.bgplayFail4;
+                                break;
+                            case 500:
+                                error = this.errors.bgplayFail5;
+                                break;
+                        }
+                        reject(error);
                     }
-                    finally {
-                        env.guiManager.draw_functions_btn_enabler();
-                    }
-                },
-                error: function(jqXHR, exception){
-                    switch(jqXHR.status){
-                        case 404:
-                            utils.observer.publish("error", $this.errors.bgplayFail4);
-                            break;
-                        case 500:
-                            utils.observer.publish("error", $this.errors.bgplayFail5);
-                            break;
-                        default:
-                            utils.observer.publish("error", $this.errors.bgplayFailDef);
-                            break;
-                    }
-                }
+                });
             });
         };
 
@@ -161,15 +165,15 @@ define([
         };
 
         this.getCPInfo = function(resources,index) {
-            if(index<resources.length){
+            if(index < resources.length){
                 var res = resources[index];
                 var r_id = res.id;
-                if(!this.current_parsed.known_cp[r_id])
+                if(!this.current_parsed.known_cp[r_id]){
                     this.CPInfoCallBack(res);
+                }
                 index++;
                 this.getCPInfo(resources, index);
-            }
-            else{
+            } else{
                 env.guiManager.cp_info_done = true;
                 env.logger.log("=== RipeBroker CPinfo Completed");
             }
@@ -189,15 +193,14 @@ define([
             });
         };
 
-        this.getASNInfo = function(resources,index) {
-            if(index<resources.length){
-                var res = resources[index]
+        this.getASNInfo = function(resources, index) {
+            if(index < resources.length){
+                var res = resources[index];
                 if(!this.current_parsed.known_asn[res] && !isNaN(parseInt(res)))
                     this.ASNInfoCallBack(res);
                 index++;
                 this.getASNInfo(resources, index);
-            }
-            else{
+            } else{
                 env.guiManager.asn_info_done = true;
                 env.logger.log("=== RipeBroker ASNinfo Completed");
             }
@@ -218,13 +221,13 @@ define([
                     $this.getCPInfo($this.current_parsed.resources,0)
                 },0);
                 env.logger.log("=== RipeBroker Starting gathering ASN Info");
-                setTimeout(function(){
+                setTimeout(function() {
                     env.guiManager.asn_info_done = false;
-                    if(env.guiManager.graph_type == "stream")
-                        $this.getASNInfo($this.current_parsed.asn_set,0);
-                    else
-                    if(env.guiManager.graph_type == "heat")
-                        $this.getASNInfo(env.guiManager.drawer.asn_set,0);
+                    if (env.guiManager.graph_type === "stream"){
+                        $this.getASNInfo($this.current_parsed.asn_set, 0);
+                    } else if(env.guiManager.graph_type === "heat") {
+                        $this.getASNInfo(env.guiManager.drawer.asn_set, 0);
+                    }
                 },0);
             }
             /*COMMON*/
@@ -239,24 +242,23 @@ define([
             this.use_ipv6_vis = env.guiManager.ip_version.indexOf(6) != -1;
 
             if(env.guiManager.global_visibility) {
-                for(var t=0; t<this.current_parsed.targets.length; t++){
-                    var tgs = this.current_parsed.targets[t];
-                    if(this.use_ipv4_vis && utils.validateIPv4(tgs)){
-                        env.logger.log("== RipeBroker adding ipv4 peerings");
-                        this.current_visibility+=this.ipv4_peerings;
+                for(let tgt of this.current_parsed.targets){
+                    if(this.use_ipv4_vis && utils.isIPv4(tgt)){
+                        this.current_visibility += this.ipv4_peerings;
                     }
-                    if(this.use_ipv6_vis && utils.validateIPv6(tgs)){
-                        env.logger.log("== RipeBroker adding ipv6 peerings");
-                        this.current_visibility+=this.ipv6_peerings;
+                    if(this.use_ipv6_vis && utils.isIPv6(tgt)){
+                        this.current_visibility += this.ipv6_peerings;
                     }
                 }
             }
-            if(this.current_visibility<this.current_parsed.local_visibility){
-                this.current_visibility=this.current_parsed.local_visibility;
-                env.guiManager.global_visibility=false;
+
+            if(this.current_visibility < this.current_parsed.local_visibility){
+                this.current_visibility = this.current_parsed.local_visibility;
+                env.guiManager.global_visibility = false;
             }
+
             //STREAM
-            if(env.guiManager.graph_type == "stream") {
+            if(env.guiManager.graph_type === "stream") {
                 //ORDERING
                 ordering = this.heuristicsManager.getCurrentOrdering(this.current_parsed, env.guiManager.graph_type);
                 if(!ordering) {
@@ -283,7 +285,7 @@ define([
                 }
                 env.guiManager.isGraphPresent();
 
-            } else if(env.guiManager.graph_type == "heat") { // HEAT
+            } else if(env.guiManager.graph_type === "heat") { // HEAT
 
                 this.current_cp_tsv = this.parser.convert_to_heatmap_tsv(this.current_parsed, env.guiManager.prepending_prevention, env.guiManager.asn_level, env.guiManager.ip_version);
                 //ORDERING
@@ -294,26 +296,27 @@ define([
                 } else {
                     env.logger.log("ordering c'è");
                 }
+
                 env.guiManager.drawer.draw_heatmap(
-                    this.current_parsed,
-                    this.current_cp_tsv,
-                    this.current_asn_tsv,
-                    ordering,
-                    env.guiManager.preserve_map,
-                    this.current_visibility,
-                    this.current_parsed.targets,
-                    this.current_parsed.query_id,
-                    $this.gotToBgplayFromPosition,
-                    env.guiManager.asn_level,
-                    env.guiManager.ip_version,
-                    env.guiManager.prepending_prevention,
-                    env.guiManager.merge_cp,
-                    env.guiManager.merge_events,
-                    env.guiManager.events_labels,
-                    env.guiManager.cp_labels,
-                    env.guiManager.heatmap_time_map,
-                    events_range,
-                    redraw_minimap);
+                    this.current_parsed, //current_parsed
+                    this.current_cp_tsv, //tsv_incoming_data
+                    this.current_asn_tsv, //stream_tsv
+                    ordering, //keys_order
+                    env.guiManager.preserve_map, //preserve_color_map
+                    this.current_visibility, //global_visibility
+                    this.current_parsed.targets, //targets
+                    this.current_parsed.query_id, //query_id
+                    $this.gotToBgplayFromPosition, //bgplay_callback
+                    env.guiManager.asn_level, //level
+                    env.guiManager.ip_version, // ip_version
+                    env.guiManager.prepending_prevention, //prepending
+                    env.guiManager.merge_cp, //collapse_cp
+                    env.guiManager.merge_events, //collapse_events
+                    env.guiManager.events_labels, //events_labels
+                    env.guiManager.cp_labels, //cp_labels
+                    env.guiManager.heatmap_time_map, //timemap
+                    events_range, //events_range
+                    redraw_minimap); //redraw_minimap
                 if (env.guiManager.merge_events) {
                     env.guiManager.update_counters(".counter_events", env.guiManager.drawer.event_set.length + "/" + this.current_parsed.events.length);
                 } else {
@@ -323,8 +326,7 @@ define([
                     env.guiManager.update_counters(".counter_asn", env.guiManager.drawer.keys.length+"/"+this.current_parsed.cp_set.length);
                 else
                     env.guiManager.update_counters(".counter_asn", env.guiManager.drawer.keys.length);
-            }
-            else {
+            }  else {
                 env.guiManager.drawer.drawer_init();
             }
             env.guiManager.boolean_checker();

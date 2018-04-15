@@ -36,11 +36,11 @@ define([
         var customTimeFormat = function(date) {
             return (d3.timeSecond(date) < date ? formatMillisecond
                 : d3.timeMinute(date) < date ? formatSecond
-                : d3.timeHour(date) < date ? formatMinute
-                : d3.timeDay(date) < date ? formatHour
-                : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? formatDay : formatWeek)
-                : d3.timeYear(date) < date ? formatMonth
-                : formatYear)(date);
+                    : d3.timeHour(date) < date ? formatMinute
+                        : d3.timeDay(date) < date ? formatHour
+                            : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? formatDay : formatWeek)
+                                : d3.timeYear(date) < date ? formatMonth
+                                    : formatYear)(date);
         };
 
 
@@ -328,17 +328,16 @@ define([
         };
 
         //function used to draw the data - already parsed as TSV
-        this.draw_streamgraph = function (current_parsed, graph_type, tsv_incoming_data, keys_order, preserve_color_map, global_visibility, targets, query_id, bgplay_callback, events_limit, events_range, redraw_minimap) {
+        this.draw_streamgraph = function (current_parsed, graph_type, tsv_incoming_data, keys_order, preserve_color_map, visibility, targets, query_id, bgplay_callback, events_limit, events_range, redraw_minimap) {
+
             this.erase_all();
             this.draw_stream_axis(this.main_svg, this.sizes);
             utils.observer.publish("updated", env.queryParams);
 
-            var parseDate = this.parseDate();
             var formatDate = this.formatDate();
             var tsv_data = d3.tsvParse(tsv_incoming_data);
-            var visibility = global_visibility;
             this.events = [];
-            var data = this.common_for_streamgraph(tsv_data, keys_order, visibility, preserve_color_map, query_id);
+            var data = this.common_for_streamgraph(tsv_data, keys_order, null, visibility, preserve_color_map, query_id);
 
             this.x = d3.scaleTime().range([0, this.sizes.width - (this.sizes.margin.left + this.sizes.margin.right + 2)]);
             this.y = d3.scaleLinear().range([this.sizes.height_main - (this.sizes.margin.top + this.sizes.margin.bottom), 0]);
@@ -541,42 +540,55 @@ define([
 
         };
 
-        this.draw_heat_axis = function (events, margin_x) {
+        this.draw_heat_axis = (events, margin_x) => {
             //date domain extent
-            var date_domain = d3.extent(events.map(function (e) {
+            const date_domain = d3.extent(events.map(function (e) {
                 return new Date(e);
             }));
             //ranges of time
+            console.log("i1");
+
             this.diff_ranges = [];
-            for (var i = 0; i < events.length - 1; i++) {
-                var a = moment(events[i]);
-                var b = moment(events[i + 1]);
-                var diff = b.diff(a);
-                this.diff_ranges.push(diff);
+            for (let i = 0; i < events.length - 1; i++) {
+                const a = moment(events[i]);
+                const b = moment(events[i + 1]);
+                this.diff_ranges.push(b.diff(a));
             }
+            console.log("i2");
             //last event last as the minimum
-            var minimum = myUtils.min(this.diff_ranges);
+            const minimum = myUtils.min(this.diff_ranges);
             this.diff_ranges.push(0);
+            console.log("i3");
+
             //normalize ranges
             this.diff_ranges = this.diff_ranges.map(function (e) {
                 return e / minimum
             });
-            var max_width = myUtils.cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
-            while (max_width < $this.sizes.width) {
+            console.log("i4");
+
+            let max_width = myUtils.cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
+            console.log(max_width, this.sizes.width, events.length, this.sizes.def_cell_margins.x);
+            while (max_width < this.sizes.width) {
                 this.diff_ranges = this.diff_ranges.map(function (e) {
                     return e * 2
                 });
-                var max_width = myUtils.cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
+                max_width = myUtils.cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
             }
+            console.log("i5");
+
             //axis
             this.width_axis = d3.scaleLinear().range([0, $this.sizes.width - margin_x / 3 * 2]).domain([0, max_width]);
             this.x = d3.scaleTime().range([0, $this.sizes.width - margin_x / 3 * 2]).domain(date_domain);
             this.ticks = [];
-            for (var i=0; i<events.length; i++) {
+            console.log("i6");
+
+            for (let i=0; i<events.length; i++) {
                 if (this.width_axis(this.diff_ranges[i]) > 10) {
                     this.ticks.push(new Date(events[i]));
                 }
             }
+            console.log("i7");
+
             this.ticks.push(new Date(events[events.length - 1]));
         };
 
@@ -624,8 +636,8 @@ define([
         };
 
         //function used to draw the data - already parsed as TSV
-        this.draw_heatmap = function (current_parsed, tsv_incoming_data, stream_tsv, keys_order, preserve_color_map, global_visibility, targets, query_id, bgplay_callback, level, ip_version, prepending, collapse_cp, collapse_events, events_labels, cp_labels, timemap, events_range, redraw_minimap) {
-            var known_cp = current_parsed.known_cp;
+        this.draw_heatmap = (current_parsed, tsv_incoming_data, stream_tsv, keys_order, preserve_color_map, global_visibility, targets, query_id, bgplay_callback, level, ip_version, prepending, collapse_cp, collapse_events, events_labels, cp_labels, timemap, events_range, redraw_minimap) => {
+            // var known_cp = current_parsed.known_cp;
             this.erase_all();
             var parseDate = this.parseDate();
             var formatDate = this.formatDate();
@@ -636,6 +648,7 @@ define([
             this.cp_set = [];
             this.asn_set = [];
 
+
             /* brush the selection */
             if (events_range) {
                 this.events_range = [moment(events_range[0]), moment(events_range[1])];
@@ -643,10 +656,12 @@ define([
                 this.events_range = null;
             }
 
-            for (var i = 0; i < tsv_data.length; i++) {
-                if (!(this.events_range && !(moment(tsv_data[i].date).isSameOrAfter(this.events_range[0]) && moment(tsv_data[i].date).isSameOrBefore(this.events_range[1]))))
-                    data.push(type(tsv_data[i], this.asn_set, this.cp_set, this.event_set, level, prepending));
+            for (let item of tsv_data) {
+                console.log(item);
+                if (!(this.events_range && !(moment(item.date).isSameOrAfter(this.events_range[0]) && moment(item.date).isSameOrBefore(this.events_range[1]))))
+                    data.push(type(item, this.asn_set, this.cp_set, this.event_set, level, prepending));
             }
+            console.log(collapse_events);
 
             // FILTRA PER EVENTS
             if (collapse_events > 0) {
@@ -655,13 +670,16 @@ define([
                     return this.event_set.indexOf(e.date) != -1;
                 }.bind(this));
             }
+            console.log(this.events, this.event_set);
+
+
             this.events = this.event_set.slice(0);
             //FILTRA PER CP
             if (collapse_cp) {
                 var cp_to_filter = cp_filter(data);
                 data = data.filter(function (e) {
                     var k = false;
-                    for (var i in cp_to_filter) k = k || cp_to_filter[i].indexOf(e.cp) == 0;
+                    for (var i in cp_to_filter) k = k || cp_to_filter[i].indexOf(e.cp) === 0;
                     return k;
                 });
                 this.cp_set = cp_to_filter.map(function (e) {
@@ -671,12 +689,13 @@ define([
             data.columns = tsv_data.columns;
 
             /* draw the minimap */
-            if (this.current_query_id != query_id || redraw_minimap) {
+            if (this.current_query_id !== query_id || redraw_minimap) {
                 var data_2 = this.common_for_streamgraph(d3.tsvParse(stream_tsv), null, null, global_visibility, preserve_color_map, query_id);
                 var stack = d3.stack();
                 stack.keys(this.keys);
                 this.draw_minimap(this.mini_svg, this.sizes, data_2, stack);
             }
+            console.log("4");
 
             if (keys_order) {
                 if (keys_order.length < 0) {
@@ -701,7 +720,7 @@ define([
             this.sizes.def_cell_margins = {x: 1, y: 1};
             this.sizes.def_labels_margins = {x: 120, y: 140};
             this.sizes.def_min_grid_size = {x: 8, y: 8};
-            if (ip_version.indexOf(6) != -1) {
+            if (ip_version.indexOf(6) !== -1) {
                 this.sizes.def_labels_margins.x += 100;
             }
 
@@ -724,6 +743,8 @@ define([
                 margin_x = this.sizes.margin.left * 4;
             }
 
+            console.log("5");
+
             //CALCOLO DELLE PROPORZIONI E DEI MARGINI
             //approfondire come poter fare una cosa fatta bene sul resize
             var min_width = Math.round((this.sizes.width - (margin_x)) / this.event_set.length);
@@ -742,20 +763,22 @@ define([
             if (gridSize_x < this.sizes.def_min_grid_size.x) {
                 gridSize_x = this.sizes.def_min_grid_size.x;
             }
+            console.log("6");
 
             //time map axis
             if (timemap) {
-                env.guiManager.dom.mainSvg.css("width", $this.sizes.width+$this.sizes.margin.left+$this.sizes.margin.right);
-                this.draw_heat_axis(this.event_set, margin_x);
+                env.guiManager.dom.mainSvg.css("width", $this.sizes.width + $this.sizes.margin.left+$this.sizes.margin.right);
+                // this.draw_heat_axis(this.event_set, margin_x);
             } else {
                 //svg
-                var svg_width = 4*this.sizes.margin.left + margin_x + this.event_set.length * (gridSize_x + this.sizes.def_cell_margins.x);
+                const svg_width = 4*this.sizes.margin.left + margin_x + this.event_set.length * (gridSize_x + this.sizes.def_cell_margins.x);
                 env.guiManager.dom.mainSvg.css("width", svg_width);
             }
 
-            var svg_height = this.sizes.margin.top + margin_y + this.keys.length * (gridSize_y + this.sizes.def_cell_margins.y);
+            const svg_height = this.sizes.margin.top + margin_y + this.keys.length * (gridSize_y + this.sizes.def_cell_margins.y);
             env.guiManager.dom.mainSvg.css("height", svg_height);
 
+            console.log("7");
             //DRAWING
             //chart
             var g = this.main_svg.append("g")
@@ -766,8 +789,7 @@ define([
                 });
 
             //labels vertical
-            var CPLabels = g
-                .append("g")
+            g.append("g")
                 .attr("class", "axis cp_axis")
                 .attr("transform", "translate(" + 0 + "," + (margin_y + gridSize_y / 2 + $this.sizes.def_cell_margins.y) + ")")
                 .selectAll(".dayLabel")
@@ -776,7 +798,7 @@ define([
                 .text(function (d) {
                     if (collapse_cp)
                         for (var i in cp_to_filter) {
-                            if (cp_to_filter[i].indexOf(d) != -1) {
+                            if (cp_to_filter[i].indexOf(d) !== -1) {
                                 var l = cp_to_filter[i].length;
                                 if (cp_to_filter[i].length > 1)
                                     return l;
@@ -804,8 +826,7 @@ define([
                 $(".cp_axis").css("display", "none");
             }
             //labels horizontal
-            var EventsLabels = g
-                .append("g")
+            g.append("g")
                 .attr("class", "axis event_axis")
                 .attr("transform", "translate(" + (margin_x + (gridSize_x + $this.sizes.def_cell_margins.x * 2 + $this.sizes.def_min_grid_size.x) / 2) + "," + (margin_y / 2) + ") rotate (-90)")
                 .selectAll(".timeLabel")
@@ -840,7 +861,9 @@ define([
                 .selectAll(".area")
                 .data(data);
 
-            areas.enter().append("rect")
+            areas
+                .enter()
+                .append("rect")
                 .attr("x", function (d) {
                     if (timemap) {
                         var i = $this.event_set.indexOf(d.date);
@@ -1150,6 +1173,7 @@ define([
             };
 
             function events_filter(data, tollerance) {
+                console.log("HERE", data, tollerance);
                 var set = {};
                 var flat = [];
                 /*for every event build a map DATE -> ASNs */
