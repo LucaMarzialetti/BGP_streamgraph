@@ -196,7 +196,7 @@ define([], function(){
             }
         }
         if(!cons){
-            this.logger.log("Cant' Be Consecutive");
+            this.logger.log("Can't be consecutive");
         }
         return cons;
     };

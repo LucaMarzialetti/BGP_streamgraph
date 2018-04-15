@@ -83,7 +83,7 @@ define([
             var under = 0;
             for(var j in asn_ordering) {
                 var a = asn_ordering[j];
-                distances[i].push(parseFloat((stato[a]+under).toFixed(3)));
+                distances[i].push(parseFloat((stato[a] + under).toFixed(3)));
                 under+=stato[a];
             }
         }
@@ -91,7 +91,7 @@ define([
     };
 
     MetricsManager.prototype.lineDistancesStdDev = function(current_parsed, asn_ordering){
-        const distances = this.lineDistances(current_parsed.asn_distributions,asn_ordering);
+        const distances = this.lineDistances(current_parsed.asn_distributions, asn_ordering);
         const std_devs = {};
 
         for(let order of asn_ordering) {
@@ -105,6 +105,7 @@ define([
         for(let i in std_devs) {
             std_devs[i] = myUtils.std_dev(std_devs[i]);
         }
+
         return std_devs;
     };
 

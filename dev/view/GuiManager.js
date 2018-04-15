@@ -126,7 +126,7 @@ define([
         this.global_visibility = true;
         this.prepending_prevention = true;
         this.asn_level = 1;
-        this.ip_version = [4];
+        this.ip_version = [4,6];
         this.graph_type = "stream";
         this.streaming = false;
         this.steps = false;

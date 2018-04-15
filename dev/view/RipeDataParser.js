@@ -408,13 +408,13 @@ define([
             this.asn_set = [];
             this.local_visibility = 0;
             //initialize
-            for (var i in data.events) {
+            for (let i of data.events) {
                 this.asn_distributions.push({});
             }
+
             //counting
-            for (var n=0; n<data.targets.length; n++){
-                var tgt = data.targets[n];
-                if ((include_ipv4 && utils.validateIPv4(tgt)) || (include_ipv6 && utils.validateIPv6(tgt))) {
+            for (let tgt of data.targets){
+                if ((include_ipv4 && tgt.indexOf(".") >= 0) || (include_ipv6 && tgt.indexOf(":") >= 0)) {
                     for (var i in data.states[tgt]) {
                         var state = data.states[tgt][i];
                         var tot = 0;

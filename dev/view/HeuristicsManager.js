@@ -496,10 +496,9 @@ define([
                 bind_structure.consecutive(ex["source"],ex["destination"]);
             }
 
-            var ordering;
-            ordering = this.exchanges_plus_sd_greedy_block(current_parsed, bind_structure, non_exchange_as);
+            let ordering = this.exchanges_plus_sd_greedy_block(current_parsed, bind_structure, non_exchange_as);
             ordering = ordering.filter(function(e){return e != null;});
-            var end = moment().valueOf();
+            let end = moment().valueOf();
             this.logger.log("TIME_EXECUTED "+this.dateConverter.executionTime(start,end));
             return ordering;
         };
@@ -527,27 +526,30 @@ define([
                 for(const [index, value] of left.entries()){
                     //straigth
                     block = blocks[value];
-                    let new_order = base.concat(block);
-                    let new_score = this.metricsManager.lineDistanceStdDevScore(this.metricsManager.lineDistancesStdDev(current_parsed,new_order));
-                    if(new_score < best_score){
-                        best_score = new_score;
-                        best_index = index;
-                        if(Array.isArray(block)) {
-                            best_order = block.slice(0);
-                        } else {
-                            best_order = block;
-                        }
-                    }
+                    if (block) {
+                        let new_order = base.concat(block);
+                        let new_score = this.metricsManager.lineDistanceStdDevScore(this.metricsManager.lineDistancesStdDev(current_parsed, new_order));
 
-                    //reversed
-                    if(Array.isArray(block)) {
-                        block = blocks[value].slice(0).reverse();
-                        new_order = base.concat(block);
-                        new_score = this.metricsManager.lineDistanceStdDevScore(this.metricsManager.lineDistancesStdDev(current_parsed, new_order));
                         if (new_score < best_score) {
                             best_score = new_score;
                             best_index = index;
-                            best_order = block.slice(0);
+                            if (Array.isArray(block)) {
+                                best_order = block.slice(0);
+                            } else {
+                                best_order = block;
+                            }
+                        }
+
+                        //reversed
+                        if (Array.isArray(block)) {
+                            block = blocks[value].slice(0).reverse();
+                            new_order = base.concat(block);
+                            new_score = this.metricsManager.lineDistanceStdDevScore(this.metricsManager.lineDistancesStdDev(current_parsed, new_order));
+                            if (new_score < best_score) {
+                                best_score = new_score;
+                                best_index = index;
+                                best_order = block.slice(0);
+                            }
                         }
                     }
                 }
