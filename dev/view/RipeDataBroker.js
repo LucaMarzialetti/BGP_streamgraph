@@ -67,10 +67,12 @@ define([
                         try {
                             this.ipv4_peerings = myUtils.max(data['data']['peer_count']['v4']['full_feed'].map(function(e){return e['count'];}));
                             this.ipv6_peerings = myUtils.max(data['data']['peer_count']['v6']['full_feed'].map(function(e){return e['count'];}));
-                            if(this.ipv6_peerings === 0 && env.queryParams.targets.some(utils.isIPv4))
+                            if(this.ipv6_peerings === 0 && env.queryParams.targets.some(utils.isIPv4)){
                                 env.guiManager.global_visibility = false;
-                            if(this.ipv4_peerings === 0 && env.queryParams.targets.some(utils.isIPv6))
+                            }
+                            if(this.ipv4_peerings === 0 && env.queryParams.targets.some(utils.isIPv6)){
                                 env.guiManager.global_visibility = false;
+                            }
 
                         } catch(err) {
                             utils.observer.publish("error", this.errors.peercountEmpty);
@@ -106,7 +108,6 @@ define([
                         try {
                             if(Array.isArray(data['data']['events']) && data['data']['events'].length < 1 &&
                                 Array.isArray(data['data']['initial_state']) && data['data']['initial_state'].length < 1){
-                                console.log("=== RipeBroker empty response ! ");
                                 reject(this.errors.bgplayEmpty);
                             } else {
                                 this.current_parsed = this.parser.ripe_response_parse(data, env.queryParams.startDate, env.queryParams.stopDate);
@@ -120,11 +121,13 @@ define([
                                 if (env.guiManager.gather_information ){
                                     env.logger.log("=== RipeBroker Starting gathering ASN Info");
                                     env.guiManager.asn_info_done = false;
-                                    if(env.guiManager.graph_type === "stream") {
-                                        this.getASNInfo(this.current_parsed.asn_set, 0);
-                                    } else if(env.guiManager.graph_type === "heat") {
-                                        this.getASNInfo(env.guiManager.drawer.asn_set, 0);
-                                    }
+                                    // if(env.guiManager.graph_type === "stream") {
+                                    //     this.getASNInfo(this.current_parsed.asn_set, 0);
+                                    // } else if(env.guiManager.graph_type === "heat") {
+                                    //     this.getASNInfo(env.guiManager.drawer.asn_set, 0);
+                                    // }
+                                    env.guiManager.asn_info_done = true;
+
                                 }
                                 resolve();
                             }
@@ -149,34 +152,37 @@ define([
         };
 
 
-        this.CPInfoCallBack = function(res) {
-            var url_cp = "https://stat.ripe.net/data/geoloc/data.json?resource=" + res.ip;
-            $.ajax({
-                url: url_cp,
-                dataType: "json",
-                success: function(data){
-                    res["geo"] = data.data.locations[0].country;
-                    $this.current_parsed.known_cp[res.id] = res;
-                },
-                error: function(jqXHR, exception){
-                    utils.observer.publish("error", $this.errors.cpInfoError);
+        this.CPInfoCallBack = (res) => {
+;            return new Promise((resolve, reject) => {
+                if (this.current_parsed.known_cp[res.id]){
+                    resolve();
                 }
+                var url_cp = "https://stat.ripe.net/data/geoloc/data.json?resource=" + res.ip;
+                $.ajax({
+                    url: url_cp,
+                    dataType: "json",
+                    success: function(data){
+                        res["geo"] = data.data.locations[0].country;
+                        $this.current_parsed.known_cp[res.id] = res;
+                        resolve();
+                    },
+                    error: function(jqXHR, exception){
+                        utils.observer.publish("error", $this.errors.cpInfoError);
+                        reject();
+                    }
+                });
             });
+
         };
 
         this.getCPInfo = function(resources,index) {
-            if(index < resources.length){
-                var res = resources[index];
-                var r_id = res.id;
-                if(!this.current_parsed.known_cp[r_id]){
-                    this.CPInfoCallBack(res);
-                }
-                index++;
-                this.getCPInfo(resources, index);
-            } else{
-                env.guiManager.cp_info_done = true;
-                env.logger.log("=== RipeBroker CPinfo Completed");
-            }
+
+            return Promise
+                .all(resources.map(this.CPInfoCallBack))
+                .then( () => {
+                    env.guiManager.cp_info_done = true;
+                    env.logger.log("=== RipeBroker CPinfo Completed");
+                });
         };
 
         this.ASNInfoCallBack = function(res) {
@@ -217,9 +223,7 @@ define([
             if(env.guiManager.gather_information){
                 env.logger.log("=== RipeBroker Starting gathering CP Info");
                 env.guiManager.cp_info_done = false;
-                setTimeout(function(){
-                    $this.getCPInfo($this.current_parsed.resources,0)
-                },0);
+                this.getCPInfo($this.current_parsed.resources);
                 env.logger.log("=== RipeBroker Starting gathering ASN Info");
                 setTimeout(function() {
                     env.guiManager.asn_info_done = false;
@@ -358,7 +362,6 @@ define([
             call();
             var interval_id = setInterval(call, every);
             //env.logger
-            console.log("Streaming started with interval ID: " + interval_id);
             return interval_id;
         };
 
@@ -376,14 +379,12 @@ define([
                     env.guiManager.dom.stepsPauseButton.addClass("hidden");
                     env.guiManager.dom.stepsStopButton.addClass("hidden");
                     env.guiManager.draw_functions_btn_enabler();
-                    console.log("Step view ended");
                 } else {
                     $this.steps_core(env.guiManager.current_step);
                     env.guiManager.current_step+=1;
                 }
             },every);
             //env.logger
-            console.log("Step view started with interval ID: "+interval_id);
             return interval_id;
         };
 

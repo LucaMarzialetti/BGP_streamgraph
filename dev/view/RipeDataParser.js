@@ -541,10 +541,7 @@ define([
 
         //convert the data to a TSV format for heatmap
         this.convert_to_heatmap_tsv = (data, antiprepending, level, target_types) => {
-
-            console.log(JSON.stringify(data));
             this.comune_converter(data, antiprepending, level, target_types);
-            console.log(JSON.stringify(data));
 
             var real_states = {};
             var real_events = data.events;

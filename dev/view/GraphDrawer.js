@@ -483,13 +483,9 @@ define([
                         var s = "";
                         s += "<strong>ASN: </strong>";
                         s += "<span>" + d_key.key + "</span>";
-                        var asn_country = $current_parsed.known_asn[d_key.key];
-                        if (asn_country) {
-                            var ac = asn_country.split(",");
-                            ac = ac[ac.length - 1].trim();
-                            // s += "<span> (" + ac + ") </span>";
-                            s += "<br><span> " + asn_country + " </span>";
-                            s += "<span class='flag-icon flag-icon-" + ac.toLowerCase() + "'></span>";
+                        const asnOwner = $current_parsed.known_asn[d_key.key];
+                        if (asnOwner) {
+                            s += "<br><span> " + asnOwner + " </span>";
                         }
                         s += "<br/><strong>Date: </strong>";
                         s += "<span>" + date + "</span>";
@@ -545,8 +541,6 @@ define([
             const date_domain = d3.extent(events.map(function (e) {
                 return new Date(e);
             }));
-            //ranges of time
-            console.log("i1");
 
             this.diff_ranges = [];
             for (let i = 0; i < events.length - 1; i++) {
@@ -554,40 +548,34 @@ define([
                 const b = moment(events[i + 1]);
                 this.diff_ranges.push(b.diff(a));
             }
-            console.log("i2");
             //last event last as the minimum
             const minimum = myUtils.min(this.diff_ranges);
             this.diff_ranges.push(0);
-            console.log("i3");
 
             //normalize ranges
             this.diff_ranges = this.diff_ranges.map(function (e) {
                 return e / minimum
             });
-            console.log("i4");
 
             let max_width = myUtils.cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
-            console.log(max_width, this.sizes.width, events.length, this.sizes.def_cell_margins.x);
+
             while (max_width < this.sizes.width) {
                 this.diff_ranges = this.diff_ranges.map(function (e) {
                     return e * 2
                 });
                 max_width = myUtils.cumulate(this.diff_ranges) + events.length * this.sizes.def_cell_margins.x;
             }
-            console.log("i5");
 
             //axis
             this.width_axis = d3.scaleLinear().range([0, $this.sizes.width - margin_x / 3 * 2]).domain([0, max_width]);
             this.x = d3.scaleTime().range([0, $this.sizes.width - margin_x / 3 * 2]).domain(date_domain);
             this.ticks = [];
-            console.log("i6");
 
             for (let i=0; i<events.length; i++) {
                 if (this.width_axis(this.diff_ranges[i]) > 10) {
                     this.ticks.push(new Date(events[i]));
                 }
             }
-            console.log("i7");
 
             this.ticks.push(new Date(events[events.length - 1]));
         };
@@ -657,11 +645,9 @@ define([
             }
 
             for (let item of tsv_data) {
-                console.log(item);
                 if (!(this.events_range && !(moment(item.date).isSameOrAfter(this.events_range[0]) && moment(item.date).isSameOrBefore(this.events_range[1]))))
                     data.push(type(item, this.asn_set, this.cp_set, this.event_set, level, prepending));
             }
-            console.log(collapse_events);
 
             // FILTRA PER EVENTS
             if (collapse_events > 0) {
@@ -670,7 +656,6 @@ define([
                     return this.event_set.indexOf(e.date) != -1;
                 }.bind(this));
             }
-            console.log(this.events, this.event_set);
 
 
             this.events = this.event_set.slice(0);
@@ -695,7 +680,6 @@ define([
                 stack.keys(this.keys);
                 this.draw_minimap(this.mini_svg, this.sizes, data_2, stack);
             }
-            console.log("4");
 
             if (keys_order) {
                 if (keys_order.length < 0) {
@@ -743,7 +727,6 @@ define([
                 margin_x = this.sizes.margin.left * 4;
             }
 
-            console.log("5");
 
             //CALCOLO DELLE PROPORZIONI E DEI MARGINI
             //approfondire come poter fare una cosa fatta bene sul resize
@@ -763,7 +746,6 @@ define([
             if (gridSize_x < this.sizes.def_min_grid_size.x) {
                 gridSize_x = this.sizes.def_min_grid_size.x;
             }
-            console.log("6");
 
             //time map axis
             if (timemap) {
@@ -778,7 +760,6 @@ define([
             const svg_height = this.sizes.margin.top + margin_y + this.keys.length * (gridSize_y + this.sizes.def_cell_margins.y);
             env.guiManager.dom.mainSvg.css("height", svg_height);
 
-            console.log("7");
             //DRAWING
             //chart
             var g = this.main_svg.append("g")
@@ -925,15 +906,13 @@ define([
                     .append("text")
                     .attr("style", "font-size: 8px;")
                     .text(function (d) {
-                        var s = "";
                         try {
                             var geo = current_parsed.known_cp[d]['geo'].split("-")[0];
-                            s += geo;
-                        }
-                        catch (err) {
+                            return geo;
+                        } catch (err) {
 
                         }
-                        return s;
+                        return d;
                     })
                     .attr("x", 0)
                     .attr("y", function (d, i) {
@@ -950,8 +929,11 @@ define([
                         var geo;
                         try {
                             geo = current_parsed.known_cp[d]['geo'].split("-")[0];
-                        } catch (err) {}
-                        return s + geo.toLowerCase() + ".svg";
+                            return s + geo.toLowerCase() + ".svg";
+                        } catch (err) {
+
+                        }
+                        return "#";
                     })
                     .attr("x", 20)
                     .attr("y", function (d, i) {
@@ -1173,7 +1155,6 @@ define([
             };
 
             function events_filter(data, tollerance) {
-                console.log("HERE", data, tollerance);
                 var set = {};
                 var flat = [];
                 /*for every event build a map DATE -> ASNs */

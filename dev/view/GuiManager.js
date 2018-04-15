@@ -841,7 +841,6 @@ define([
         this.streaming_stop_btn_setup = function () {
             this.dom.streamingStopButton.on("mousedown", function (e, ui) {
                 if(e.which==1){
-                    console.log("Stopping streaming ith interval ID: "+$this.streaming_interval);
                     clearInterval($this.streaming_interval);
                     delete $this.streaming_interval;
                     $this.streaming=false;
