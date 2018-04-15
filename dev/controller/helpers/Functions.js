@@ -93,9 +93,8 @@ define([
   };
 
   //find the max in the array
-  const max = (a) => {
-    if(Array.isArray(a))
-      return a.reduce(function(va,vb){return Math.max(va,vb)});
+  const max = function(arr){
+    return Math.max.apply(null, arr);
   };
 
   //find the min in the array

@@ -116,17 +116,22 @@ define([
 
     /************************ WIGGLES ************************/
     MetricsManager.prototype.sortByWiggleMinMax = function(wiggles, ordering){
+        var n, length;
         var as_w = {};
-        for(var a in ordering)
-            as_w[ordering[a]] = [];
-        for(var w in wiggles){
-            var list = wiggles[w];
-            for(var a in list)
-                as_w[a].push(list[a]);
+        for (n=0,length=ordering.length; n<length; n++) {
+            as_w[ordering[n]] = [];
         }
 
-        for(var w in as_w){
-            as_w[w] = myUtils.max(as_w[w]);
+        for (n=0,length=wiggles.length; n<length; n++) {
+            var list = wiggles[n];
+            for (var n2=0,length2=list.length; n2<length2; n2++) {
+                as_w[n2].push(list[n2]);
+            }
+        }
+
+        for (n=0,length=as_w.length; n<length; n++) {
+            as_w[n] = myUtils.max(as_w[n]);
+
         }
 
         return as_w;
@@ -134,15 +139,15 @@ define([
 
     MetricsManager.prototype.sortByWiggleMinSum = function(wiggles, ordering){
         var as_w = {};
-        for(var a in ordering)
+        for(var a of ordering)
             as_w[ordering[a]] = [];
-        for(var w in wiggles){
+        for(var w of wiggles){
             var list = wiggles[w];
-            for(var a in list)
+            for(var a of list)
                 as_w[a].push(list[a]);
         }
 
-        for(var w in as_w){
+        for(var w of as_w){
             as_w[w] = myUtils.cumulate(as_w[w]);
         }
 
@@ -151,7 +156,7 @@ define([
 
     MetricsManager.prototype.wiggleScore = function(wiggles){
         var w = 0;
-        for(var i in wiggles){
+        for(var i of wiggles){
             w+=wiggles[i];
         }
         return w;
@@ -194,9 +199,11 @@ define([
         function calc_y(e,a,ordering,asn_distributions){
             var dist = asn_distributions[e];
             var y = 0;
-            if(a >= 0)
-                for(var i = 0; i <= a; i++)
-                    y+=dist[ordering[i]];
+            if(a >= 0) {
+                for (var i = 0; i <= a; i++) {
+                    y += dist[ordering[i]];
+                }
+            }
             return y;
         }
 
@@ -205,7 +212,7 @@ define([
         }
 
         function calc_w(fi, g, g_1){
-            return fi*(Math.abs(g)+Math.abs(g_1))/2;
+            return fi*(Math.abs(g) + Math.abs(g_1))/2;
         }
     };
 
@@ -215,10 +222,12 @@ define([
         var counters = [];
         var mapping = {};
         /*init*/
-        for(var a = 0; a<asn_ordering.length; a++)
-            mapping[asn_ordering[a]] = String.fromCharCode(35+a);
-        for(var i = 0; i<asn_distributions.length;i++)
+        for(var a = 0; a<asn_ordering.length; a++) {
+            mapping[asn_ordering[a]] = String.fromCharCode(35 + a);
+        }
+        for(var i = 0; i<asn_distributions.length;i++) {
             counters[i] = "";
+        }
         /*fit*/
         for(var i = 0; i<asn_distributions.length;i++){
             var stato = asn_distributions[i];
