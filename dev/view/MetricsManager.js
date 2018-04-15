@@ -91,63 +91,64 @@ define([
     };
 
     MetricsManager.prototype.lineDistancesStdDev = function(current_parsed, asn_ordering){
-        var distances = this.lineDistances(current_parsed.asn_distributions,asn_ordering);
-        var std_devs = {};
-        for(var i in asn_ordering)
-            std_devs[asn_ordering[i]] = [];
-        for(var i in distances){
-            var stato = distances[i];
-            for(var j in asn_ordering){
-                var asn = asn_ordering[j];
-                std_devs[asn].push(stato[j]);
+        const distances = this.lineDistances(current_parsed.asn_distributions,asn_ordering);
+        const std_devs = {};
+
+        for(let order of asn_ordering) {
+            std_devs[order] = [];
+        }
+        for(let stato of distances){
+            for (let n=0; n<asn_ordering.length; n++){
+                std_devs[asn_ordering[n]].push(stato[n]);
             }
         }
-        for(var i in std_devs)
+        for(let i in std_devs) {
             std_devs[i] = myUtils.std_dev(std_devs[i]);
+        }
         return std_devs;
     };
 
     MetricsManager.prototype.lineDistanceStdDevScore = function(line_distance){
-        var distance = 0;
-        for(var i in line_distance)
-            distance+=line_distance[i];
-        return distance;
+        return Object.values(line_distance).reduce((a, b) => a + b, 0);
     };
 
     /************************ WIGGLES ************************/
     MetricsManager.prototype.sortByWiggleMinMax = function(wiggles, ordering){
-        var n, length;
-        var as_w = {};
-        for (n=0,length=ordering.length; n<length; n++) {
-            as_w[ordering[n]] = [];
+        const as_w = {};
+
+        for (let order of ordering) {
+            as_w[order] = [];
         }
 
-        for (n=0,length=wiggles.length; n<length; n++) {
-            var list = wiggles[n];
-            for (var n2=0,length2=list.length; n2<length2; n2++) {
-                as_w[n2].push(list[n2]);
+        for (let wiggle of wiggles) {
+            for (let key in wiggle) {
+                as_w[key].push(wiggle[key]);
             }
         }
-
-        for (n=0,length=as_w.length; n<length; n++) {
-            as_w[n] = myUtils.max(as_w[n]);
-
+        for (let w in as_w){
+            as_w[w] = myUtils.max(as_w[w]);
         }
+
 
         return as_w;
     };
 
     MetricsManager.prototype.sortByWiggleMinSum = function(wiggles, ordering){
-        var as_w = {};
-        for(var a of ordering)
-            as_w[ordering[a]] = [];
-        for(var w of wiggles){
-            var list = wiggles[w];
-            for(var a of list)
-                as_w[a].push(list[a]);
+        let as_w = {};
+        let w;
+
+        for(let a of ordering) {
+            as_w[a] = [];
         }
 
-        for(var w of as_w){
+        for(w of wiggles){
+            let list = w;
+            for(let a in list){
+                as_w[a].push(list[a]);
+            }
+        }
+
+        for(w in as_w){
             as_w[w] = myUtils.cumulate(as_w[w]);
         }
 
@@ -155,11 +156,7 @@ define([
     };
 
     MetricsManager.prototype.wiggleScore = function(wiggles){
-        var w = 0;
-        for(var i of wiggles){
-            w+=wiggles[i];
-        }
-        return w;
+        return Object.values(wiggles).reduce((a, b) => a + b, 0);
     };
 
     MetricsManager.prototype.computeWiggle = function(current_parsed, asn_ordering){
@@ -241,10 +238,12 @@ define([
     };
 
     MetricsManager.prototype.computeLevenshteinDistance = function(current_parsed, asn_ordering){
-        var strings = this.characterization(current_parsed.asn_distributions, asn_ordering);
-        var distances = [];
-        for(var i = 0; i<strings.length-1; i++)
-            distances.push(myUtils.levenshtein(strings[i],strings[i+1]));
+        const strings = this.characterization(current_parsed.asn_distributions, asn_ordering);
+        const distances = [];
+        for(let i = 0; i<strings.length-1; i++) {
+            distances.push(myUtils.levenshtein(strings[i], strings[i + 1]));
+        }
+
         return distances;
     };
 

@@ -50,7 +50,6 @@ define([
 
   //sum all values in the array
   const cumulate = (a) => {
-    if(Array.isArray(a))
       return a.reduce((pv, cv) => pv+cv, 0);
   };
 

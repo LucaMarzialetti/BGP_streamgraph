@@ -111,6 +111,7 @@ define([
         env = {
             "version": "18.4.13.2",
             "dev": instanceParams.dev,
+            "showMetricsScore": instanceParams.showMetricsScore,
             "logger": new Logger(),
             "autoStart": instanceParams.autoStart || true,
             "widgetUrl": WIDGET_URL + "dev/",

@@ -278,7 +278,9 @@ define([
                     null,
                     events_range,
                     redraw_minimap);
-                this.heuristicsManager.MetricsManager.metrics(this.current_parsed, env.guiManager.drawer.keys);
+                if (env.showMetricsScore){
+                    this.heuristicsManager.metricsManager.metrics(this.current_parsed, env.guiManager.drawer.keys);
+                }
                 env.guiManager.isGraphPresent();
 
             } else if(env.guiManager.graph_type == "heat") { // HEAT
