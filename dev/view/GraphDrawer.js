@@ -768,7 +768,7 @@ define([
             //time map axis
             if (timemap) {
                 env.guiManager.dom.mainSvg.css("width", $this.sizes.width + $this.sizes.margin.left+$this.sizes.margin.right);
-                // this.draw_heat_axis(this.event_set, margin_x);
+                this.draw_heat_axis(this.event_set, margin_x);
             } else {
                 //svg
                 const svg_width = 4*this.sizes.margin.left + margin_x + this.event_set.length * (gridSize_x + this.sizes.def_cell_margins.x);

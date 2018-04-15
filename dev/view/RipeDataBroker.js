@@ -238,8 +238,8 @@ define([
             this.parser.cp_seqs(this.current_parsed);
             this.parser.asn_exchanges(this.current_parsed);
             this.current_visibility = 0;
-            this.use_ipv4_vis = env.guiManager.ip_version.indexOf(4) != -1;
-            this.use_ipv6_vis = env.guiManager.ip_version.indexOf(6) != -1;
+            this.use_ipv4_vis = env.guiManager.ip_version.indexOf(4) !== -1;
+            this.use_ipv6_vis = env.guiManager.ip_version.indexOf(6) !== -1;
 
             if(env.guiManager.global_visibility) {
                 for(let tgt of this.current_parsed.targets){

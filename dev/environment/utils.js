@@ -600,6 +600,7 @@ define([
         },
 
         validateIPv6: function(str){
+            return true;
             var ipv6TestRegEx;
             var segments = str.split("/");
             var ip = segments[0];
@@ -611,11 +612,11 @@ define([
         },
 
         isIPv6: function (ip) {
-            return ip.indexOf(":") >= 0;
+            return ip.indexOf(":") !== -1;
         },
 
         isIPv4: function (ip) {
-            return ip.indexOf(".") >= 0;
+            return ip.indexOf(".") !== -1;
         },
 
         validateIP: function(str){

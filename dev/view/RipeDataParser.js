@@ -414,7 +414,7 @@ define([
 
             //counting
             for (let tgt of data.targets){
-                if ((include_ipv4 && tgt.indexOf(".") >= 0) || (include_ipv6 && tgt.indexOf(":") >= 0)) {
+                if ((include_ipv4 && utils.isIPv6(tgt)) || (include_ipv6 && utils.isIPv6(tgt))) {
                     for (var i in data.states[tgt]) {
                         var state = data.states[tgt][i];
                         var tot = 0;
@@ -586,7 +586,7 @@ define([
             converted_data.push(header);
             for (var t in data.targets) {
                 var tgt = data.targets[t];
-                if ((include_ipv4 && utils.validateIPv4(tgt)) || (include_ipv6 && utils.validateIPv6(tgt))) {
+                if ((include_ipv4 && utils.isIPv4(tgt)) || (include_ipv6 && utils.isIPv6(tgt))) {
                     for (var i in real_states[tgt]) {
                         var state = real_states[tgt][i];
                         for (var j in cp_set) {
