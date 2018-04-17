@@ -101,7 +101,8 @@ define([
                     data : {
                         resource: env.queryParams.targets.join(","),
                         starttime: env.queryParams.startDate.unix(),
-                        endtime: env.queryParams.stopDate.unix()
+                        endtime: env.queryParams.stopDate.unix(),
+                        
                     },
                     success: (data) => {
                         env.logger.log("=== RipeBroker Success! Data loaded from:"+url_bgplay);

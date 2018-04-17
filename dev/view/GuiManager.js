@@ -132,7 +132,7 @@ define([
         this.steps = false;
         this.current_step = 0;
         this.merge_cp = false;
-        this.merge_events = 0;
+        this.merge_events = 40;
         this.events_labels = false;
         this.cp_labels = false;
         this.use_scrollbars = false;
