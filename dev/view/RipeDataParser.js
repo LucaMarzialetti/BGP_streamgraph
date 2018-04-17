@@ -414,7 +414,7 @@ define([
 
             //counting
             for (let tgt of data.targets){
-                if ((include_ipv4 && utils.isIPv6(tgt)) || (include_ipv6 && utils.isIPv6(tgt))) {
+                if ((include_ipv4 && utils.isIPv4(tgt)) || (include_ipv6 && utils.isIPv6(tgt))) {
                     for (var i in data.states[tgt]) {
                         var state = data.states[tgt][i];
                         var tot = 0;
