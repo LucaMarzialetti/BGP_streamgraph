@@ -83,7 +83,7 @@ define([
                 .attr("transform", "translate(" + x + "," + y + ")")
                 .append("text")
                 .text(s)
-                .attr("style", "font-family:'Arial Black', Gadget, sans-serif; font-size: 20px; stroke: black; fill: gray; opacity: 0.4; stroke-opacity: 0.4;");
+                .attr("style", "font-family:'Arial Black', Gadget, sans-serif; font-size: 20px; fill: gray; stroke: black; opacity: 0.4; stroke-opacity: 0.4;"); //  stroke: black;
         };
 
         this.draw_minimap = function (svg, sizes, data, stack) {
@@ -876,7 +876,7 @@ define([
                 .style("fill", function (d) {
                     return (d.asn && d.asn != null) ? $this.z(d.asn) : "#ffffff";
                 })
-                .style("stroke", "black")
+                .style("stroke", "gray")
                 .style("stroke-width", this.sizes.def_cell_margins.x / 5)
                 .style("opacity", 1)
                 .on('mousemove', function (d) {
