@@ -46,6 +46,7 @@ define([
 
         //setup the drawing in the svg  <-- TO CALL AT DOM READY
         this.drawer_init = function () {
+            env.guiManager.loading(true);
             this.erase_all();
             var margin = {top: 5, right: 15, bottom: 15, left: 15};
             var width = env.guiManager.dom.mainSvg.outerWidth() - 5 - margin.left - margin.right *2;
@@ -329,7 +330,6 @@ define([
 
         //function used to draw the data - already parsed as TSV
         this.draw_streamgraph = function (current_parsed, graph_type, tsv_incoming_data, keys_order, preserve_color_map, visibility, targets, query_id, bgplay_callback, events_limit, events_range, redraw_minimap) {
-
             this.erase_all();
             this.draw_stream_axis(this.main_svg, this.sizes);
             utils.observer.publish("updated", env.queryParams);
@@ -533,6 +533,8 @@ define([
             }
 
             this.current_query_id = query_id;
+
+            env.guiManager.loading(false);
 
         };
 
@@ -925,7 +927,7 @@ define([
                     .attr("height", 8)
                     .attr("width", 8)
                     .attr("xlink:href", function (d) {
-                        var s = "https://stat.ripe.net/widgets/js/interdomain-landscape/dev/view/css/flags/2.8.0/flags/4x3/";
+                        var s = env.widgetUrl + "view/css/flags/2.8.0/flags/4x3/";
                         var geo;
                         try {
                             geo = current_parsed.known_cp[d]['geo'].split("-")[0];
@@ -1063,7 +1065,7 @@ define([
                         };
                     },0);
                 }
-            };
+            }
 
             function mouseout() {
                 setTimeout(function(){
@@ -1116,7 +1118,7 @@ define([
                         .style("fill-opacity", 0.2);
                     $this.last_hover = d;
                 }
-            };
+            }
 
             function date_mouse_over(d, pos) {
                 if ($this.last_hover != d) {
@@ -1127,7 +1129,7 @@ define([
                         .style("fill-opacity", 0.2);
                     $this.last_hover = d;
                 }
-            };
+            }
 
             function cp_filter(data) {
                 var set = {};
@@ -1186,9 +1188,10 @@ define([
                 return flat;
             }
 
+            env.guiManager.loading(false);
             utils.observer.publish("updated", env.queryParams);
 
-        };
+        }
 
         //extra functions
         //change color to areas
@@ -1230,6 +1233,8 @@ define([
             this.mini_svg.select(".background").remove();
             this.mini_svg.selectAll(".axis").remove();
         };
+
+        
     };
 
 

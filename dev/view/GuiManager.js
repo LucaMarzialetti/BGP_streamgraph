@@ -14,7 +14,7 @@ define([
     var GuiManager = function(env) {
 
         /*************************************** DOM elements ************************************/
-        env.parentDom.append(template());
+        env.parentDom.append(template({ widgetUrl: env.widgetUrl }));
 
         this.mouse = { x: 0, y: 0 };
 
@@ -110,7 +110,8 @@ define([
             stopDate: env.parentDom.find(".stop-date"),
 
             timeModal: env.parentDom.find(".time-modal"),
-            timeModalButton: env.parentDom.find(".time-modal-button")
+            timeModalButton: env.parentDom.find(".time-modal-button"),
+            loadingImage: env.parentDom.find(".bgpstr-spinner")
         };
 
         utils.observer.subscribe("updated", function(params){
@@ -172,7 +173,6 @@ define([
 
         this.pickers_setup = function () {
 
-
             this.dom.timeModal.modal({
                 show: false,
                 backdrop : false,
@@ -232,9 +232,10 @@ define([
         };
 
         this.setTimeFrameButton = function () {
-            this.dom.applyTime.on("mousedown", function () {
+            this.dom.applyTime.on("mousedown", () => {
                 env.queryParams.startDate = moment($this.dom.startDate.datetimepicker("getDate"));
                 env.queryParams.stopDate = moment($this.dom.stopDate.datetimepicker("getDate"));
+                this.loading(true);
                 $this.ripeDataBroker.dataRequest();
             });
         };
@@ -289,7 +290,6 @@ define([
             this.heat_asn_sort_btn_setup();
             this.draw_functions_btn_enabler();
         };
-
 
         this.isGraphPresent = function (text) {
             return this.drawer.isGraphPresent();
@@ -755,9 +755,9 @@ define([
         };
 
         this.graph_type_radio_setup = function () {
-            env.parentDom.on("mousedown", ".graph_type", function (e) {
-
-                setTimeout(function () {
+            env.parentDom.on("mousedown", ".graph_type",  (e) => {
+                this.loading(true);
+                setTimeout(() => {
                     $this.graph_type = $this.dom.graphType.filter(":checked").val();
                     if ($this.graph_type == "stream") {
                         $this.dom.counterAsn.find("label").text("#ASN");
@@ -766,15 +766,13 @@ define([
                         $this.dom.mainSvg.css("height", '');
                         $this.dom.mainSvg.css("overflow-y", '');
                         $this.dom.mainSvg.find('svg').css("height",'');
-                        $this.use_scrollbars=false;
+                        $this.use_scrollbars = false;
+                    } else if ($this.graph_type == "heat") {
+                        $this.dom.counterAsn.find("label").text("#CP");
+                        $this.dom.streamOptionButton.addClass("hidden");
+                        $this.dom.heatOptionButton.removeClass("hidden");
                     }
-                    else {
-                        if ($this.graph_type == "heat") {
-                            $this.dom.counterAsn.find("label").text("#CP");
-                            $this.dom.streamOptionButton.addClass("hidden");
-                            $this.dom.heatOptionButton.removeClass("hidden");
-                        }
-                    }
+
                     $this.ripeDataBroker.heuristicsManager.setDefaultHeuristic($this.graph_type);
                     if ($this.isGraphPresent()) {
                         $this.ripeDataBroker.loadCurrentState(false, null, true);
@@ -1234,6 +1232,17 @@ define([
             $(selector).text(quantity);
         };
 
+
+        this.loading = function(isLoading){
+
+            if (isLoading){
+                this.dom.loadingImage.show();
+            } else {
+                this.dom.loadingImage.hide();
+
+            }
+
+        };
     };
 
     return GuiManager;

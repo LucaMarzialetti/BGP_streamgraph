@@ -10061,3 +10061,12 @@
   padding: 3px;
   height: 100%;
 }
+.bgpst-container .bgpstr-spinner {
+  position: absolute;
+  top: 170px;
+  left: 50%;
+  background-color: #FFFFFF;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #C0C0C0;
+}
