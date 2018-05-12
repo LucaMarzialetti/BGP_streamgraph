@@ -185,7 +185,7 @@ define([
             });
             this.dom.startDate
                 .datetimepicker({
-                    initialDate: env.queryParams.startDate.format("YYYY-MM-DD HH:mm:ss"),
+                    initialDate: env.queryParams.startDate,//.utc().format("YYYY-MM-DD HH:mm:ss")
                     format: "yyyy-mm-dd hh:ii:ss",
                     autoclose: true,
                     startDate: "2004-01-01 00:00:00",
@@ -227,8 +227,8 @@ define([
                         .css("left", offset.left - $(window).scrollLeft());
                 });
 
-            this.dom.startDate.datetimepicker("setDate", env.queryParams.startDate.utc().toDate());
-            this.dom.stopDate.datetimepicker("setDate", env.queryParams.stopDate.utc().toDate());
+            this.dom.startDate.datetimepicker("setDate", new Date(env.queryParams.startDate.format("YYYY-MM-DDTHH:mm:ss")));
+            this.dom.stopDate.datetimepicker("setDate", new Date(env.queryParams.stopDate.format("YYYY-MM-DDTHH:mm:ss")));
         };
 
         this.setTimeFrameButton = function () {

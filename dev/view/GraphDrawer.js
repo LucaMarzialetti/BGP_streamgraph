@@ -26,7 +26,7 @@ define([
 
         var formatMillisecond = d3.timeFormat(".%L"),
             formatSecond = d3.timeFormat(":%S"),
-            formatMinute = d3.timeFormat("%I:%M"),
+            formatMinute = d3.timeFormat("%H:%M"),
             formatHour = d3.timeFormat("%H:%M"),
             formatDay = d3.timeFormat("%Y-%m-%d"),
             formatWeek = d3.timeFormat("%b %d"),
