@@ -2,13 +2,14 @@
 
 define([
     "bgpst.env.utils",
+    "bgpst.env.config",
     "bgpst.lib.jquery-amd",
     "bgpst.view.parser",
     "bgpst.controller.dateconverter",
     "bgpst.view.heuristics",
     "bgpst.lib.moment",
     "bgpst.controller.functions"
-], function(utils, $, RipeDataParser, DateConverter, HeuristicsManager, moment, myUtils){
+], function(utils, config, $, RipeDataParser, DateConverter, HeuristicsManager, moment, myUtils){
 
 
     var RipeDataBroker = function(env) {
@@ -52,15 +53,14 @@ define([
 
         this.getPeerCountData = () => {
             return new Promise((resolve, reject) => {
-                var url_ris_peer_count = "https://stat.ripe.net/data/ris-peer-count/data.json";
                 $.ajax({
-                    url: url_ris_peer_count,
+                    url: config.dataAPIs.count,
                     dataType: "json",
                     data : {
                         starttime: env.queryParams.startDate.unix(),
-                        endtime: env.queryParams.stopDate.unix(),
-                        "v4_full_prefix_threshold": 1000,
-                        "v6_full_prefix_threshold": 1000
+                        endtime: env.queryParams.stopDate.unix()
+                        // "v4_full_prefix_threshold": 800000,//1000
+                        // "v6_full_prefix_threshold": 1000
                     },
                     success: (data) => {
                         env.logger.log("=== RipeBroker Success! Peer count loaded");
@@ -94,18 +94,15 @@ define([
         this.getBGPData = function() {
             return new Promise((resolve, reject) => {
 
-                var url_bgplay = "https://stat.ripe.net/data/bgplay/data.json";
                 $.ajax({
-                    url: url_bgplay,
+                    url: config.dataAPIs.main,
                     dataType: "json",
                     data : {
                         resource: env.queryParams.targets.join(","),
                         starttime: env.queryParams.startDate.unix(),
-                        endtime: env.queryParams.stopDate.unix(),
-                        
+                        endtime: env.queryParams.stopDate.unix()
                     },
                     success: (data) => {
-                        env.logger.log("=== RipeBroker Success! Data loaded from:"+url_bgplay);
                         try {
                             if(Array.isArray(data['data']['events']) && data['data']['events'].length < 1 &&
                                 Array.isArray(data['data']['initial_state']) && data['data']['initial_state'].length < 1){
@@ -154,21 +151,23 @@ define([
 
 
         this.CPInfoCallBack = (res) => {
-;            return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
                 if (this.current_parsed.known_cp[res.id]){
                     resolve();
                 }
-                var url_cp = "https://stat.ripe.net/data/geoloc/data.json?resource=" + res.ip;
                 $.ajax({
-                    url: url_cp,
+                    url: config.dataAPIs.cpInfo,
                     dataType: "json",
+                    data: {
+                        resource: res.ip
+                    },
                     success: function(data){
                         res["geo"] = data.data.locations[0].country;
                         $this.current_parsed.known_cp[res.id] = res;
                         resolve();
                     },
                     error: function(jqXHR, exception){
-                        utils.observer.publish("error", $this.errors.cpInfoError);
+                        // utils.observer.publish("error", $this.errors.cpInfoError);
                         reject();
                     }
                 });
@@ -187,9 +186,11 @@ define([
         };
 
         this.ASNInfoCallBack = function(res) {
-            var url_asn = "https://stat.ripe.net/data/as-overview/data.json?resource=AS" + res;
             $.ajax({
-                url: url_asn,
+                url: config.dataAPIs.asInfo,
+                data: {
+                    resource: "AS" + res
+                },
                 dataType: "json",
                 success: function(data){
                     $this.current_parsed.known_asn[res] = data.data.holder;

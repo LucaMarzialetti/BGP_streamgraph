@@ -317,7 +317,7 @@ define([
                 .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
                 .attr("transform", "translate(" + sizes.margin.left + "," + (sizes.height_main / 2) + ")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
                 .attr("class", "axe_description")
-                .text("Visibile on % collector peers");
+                .text("Visible on % collector peers");
         };
 
         this.parseDate = function () {
@@ -476,7 +476,7 @@ define([
 
                 env.guiManager.dom.tooltipSvg
                     .css("left", env.guiManager.mouse.x + 10 + "px")
-                    .css("top", env.guiManager.mouse.y + 50 + "px");
+                    .css("top", env.guiManager.mouse.y - 50 + "px");
 
                 if($this.last_hover==null || $this.last_hover.asn!=d_key.key || $this.last_hover.date!=date || $this.last_hover.perc!=perc)
                     setTimeout(function(){
@@ -1000,7 +1000,7 @@ define([
                 var $current_parsed = current_parsed;
                 env.guiManager.dom.tooltipSvg
                     .css("left", env.guiManager.mouse.x + 10 + "px")
-                    .css("top", env.guiManager.mouse.y + 50 + "px");
+                    .css("top", env.guiManager.mouse.y - 50 + "px");
                 if($this.last_hover==null || !($this.last_hover.asn == d_key.asn && d_key.cp == $this.last_hover.cp && $this.last_hover.date == d_key.date))
                     setTimeout(function(){
                         var s = "<strong> ASN: </strong>";
@@ -1108,7 +1108,7 @@ define([
                 env.guiManager.dom.tooltipSvg
                     .html(s)
                     .css("left", env.guiManager.mouse.x + 10 + "px")
-                    .css("top", env.guiManager.mouse.y + 50 + "px");
+                    .css("top", env.guiManager.mouse.y - 50 + "px");
 
                 if ($this.last_hover != d) {
                     d3.selectAll(".area")

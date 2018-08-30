@@ -1,5 +1,6 @@
 define([
     "bgpst.env.utils",
+    "bgpst.env.config",
     "bgpst.view.graphdrawer",
     "bgpst.controller.dateconverter",
     "bgpst.view.broker",
@@ -7,7 +8,7 @@ define([
     "bgpst.lib.moment",
     "bgpst.lib.jquery-amd",
     "bgpst.lib.stache!main"
-], function(utils, GraphDrawer, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
+], function(utils, config, GraphDrawer, DateConverter, RipeDataBroker, EPPZScrollTo, moment, $, template){
 
 
     //setup the whole gui interface actions, events and styles <-- TO CALL AT DOM READY
@@ -20,8 +21,8 @@ define([
 
         $(env.parentDom).on("mousemove", function(e){
             this.mouse = {
-                x: e.pageX,
-                y: e.pageY
+                x: e.screenX,
+                y: e.screenY
             };
         }.bind(this));
 
